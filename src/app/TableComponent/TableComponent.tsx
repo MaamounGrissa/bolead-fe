@@ -41,11 +41,11 @@ import {
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import SortAmountDownIcon from '@patternfly/react-icons/dist/esm/icons/sort-amount-down-icon';
 import DashboardWrapper from '@patternfly/react-core/src/demos/examples/DashboardWrapper.js';
-import { capitalize } from '@patternfly/react-table/src/components/Table/utils/utils';
-import { Table, TableBody, TableComposable, TableHeader, TableText, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { Table, TableBody, TableHeader, TableProps, headerCol } from '@patternfly/react-table';
 import { SearchIcon } from '@patternfly/react-icons';
+import Resource from '@app/Ressources/RessourceInterface';
 
-export const TableComponent = ({ columns, rows }) => {
+export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
   const defaultColumns = columns;
   const defaultRows = rows;
 
@@ -67,9 +67,6 @@ export const TableComponent = ({ columns, rows }) => {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = React.useState(false);
-
-
-
 
   const matchCheckboxNameToColumn = (name: any) => {
     switch (name) {
@@ -139,6 +136,63 @@ export const TableComponent = ({ columns, rows }) => {
   React.useEffect(() => {
     setPaginatedRows(managedRows.slice((page - 1) * perPage, page * perPage - 1));
   }, [managedRows, page, perPage]);
+
+  const isRepoSelectable = (repo) => repo.name !== 'a'; // Arbitrary logic for this example
+  const selectableRepos = defaultRows.filter(isRepoSelectable);
+
+  // In this example, selected rows are tracked by the repo names from each row. This could be any unique identifier.
+  // This is to prevent state from being based on row order index in case we later add sorting.
+  const [selectedRepoNames, setSelectedRepoNames] = React.useState<string[]>([]);
+  const setRepoSelected = (repo: Repository, isSelecting = true) =>
+    setSelectedRepoNames(prevSelected => {
+      const otherSelectedRepoNames = prevSelected.filter(r => r !== repo.name);
+      return isSelecting && isRepoSelectable(repo) ? [...otherSelectedRepoNames, repo.name] : otherSelectedRepoNames;
+    });
+  const selectAllRepos = (isSelecting = true) =>
+    setSelectedRepoNames(isSelecting ? selectableRepos.map(r => r.name) : []);
+  const isRepoSelected = (repo: Repository) => selectedRepoNames.includes(repo.name);
+
+  const [canSelectAll, setCanSelectAll] = React.useState(true);
+
+  // To allow shift+click to select/deselect multiple rows
+  const [recentSelectedRowIndex, setRecentSelectedRowIndex] = React.useState<number | null>(null);
+  const [shifting, setShifting] = React.useState(false);
+
+  const onSelectRepo = (repo: Repository, rowIndex: number, isSelecting: boolean) => {
+    // If the user is shift + selecting the checkboxes, then all intermediate checkboxes should be selected
+    if (shifting && recentSelectedRowIndex !== null) {
+      const numberSelected = rowIndex - recentSelectedRowIndex;
+      const intermediateIndexes =
+        numberSelected > 0
+          ? Array.from(new Array(numberSelected + 1), (_x, i) => i + recentSelectedRowIndex)
+          : Array.from(new Array(Math.abs(numberSelected) + 1), (_x, i) => i + rowIndex);
+      intermediateIndexes.forEach(index => setRepoSelected(repositories[index], isSelecting));
+    } else {
+      setRepoSelected(repo, isSelecting);
+    }
+    setRecentSelectedRowIndex(rowIndex);
+  };
+
+  React.useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') {
+        setShifting(true);
+      }
+    };
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') {
+        setShifting(false);
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup', onKeyUp);
+    };
+  }, []);
 
   // Removes attribute from each node object in Data.jsx
   const removePropFromObject = (object, keys) =>
@@ -692,13 +746,32 @@ export const TableComponent = ({ columns, rows }) => {
         }
       ];
     }
+    
     const onSelect = loading || filteredRows.length === 0 ? null : onRowSelect; // To remove the select box when there are no rows
+
+    const tableColumns: TableProps['cells'] = [
+        { title: 'Avatar' },
+        { title: 'Name' },
+        { title: 'Phone' },
+        { title: 'Email' },
+        { title: 'Type' },
+        { title: 'Status' }
+        ];
+    const finalRows: TableProps['rows'] = tableRows.map(repo => ({
+        cells: [repo.avatar, repo.name, repo.phone, repo.email, repo.type, repo.status],
+        selected: isRepoSelected(repo),
+        disableSelection: !isRepoSelectable(repo)
+    }));
 
   return (
     <React.Fragment>
           <Card>
             {toolbarItems}
-            <Table cells={managedColumns} rows={paginatedRows} onSelect={onSelect} aria-label="Filterable Table Demo">
+            <Table 
+                cells={tableColumns} 
+                rows={finalRows} 
+                onSelect={onSelect} 
+                aria-label="Filterable Table Demo">
                 <TableHeader />
                 <TableBody />
             </Table>
