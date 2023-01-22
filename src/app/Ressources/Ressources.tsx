@@ -41,67 +41,33 @@ interface Repository {
 }
 
 const Ressources: React.FunctionComponent = () => {
+
   const columns = [
-    'Servers',
-    'Threads',
-    'Applications',
-    'Workspaces',
-    'Status',
-    'Location',
-    'Url'
+    { title: 'Servers' },
+    { title: 'Threads' },
+    { title: 'Applications' },
+    { title: 'Workspaces' },
+    { title: 'Status' },
+    { title: 'Location' },
+    { title: 'Url' }
   ];
 
   const rows = [
-    {
-      servers: 'US-Node 1',
-      threads: 5,
-      applications: 25,
-      workspaces: 5,
-      status: 'Stopped',
-      location: 'Raleigh',
-      url: 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'
-    },
-    {
-      servers: 'US-Node 2',
-      threads: 5,
-      applications: 30,
-      workspaces: 2,
-      status: 'Down',
-      location: 'Westford',
-      url: 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'
-    },
-    {
-      servers: 'US-Node 3',
-      threads: 13,
-      applications: 35,
-      workspaces: 12,
-      status: 'Degraded',
-      location: 'Boston',
-      url: 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'
-    },
-    {
-      servers: 'US-Node 4',
-      threads: 2,
-      applications: 5,
-      workspaces: 18,
-      status: 'Needs Maintainence',
-      location: 'Raleigh',
-      url: 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'
-    },
-    {
-      servers: 'US-Node 5',
-      threads: 7,
-      applications: 30,
-      workspaces: 5,
-      status: 'Running',
-      location: 'Boston',
-      url: 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'
-    },
-  ]
+    { cells: ['US-Node 1', '5', '25', '5', 'Stopped', 'Raleigh', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] },
+    { cells: ['US-Node 2', '5', '30', '2', 'Down', 'Westford', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] },
+    { cells: ['US-Node 3', '13', '35', '12', 'Degraded', 'Boston', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] },
+    { cells: ['US-Node 4', '2', '5', '18', 'Needs Maintainence', 'Raleigh', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] },
+    { cells: ['US-Node 5', '7', '30', '5', 'Running', 'Boston', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#']},
+    { cells: ['US-Node 6', '5', '20', '15', 'Stopped', 'Raleigh', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] },
+    { cells: ['CZ-Node 1', '12', '48', '13', 'Down', 'Brno', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] },
+    { cells: ['CZ-Node 2', '3', '8', '20', 'Running', 'Brno', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] },
+    { cells: ['CZ-Remote-Node 1', '15', '20', '10', 'Down', 'Brno', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] },
+    { cells: ['Bangalore-Node 1', '20', '30', '30', 'Running', 'Bangalore', 'https://www.patternfly.org/v4/components/table/react-demos/column-management/#'] }
+  ];
 
   return (
     <PageSection>
-      <Title headingLevel="h1" size="lg">Liste des Ressources</Title>
+      <Title headingLevel="h1" size="lg"  className="pf-u-mb-xl">Ressources Page Title!</Title>
       <div>
         <TableComponent columns={columns} rows={rows} />
       </div>

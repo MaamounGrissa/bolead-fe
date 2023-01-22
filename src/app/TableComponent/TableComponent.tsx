@@ -24,21 +24,37 @@ import {
   Select,
   SelectVariant,
   Card,
-  TextVariants
+  TextVariants,
+  Title,
+  Bullseye,
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateBody,
+  EmptyStateSecondaryActions,
+  SelectOption,
+  ToolbarFilter,
+  DropdownPosition,
+  ToolbarToggleGroup,
+  ToolbarGroup,
+  SearchInput
 } from '@patternfly/react-core';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import SortAmountDownIcon from '@patternfly/react-icons/dist/esm/icons/sort-amount-down-icon';
 import DashboardWrapper from '@patternfly/react-core/src/demos/examples/DashboardWrapper.js';
 import { capitalize } from '@patternfly/react-table/src/components/Table/utils/utils';
-import { TableComposable, TableText, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { Table, TableBody, TableComposable, TableHeader, TableText, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { SearchIcon } from '@patternfly/react-icons';
 
 export const TableComponent = ({ columns, rows }) => {
   const defaultColumns = columns;
   const defaultRows = rows;
 
-  const [filters, setFilters] = React.useState([]);
+  const [filters, setFilters] = React.useState({
+    location: [],
+    name: [],
+    status: []
+  });
   const [filteredColumns, setFilteredColumns] = React.useState([]);
-  const [filteredRows, setFilteredRows] = React.useState([]);
   const [managedColumns, setManagedColumns] = React.useState(defaultColumns);
   const [managedRows, setManagedRows] = React.useState(defaultRows);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -46,8 +62,16 @@ export const TableComponent = ({ columns, rows }) => {
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(10);
   const [paginatedRows, setPaginatedRows] = React.useState(rows);
+  const [loading, setLoading] = React.useState(false);
+  const [currentCategory, setCurrentCategory] = React.useState('Status');
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState('');
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = React.useState(false);
 
-  const matchCheckboxNameToColumn = name => {
+
+
+
+  const matchCheckboxNameToColumn = (name: any) => {
     switch (name) {
       case 'check1':
         return 'Servers';
@@ -67,7 +91,7 @@ export const TableComponent = ({ columns, rows }) => {
         return 'URL';
     }
   };
-  const matchSelectedColumnNameToAttr = name => {
+  const matchSelectedColumnNameToAttr = (name: any) => {
     switch (name) {
       case 'Servers':
         return 'name';
@@ -89,15 +113,15 @@ export const TableComponent = ({ columns, rows }) => {
   };
 
   // Pagination logic
-  const handleSetPage = (_evt, newPage) => {
+  const handleSetPage = (_evt: any, newPage: any) => {
     setPage(newPage);
   };
 
-  const handlePerPageSelect = (_evt, newPerPage) => {
+  const handlePerPageSelect = (_evt: any, newPerPage: any) => {
     setPerPage(newPerPage);
   };
 
-  const renderPagination = (variant, isCompact) => (
+  const renderPagination = (variant: string | undefined, isCompact: boolean | undefined) => (
     <Pagination
       isCompact={isCompact}
       itemCount={rows.length}
@@ -188,7 +212,6 @@ export const TableComponent = ({ columns, rows }) => {
   };
 
   const selectAllColumns = () => {
-    unfilterAllData();
     setCheckedState(Array(columns.length).fill(true));
   };
 
@@ -366,7 +389,7 @@ export const TableComponent = ({ columns, rows }) => {
     );
   };
 
-  const renderLabel = labelText => {
+  const renderLabel = (labelText: any) => {
     switch (labelText) {
       case 'Running':
         return <Label color="green">{labelText}</Label>;
@@ -379,6 +402,182 @@ export const TableComponent = ({ columns, rows }) => {
     }
   };
 
+  const onDelete = (type = '', id = '') => {
+    if (type) {
+      setFilters({
+        ...filters,
+        [type.toLowerCase()]: filters[type.toLowerCase()].filter(s => s !== id)
+      })
+    } else {
+      setFilters({
+        location: [],
+        name: [],
+        status: []
+       })
+    }
+  };
+
+  const onCategoryToggle = (isOpen: any) => {
+    setIsCategoryDropdownOpen(isOpen);
+  };
+
+  const onCategorySelect = (event: any) => {
+    setCurrentCategory(event.target.innerText);
+    setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
+  };
+
+  const onFilterToggle = (isOpen: boolean) => {
+    setIsFilterDropdownOpen(isOpen);
+  };
+
+  const onFilterSelect = (event: any) => {
+    setIsFilterDropdownOpen(!isFilterDropdownOpen);
+  };
+
+  const onInputChange = (newValue: string) => {
+    setInputValue(newValue);
+  };
+
+  const onRowSelect = (event: any, isSelected: boolean, rowId: number) => {
+    let myrows;
+    if (rowId === -1) {
+        myrows = rows.map(oneRow => {
+        oneRow.selected = isSelected;
+        return oneRow;
+      });
+    } else {
+        myrows = [...rows];
+        myrows[rowId].selected = isSelected;
+    }
+    setFilteredRows(rows);
+  };
+
+  const onStatusSelect = (event, selection) => {
+    const checked = event.target.checked;
+    setFilters({
+        ...filters,
+        ['status']: checked ? [selection] : []
+    })
+  };
+
+  const onNameInput = (event: any) => {
+    if (event.key && event.key !== 'Enter') {
+      return;
+    }
+    setFilters({
+        ...filters,
+        ['name']: [inputValue]
+    })
+    setInputValue('');
+  };
+
+  const onLocationSelect = (event, selection) => {
+    setFilters({
+        ...filters,
+        ['location']: [selection]
+    })
+    onFilterSelect();
+  };
+
+  const buildCategoryDropdown = () => {
+    const categoryMenuItems = [
+      <SelectOption key="cat1" value="Location" />,
+      <SelectOption key="cat2" value="Name" />,
+      <SelectOption key="cat3" value="Status" />
+    ];
+
+    return (
+      <ToolbarItem>
+        <Select
+          onSelect={onCategorySelect}
+          selections={currentCategory}
+          position={DropdownPosition.left}
+          onToggle={onCategoryToggle}
+          isOpen={isCategoryDropdownOpen}
+          toggleIcon={<FilterIcon />}
+          style={{ width: '100%' }}
+        >
+          {categoryMenuItems}
+        </Select>
+      </ToolbarItem>
+    );
+  }
+
+  const buildFilterDropdown = () => {
+    const locationMenuItems = [
+      <SelectOption key="raleigh" value="Raleigh" />,
+      <SelectOption key="westford" value="Westford" />,
+      <SelectOption key="boston" value="Boston" />,
+      <SelectOption key="brno" value="Brno" />,
+      <SelectOption key="bangalore" value="Bangalore" />
+    ];
+
+    const statusMenuItems = [
+      <SelectOption key="statusRunning" value="Running" />,
+      <SelectOption key="statusStopped" value="Stopped" />,
+      <SelectOption key="statusDown" value="Down" />,
+      <SelectOption key="statusDegraded" value="Degraded" />,
+      <SelectOption key="statusMaint" value="Needs Maintainence" />
+    ];
+
+    return (
+      <React.Fragment>
+        <ToolbarFilter
+          chips={filters.location}
+          deleteChip={onDelete}
+          categoryName="Location"
+          showToolbarItem={currentCategory === 'Location'}
+        >
+          <Select
+            aria-label="Location"
+            onToggle={onFilterToggle}
+            onSelect={onLocationSelect}
+            selections={filters.location[0]}
+            isOpen={isFilterDropdownOpen}
+            placeholderText="Any"
+          >
+            {locationMenuItems}
+          </Select>
+        </ToolbarFilter>
+        <ToolbarFilter
+          chips={filters.name}
+          deleteChip={onDelete}
+          categoryName="Name"
+          showToolbarItem={currentCategory === 'Name'}
+        >
+          <SearchInput
+            aria-label="name filter"
+            placeholder="Filter by name..."
+            onChange={onInputChange}
+            value={inputValue}
+            onClear={() => {
+              onInputChange('');
+            }}
+            onSearch={onNameInput}
+          />
+        </ToolbarFilter>
+        <ToolbarFilter
+          chips={filters.status}
+          deleteChip={onDelete}
+          categoryName="Status"
+          showToolbarItem={currentCategory === 'Status'}
+        >
+          <Select
+            variant={SelectVariant.checkbox}
+            aria-label="Status"
+            onToggle={onFilterToggle}
+            onSelect={onStatusSelect}
+            selections={filters.status}
+            isOpen={isFilterDropdownOpen}
+            placeholderText="Filter by status"
+          >
+            {statusMenuItems}
+          </Select>
+        </ToolbarFilter>
+      </React.Fragment>
+    );
+  }
+
   const toolbarItems = (
     <React.Fragment>
       <Toolbar id="page-layout-table-column-management-action-toolbar-top">
@@ -389,17 +588,12 @@ export const TableComponent = ({ columns, rows }) => {
           <ToolbarItem variant="overflow-menu">
             <OverflowMenu breakpoint="md">
               <OverflowMenuItem>
-                <Select
-                  id="page-layout-table-column-management-action-toolbar-top-select-checkbox-toggle"
-                  variant={SelectVariant.single}
-                  aria-label="Select Input"
-                  aria-labelledby="page-layout-table-column-management-action-toolbar-top-select-checkbox-label page-layout-table-column-management-action-toolbar-top-select-checkbox-toggle"
-                  placeholderText={
-                    <>
-                      <FilterIcon /> Name
-                    </>
-                  }
-                />
+                <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
+                    <ToolbarGroup variant="filter-group">
+                    {buildCategoryDropdown()}
+                    {buildFilterDropdown()}
+                    </ToolbarGroup>
+                </ToolbarToggleGroup>
               </OverflowMenuItem>
               <OverflowMenuItem>
                 <OptionsMenu
@@ -433,49 +627,81 @@ export const TableComponent = ({ columns, rows }) => {
     </React.Fragment>
   );
 
+
+  const filteredRows =
+      filters.name.length > 0 || filters.location.length > 0 || filters.status.length > 0
+        ? rows.filter(row => {
+            return (
+              (filters.name.length === 0 ||
+                filters.name.some(name => row.cells[0].toLowerCase().includes(name.toLowerCase()))) &&
+              (filters.location.length === 0 || filters.location.includes(row.cells[5])) &&
+              (filters.status.length === 0 || filters.status.includes(row.cells[4]))
+            );
+          })
+        : rows;
+
+    let tableRows = filteredRows;
+    if (!loading && filteredRows.length === 0) {
+      tableRows = [
+        {
+          heightAuto: true,
+          cells: [
+            {
+              props: { colSpan: 8 },
+              title: (
+                <Bullseye>
+                  <EmptyState>
+                    <EmptyStateIcon icon={SearchIcon} />
+                    <Title headingLevel="h5" size="lg">
+                      Clear all filters and try again.
+                    </Title>
+                    <EmptyStateBody>
+                      No results match this filter criteria. Remove all filters or clear all filters to show results.
+                    </EmptyStateBody>
+                    <EmptyStateSecondaryActions>
+                      <Button
+                        variant="link"
+                        onClick={() => {
+                          this.onDelete(null);
+                        }}
+                      >
+                        Clear all filters
+                      </Button>
+                    </EmptyStateSecondaryActions>
+                  </EmptyState>
+                </Bullseye>
+              )
+            }
+          ]
+        }
+      ];
+    } else if (loading) {
+      tableRows = [
+        {
+          heightAuto: true,
+          cells: [
+            {
+              props: { colSpan: 8 },
+              title: (
+                <Title headingLevel="h2" size="3xl">
+                  Please wait while loading data
+                </Title>
+              )
+            }
+          ]
+        }
+      ];
+    }
+    const onSelect = loading || filteredRows.length === 0 ? null : onRowSelect; // To remove the select box when there are no rows
+
   return (
     <React.Fragment>
           <Card>
             {toolbarItems}
-            <TableComposable variant="compact" aria-label="Column Management Table">
-              <Thead>
-                <Tr>
-                  {managedColumns.map((column, columnIndex) => (
-                    <Th key={columnIndex}>{column}</Th>
-                  ))}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {paginatedRows.map((row, rowIndex) => (
-                  <Tr key={rowIndex}>
-                    <>
-                      {Object.entries(row).map(([key, value]) =>
-                        key === 'status' ? (
-                          <Td width={15} dataLabel="Status" key={key}>
-                            {renderLabel(value)}
-                          </Td>
-                        ) : key === 'url' ? (
-                          <Td width={10} dataLabel="URL" modifier="truncate" key={key}>
-                            <TableText>
-                              <a href="#">{row.url}</a>
-                            </TableText>
-                          </Td>
-                        ) : (
-                          <Td key={key}
-                            width={key === 'name' ? 15 : 10}
-                            dataLabel={
-                              key === 'lastModified' ? 'Last modified' : capitalize(key)
-                            }
-                          >
-                            {value}
-                          </Td>
-                        )
-                      )}
-                    </>
-                  </Tr>
-                ))}
-              </Tbody>
-            </TableComposable>
+            <Table cells={managedColumns} rows={paginatedRows} onSelect={onSelect} aria-label="Filterable Table Demo">
+                <TableHeader />
+                <TableBody />
+            </Table>
             {renderPagination(PaginationVariant.bottom)}
             {renderModal()}
           </Card>
