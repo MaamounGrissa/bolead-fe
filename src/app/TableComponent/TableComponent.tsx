@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Button,
   DataList,
@@ -36,78 +36,32 @@ import {
   DropdownPosition,
   ToolbarToggleGroup,
   ToolbarGroup,
-  SearchInput
+  SearchInput,
+  Avatar
 } from '@patternfly/react-core';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import SortAmountDownIcon from '@patternfly/react-icons/dist/esm/icons/sort-amount-down-icon';
 import DashboardWrapper from '@patternfly/react-core/src/demos/examples/DashboardWrapper.js';
 import { Table, TableBody, TableHeader, TableProps, headerCol } from '@patternfly/react-table';
 import { SearchIcon } from '@patternfly/react-icons';
-import Resource from '@app/Ressources/RessourceInterface';
 
 export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
-  const defaultColumns = columns;
-  const defaultRows = rows;
+    const defaultColumns = columns;
+    const defaultRows = rows;
 
-  const [filters, setFilters] = React.useState({
-    location: [],
-    name: [],
-    status: []
-  });
-  const [filteredColumns, setFilteredColumns] = React.useState([]);
-  const [managedColumns, setManagedColumns] = React.useState(defaultColumns);
-  const [managedRows, setManagedRows] = React.useState(defaultRows);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [checkedState, setCheckedState] = React.useState(Array(columns.length).fill(true));
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(10);
-  const [paginatedRows, setPaginatedRows] = React.useState(rows);
-  const [loading, setLoading] = React.useState(false);
-  const [currentCategory, setCurrentCategory] = React.useState('Status');
-  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState('');
-  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = React.useState(false);
-
-  const matchCheckboxNameToColumn = (name: any) => {
-    switch (name) {
-      case 'check1':
-        return 'Servers';
-      case 'check2':
-        return 'Threads';
-      case 'check3':
-        return 'Applications';
-      case 'check4':
-        return 'Workspaces';
-      case 'check5':
-        return 'Status';
-      case 'check6':
-        return 'Location';
-      case 'check7':
-        return 'Last Modified';
-      case 'check8':
-        return 'URL';
-    }
-  };
-  const matchSelectedColumnNameToAttr = (name: any) => {
-    switch (name) {
-      case 'Servers':
-        return 'name';
-      case 'Threads':
-        return 'threads';
-      case 'Applications':
-        return 'applications';
-      case 'Workspaces':
-        return 'workspaces';
-      case 'Status':
-        return 'status';
-      case 'Location':
-        return 'location';
-      case 'Last Modified':
-        return 'lastModified';
-      case 'URL':
-        return 'url';
-    }
-  };
+    const [filters, setFilters] = useState({
+        type: [],
+        name: [],
+        status: []
+    });
+    const [page, setPage] = useState(1);
+    const [perPage, setPerPage] = useState(10);
+    const [paginatedRows, setPaginatedRows] = useState(rows);
+    const [loading, setLoading] = useState(false);
+    const [currentCategory, setCurrentCategory] = useState('Status');
+    const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+    const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   // Pagination logic
   const handleSetPage = (_evt: any, newPage: any) => {
@@ -133,66 +87,9 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
     />
   );
 
-  React.useEffect(() => {
-    setPaginatedRows(managedRows.slice((page - 1) * perPage, page * perPage - 1));
-  }, [managedRows, page, perPage]);
-
-  const isRepoSelectable = (repo) => repo.name !== 'a'; // Arbitrary logic for this example
-  const selectableRepos = defaultRows.filter(isRepoSelectable);
-
-  // In this example, selected rows are tracked by the repo names from each row. This could be any unique identifier.
-  // This is to prevent state from being based on row order index in case we later add sorting.
-  const [selectedRepoNames, setSelectedRepoNames] = React.useState<string[]>([]);
-  const setRepoSelected = (repo: Repository, isSelecting = true) =>
-    setSelectedRepoNames(prevSelected => {
-      const otherSelectedRepoNames = prevSelected.filter(r => r !== repo.name);
-      return isSelecting && isRepoSelectable(repo) ? [...otherSelectedRepoNames, repo.name] : otherSelectedRepoNames;
-    });
-  const selectAllRepos = (isSelecting = true) =>
-    setSelectedRepoNames(isSelecting ? selectableRepos.map(r => r.name) : []);
-  const isRepoSelected = (repo: Repository) => selectedRepoNames.includes(repo.name);
-
-  const [canSelectAll, setCanSelectAll] = React.useState(true);
-
-  // To allow shift+click to select/deselect multiple rows
-  const [recentSelectedRowIndex, setRecentSelectedRowIndex] = React.useState<number | null>(null);
-  const [shifting, setShifting] = React.useState(false);
-
-  const onSelectRepo = (repo: Repository, rowIndex: number, isSelecting: boolean) => {
-    // If the user is shift + selecting the checkboxes, then all intermediate checkboxes should be selected
-    if (shifting && recentSelectedRowIndex !== null) {
-      const numberSelected = rowIndex - recentSelectedRowIndex;
-      const intermediateIndexes =
-        numberSelected > 0
-          ? Array.from(new Array(numberSelected + 1), (_x, i) => i + recentSelectedRowIndex)
-          : Array.from(new Array(Math.abs(numberSelected) + 1), (_x, i) => i + rowIndex);
-      intermediateIndexes.forEach(index => setRepoSelected(repositories[index], isSelecting));
-    } else {
-      setRepoSelected(repo, isSelecting);
-    }
-    setRecentSelectedRowIndex(rowIndex);
-  };
-
-  React.useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
-        setShifting(true);
-      }
-    };
-    const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === 'Shift') {
-        setShifting(false);
-      }
-    };
-
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
-
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-      document.removeEventListener('keyup', onKeyUp);
-    };
-  }, []);
+  useEffect(() => {
+    setPaginatedRows(defaultRows.slice((page - 1) * perPage, page * perPage - 1));
+  }, [defaultRows, page, perPage]);
 
   // Removes attribute from each node object in Data.jsx
   const removePropFromObject = (object, keys) =>
@@ -201,275 +98,9 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
       return keep;
     }, object);
 
-  // Filters columns out of table that are not selected in the column management modal
-  const filterData = (checked, name) => {
-    const selectedColumn = matchSelectedColumnNameToAttr(name);
-
-    const filteredRows = [];
-    if (checked) {
-      const updatedFilters = filters.filter(item => item !== selectedColumn);
-
-      // Only show the names of columns that were selected in the modal
-      const filteredColumns = defaultColumns.filter(
-        column => !updatedFilters.includes(matchSelectedColumnNameToAttr(column))
-      );
-
-      // Remove the attributes (i.e. "columns") that were not selected
-      defaultRows.forEach(item => filteredRows.push(removePropFromObject(item, updatedFilters)));
-
-      setFilters(updatedFilters);
-      setFilteredColumns(filteredColumns);
-      setFilteredRows(filteredRows);
-    } else {
-      let updatedFilters = filters;
-      updatedFilters.push(selectedColumn);
-
-      // Only show the names of columns that were selected in the modal
-      const filteredColumns = managedColumns.filter(column => !filters.includes(matchSelectedColumnNameToAttr(column)));
-
-      // Remove the attributes (i.e. "columns") that were not selected
-      managedRows.forEach(item => filteredRows.push(removePropFromObject(item, updatedFilters)));
-
-      setFilters(updatedFilters);
-      setFilteredColumns(filteredColumns);
-      setFilteredRows(filteredRows);
+    const onDelete= () => {
+        return 'delete';
     }
-  };
-  const unfilterAllData = () => {
-    setFilters([]);
-    setFilteredColumns(defaultColumns);
-    setFilteredRows(defaultRows);
-  };
-
-  const handleChange = (checked, event) => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-
-    // Remove any columns from the table that aren't checked
-    filterData(checked, matchCheckboxNameToColumn(target.name));
-    const checkedIndex = columns.findIndex(element => element === matchCheckboxNameToColumn(target.name));
-
-    const updatedCheckedState = [...checkedState];
-    updatedCheckedState[checkedIndex] = value;
-    setCheckedState(updatedCheckedState);
-  };
-
-  const handleModalToggle = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const onSave = () => {
-    setManagedColumns(filteredColumns);
-    setManagedRows(filteredRows);
-    setPaginatedRows(filteredRows);
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const selectAllColumns = () => {
-    setCheckedState(Array(columns.length).fill(true));
-  };
-
-  const renderModal = () => {
-    return (
-      <Modal
-        title="Manage columns"
-        isOpen={isModalOpen}
-        variant="small"
-        description={
-          <TextContent>
-            <Text component={TextVariants.p}>Selected categories will be displayed in the table.</Text>
-            <Button isInline onClick={selectAllColumns} variant="link">
-              Select all
-            </Button>
-          </TextContent>
-        }
-        onClose={handleModalToggle}
-        actions={[
-          <Button key="save" variant="primary" onClick={onSave}>
-            Save
-          </Button>,
-          <Button key="cancel" variant="secondary" onClick={handleModalToggle}>
-            Cancel
-          </Button>
-        ]}
-      >
-        <DataList aria-label="Table column management" id="table-column-management" isCompact>
-          <DataListItem aria-labelledby="table-column-management-item1">
-            <DataListItemRow>
-              <DataListCheck
-                aria-labelledby="table-column-management-item1"
-                checked={checkedState[0]}
-                name="check1"
-                id="check1"
-                onChange={handleChange}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell id="table-column-management-item1" key="table-column-management-item1">
-                    <label htmlFor="check1">{columns[0]}</label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem aria-labelledby="table-column-management-item2">
-            <DataListItemRow>
-              <DataListCheck
-                aria-labelledby="table-column-management-item2"
-                checked={checkedState[1]}
-                name="check2"
-                id="check2"
-                onChange={handleChange}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell id="table-column-management-item2" key="table-column-management-item2">
-                    <label htmlFor="check2">{columns[1]}</label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem aria-labelledby="table-column-management-item3">
-            <DataListItemRow>
-              <DataListCheck
-                aria-labelledby="table-column-management-item3"
-                checked={checkedState[2]}
-                name="check3"
-                id="check3"
-                onChange={handleChange}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell id="table-column-management-item3" key="table-column-management-item3">
-                    <label htmlFor="check3">{columns[2]}</label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem aria-labelledby="table-column-management-item4">
-            <DataListItemRow>
-              <DataListCheck
-                aria-labelledby="table-column-management-item4"
-                checked={checkedState[3]}
-                name="check4"
-                id="check4"
-                onChange={handleChange}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell id="table-column-management-item4" key="table-column-management-item4">
-                    <label htmlFor="check4">{columns[3]}</label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem aria-labelledby="table-column-management-item4">
-            <DataListItemRow>
-              <DataListCheck
-                aria-labelledby="table-column-management-item4"
-                checked={checkedState[4]}
-                name="check5"
-                id="check5"
-                onChange={handleChange}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell id="table-column-management-item4" key="table-column-management-item4">
-                    <label htmlFor="check5">{columns[4]}</label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem aria-labelledby="table-column-management-item5">
-            <DataListItemRow>
-              <DataListCheck
-                aria-labelledby="table-column-management-item5"
-                checked={checkedState[5]}
-                name="check6"
-                id="check6"
-                onChange={handleChange}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell id="table-column-management-item5" key="table-column-management-item5">
-                    <label htmlFor="check6">{columns[5]}</label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem aria-labelledby="table-column-management-item6">
-            <DataListItemRow>
-              <DataListCheck
-                aria-labelledby="table-column-management-item6"
-                checked={checkedState[6]}
-                name="check7"
-                id="check7"
-                onChange={handleChange}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell id="table-column-management-item6" key="table-column-management-item5">
-                    <label htmlFor="check7">{columns[6]}</label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem aria-labelledby="table-column-management-item5">
-            <DataListItemRow>
-              <DataListCheck
-                aria-labelledby="table-column-management-item5"
-                checked={checkedState[7]}
-                name="check8"
-                id="check8"
-                onChange={handleChange}
-              />
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell id="table-column-management-item7" key="table-column-management-item7">
-                    <label htmlFor="check8">{columns[7]}</label>
-                  </DataListCell>
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-        </DataList>
-      </Modal>
-    );
-  };
-
-  const renderLabel = (labelText: any) => {
-    switch (labelText) {
-      case 'Running':
-        return <Label color="green">{labelText}</Label>;
-      case 'Stopped':
-        return <Label color="orange">{labelText}</Label>;
-      case 'Needs Maintenance':
-        return <Label color="blue">{labelText}</Label>;
-      case 'Down':
-        return <Label color="red">{labelText}</Label>;
-    }
-  };
-
-  const onDelete = (type = '', id = '') => {
-    if (type) {
-      setFilters({
-        ...filters,
-        [type.toLowerCase()]: filters[type.toLowerCase()].filter(s => s !== id)
-      })
-    } else {
-      setFilters({
-        location: [],
-        name: [],
-        status: []
-       })
-    }
-  };
 
   const onCategoryToggle = (isOpen: any) => {
     setIsCategoryDropdownOpen(isOpen);
@@ -492,25 +123,10 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
     setInputValue(newValue);
   };
 
-  const onRowSelect = (event: any, isSelected: boolean, rowId: number) => {
-    let myrows;
-    if (rowId === -1) {
-        myrows = rows.map(oneRow => {
-        oneRow.selected = isSelected;
-        return oneRow;
-      });
-    } else {
-        myrows = [...rows];
-        myrows[rowId].selected = isSelected;
-    }
-    setFilteredRows(rows);
-  };
-
   const onStatusSelect = (event, selection) => {
-    const checked = event.target.checked;
     setFilters({
         ...filters,
-        ['status']: checked ? [selection] : []
+        ['status']: [selection]
     })
   };
 
@@ -522,20 +138,18 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
         ...filters,
         ['name']: [inputValue]
     })
-    setInputValue('');
   };
 
-  const onLocationSelect = (event, selection) => {
+  const onTypeSelect = (event, selection) => {
     setFilters({
         ...filters,
-        ['location']: [selection]
+        ['type']: [selection]
     })
-    onFilterSelect();
   };
 
   const buildCategoryDropdown = () => {
     const categoryMenuItems = [
-      <SelectOption key="cat1" value="Location" />,
+      <SelectOption key="cat1" value="Type" />,
       <SelectOption key="cat2" value="Name" />,
       <SelectOption key="cat3" value="Status" />
     ];
@@ -558,12 +172,10 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
   }
 
   const buildFilterDropdown = () => {
-    const locationMenuItems = [
-      <SelectOption key="raleigh" value="Raleigh" />,
-      <SelectOption key="westford" value="Westford" />,
-      <SelectOption key="boston" value="Boston" />,
-      <SelectOption key="brno" value="Brno" />,
-      <SelectOption key="bangalore" value="Bangalore" />
+    const TypeMenuItems = [
+      <SelectOption key="technicien" value="Technicien" />,
+      <SelectOption key="admin" value="Admin" />,
+      <SelectOption key="Operateur" value="Operateur" />,
     ];
 
     const statusMenuItems = [
@@ -577,20 +189,20 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
     return (
       <React.Fragment>
         <ToolbarFilter
-          chips={filters.location}
+          chips={filters.type}
           deleteChip={onDelete}
-          categoryName="Location"
-          showToolbarItem={currentCategory === 'Location'}
+          categoryName="Type"
+          showToolbarItem={currentCategory === 'Type'}
         >
           <Select
-            aria-label="Location"
+            aria-label="Type"
             onToggle={onFilterToggle}
-            onSelect={onLocationSelect}
-            selections={filters.location[0]}
+            onSelect={onTypeSelect}
+            selections={filters.type[0]}
             isOpen={isFilterDropdownOpen}
             placeholderText="Any"
           >
-            {locationMenuItems}
+            {TypeMenuItems}
           </Select>
         </ToolbarFilter>
         <ToolbarFilter
@@ -663,16 +275,6 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
                   }
                 />
               </OverflowMenuItem>
-              <OverflowMenuGroup groupType="button" isPersistent>
-                <OverflowMenuItem>
-                  <Button variant="primary">Action</Button>
-                </OverflowMenuItem>
-                <OverflowMenuItem breakpoint="md" isPersistent>
-                  <Button variant="link" onClick={handleModalToggle}>
-                    Manage columns
-                  </Button>
-                </OverflowMenuItem>
-              </OverflowMenuGroup>
             </OverflowMenu>
           </ToolbarItem>
           <ToolbarItem variant="pagination">{renderPagination(PaginationVariant.top)}</ToolbarItem>
@@ -681,14 +283,13 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
     </React.Fragment>
   );
 
-
   const filteredRows =
-      filters.name.length > 0 || filters.location.length > 0 || filters.status.length > 0
-        ? rows.filter(row => {
+      filters.name.length > 0 || filters.type.length > 0 || filters.status.length > 0
+        ? rows.filter((row: any) => {
             return (
               (filters.name.length === 0 ||
-                filters.name.some(name => row.cells[0].toLowerCase().includes(name.toLowerCase()))) &&
-              (filters.location.length === 0 || filters.location.includes(row.cells[5])) &&
+                filters.name.some((name: string) => row.cells[0].toLowerCase().includes(name.toLowerCase()))) &&
+              (filters.type.length === 0 || filters.type.includes(row.cells[3])) &&
               (filters.status.length === 0 || filters.status.includes(row.cells[4]))
             );
           })
@@ -716,7 +317,7 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
                       <Button
                         variant="link"
                         onClick={() => {
-                          this.onDelete(null);
+                          onDelete();
                         }}
                       >
                         Clear all filters
@@ -747,8 +348,6 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
       ];
     }
     
-    const onSelect = loading || filteredRows.length === 0 ? null : onRowSelect; // To remove the select box when there are no rows
-
     const tableColumns: TableProps['cells'] = [
         { title: 'Avatar' },
         { title: 'Name' },
@@ -756,11 +355,16 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
         { title: 'Email' },
         { title: 'Type' },
         { title: 'Status' }
-        ];
-    const finalRows: TableProps['rows'] = tableRows.map(repo => ({
-        cells: [repo.avatar, repo.name, repo.phone, repo.email, repo.type, repo.status],
-        selected: isRepoSelected(repo),
-        disableSelection: !isRepoSelectable(repo)
+    ];
+    const finalRows: TableProps['rows'] = tableRows.map((repo: any) => ({
+        cells: [
+            <><Avatar src={repo.avatar} alt="avatar" size="md" /></>, 
+            repo.name, 
+            repo.phone, 
+            repo.email, 
+            repo.type, 
+            repo.status
+        ],
     }));
 
   return (
@@ -770,13 +374,11 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
             <Table 
                 cells={tableColumns} 
                 rows={finalRows} 
-                onSelect={onSelect} 
                 aria-label="Filterable Table Demo">
                 <TableHeader />
                 <TableBody />
             </Table>
             {renderPagination(PaginationVariant.bottom)}
-            {renderModal()}
           </Card>
     </React.Fragment>
   );
