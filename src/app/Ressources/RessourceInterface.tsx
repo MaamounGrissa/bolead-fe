@@ -1,5 +1,4 @@
 export default interface Resource {
-    avatar: string;
     name: string;
     phone: string;
     email: string;
