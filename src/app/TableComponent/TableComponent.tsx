@@ -47,14 +47,162 @@ import DashboardWrapper from '@patternfly/react-core/src/demos/examples/Dashboar
 import { Table, TableBody, TableHeader, TableProps, TableVariant, headerCol } from '@patternfly/react-table';
 import { SearchIcon } from '@patternfly/react-icons';
 
-export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
-    const defaultColumns = columns;
-    const defaultRows = rows;
+export default interface Resource {
+    name: string;
+    phone: string;
+    email: string;
+    type: string;
+    status: string;
+}
 
+export const TableComponent: React.FunctionComponent = () => {
+    const rows: any = [
+        {
+          name: 'John Smith',
+          phone: '555-555-5555',
+          email: 'john@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'Anna Smith',
+          phone: '555-555-5555',
+          email: 'anna@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'Peter Smith',
+          phone: '555-555-5555',
+          email: 'peter@bolead.fr',
+          type: 'Administrateur',
+          status: 'Actif'
+        },
+        {
+          name: 'Randy Schwartz',
+          phone: '555-555-5555',
+          email: 'randy@bolead.fr',
+          type: 'Administrateur',
+          status: 'Actif'
+        },
+        {
+          name: 'Michael Smith',
+          phone: '555-555-5555',
+          email: 'michael@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'John Smith',
+          phone: '555-555-5555',
+          email: 'john@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'Anna Smith',
+          phone: '555-555-5555',
+          email: 'anna@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'Peter Smith',
+          phone: '555-555-5555',
+          email: 'peter@bolead.fr',
+          type: 'Administrateur',
+          status: 'Actif'
+        },
+        {
+          name: 'Randy Schwartz',
+          phone: '555-555-5555',
+          email: 'randy@bolead.fr',
+          type: 'Administrateur',
+          status: 'Actif'
+        },
+        {
+          name: 'Michael Smith',
+          phone: '555-555-5555',
+          email: 'michael@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'John Smith',
+          phone: '555-555-5555',
+          email: 'john@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'Anna Smith',
+          phone: '555-555-5555',
+          email: 'anna@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'Peter Smith',
+          phone: '555-555-5555',
+          email: 'peter@bolead.fr',
+          type: 'Administrateur',
+          status: 'Actif'
+        },
+        {
+          name: 'Randy Schwartz',
+          phone: '555-555-5555',
+          email: 'randy@bolead.fr',
+          type: 'Administrateur',
+          status: 'Actif'
+        },
+        {
+          name: 'Michael Smith',
+          phone: '555-555-5555',
+          email: 'michael@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'John Smith',
+          phone: '555-555-5555',
+          email: 'john@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'Anna Smith',
+          phone: '555-555-5555',
+          email: 'anna@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        },
+        {
+          name: 'Peter Smith',
+          phone: '555-555-5555',
+          email: 'peter@bolead.fr',
+          type: 'Administrateur',
+          status: 'Actif'
+        },
+        {
+          name: 'Randy Schwartz',
+          phone: '555-555-5555',
+          email: 'randy@bolead.fr',
+          type: 'Administrateur',
+          status: 'Actif'
+        },
+        {
+          name: 'Michael Smith',
+          phone: '555-555-5555',
+          email: 'michael@bolead.fr',
+          type: 'Technicien',
+          status: 'Actif'
+        }
+    ];
+    const defaultRows = rows;
     const [filters, setFilters] = useState({
-        type: [],
-        name: [],
-        status: []
+        type: "",
+        name: "",
+        status: ""
     });
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
@@ -84,20 +232,22 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
         setPerPage(newPerPage);
     };
 
-    const renderPagination = (variant: string | undefined, isCompact: boolean | undefined) => (
-        <Pagination
-        isCompact={isCompact}
-        itemCount={rows.length}
-        page={page}
-        perPage={perPage}
-        onSetPage={handleSetPage}
-        onPerPageSelect={handlePerPageSelect}
-        variant={variant}
-        titles={{
-            paginationTitle: `${variant} pagination`
-        }}
-        />
-    );
+    const renderPagination = (variant: string | "bottom", isCompact: boolean | true) => {
+        return (
+            <Pagination
+            isCompact={isCompact}
+            itemCount={rows.length}
+            page={page}
+            perPage={perPage}
+            onSetPage={handleSetPage}
+            onPerPageSelect={handlePerPageSelect}
+            variant={variant === "top" ? PaginationVariant.top : PaginationVariant.bottom}
+            titles={{
+                paginationTitle: `${variant} pagination`
+            }}
+            />
+        )
+    };
 
     useEffect(() => {
         setPaginatedRows(defaultRows.slice((page - 1) * perPage, page * perPage - 1));
@@ -135,10 +285,10 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
         setInputValue(newValue);
     };
 
-    const onStatusSelect = (event, selection) => {
+    const onStatusSelect = (event: any) => {
         setFilters({
             ...filters,
-            ['status']: [selection]
+            status: event.target.value
         })
     };
 
@@ -148,14 +298,14 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
         }
         setFilters({
             ...filters,
-            ['name']: [inputValue]
+            name: inputValue
         })
     };
 
-    const onTypeSelect = (event: any, selection: string) => {
+    const onTypeSelect = (event: any) => {
         setFilters({
             ...filters,
-            ['type']: [selection]
+            type: event.target.value
         })
     };
 
@@ -199,7 +349,7 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
         return (
         <React.Fragment>
             <ToolbarFilter
-            chips={filters.type}
+            chips={[filters.type]}
             deleteChip={onDelete}
             categoryName="Type"
             showToolbarItem={currentCategory === 'Type'}
@@ -208,7 +358,7 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
                 aria-label="Type"
                 onToggle={onFilterToggle}
                 onSelect={onTypeSelect}
-                selections={filters.type[0]}
+                selections={filters.type}
                 isOpen={isFilterDropdownOpen}
                 placeholderText="Any"
             >
@@ -216,7 +366,7 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
             </Select>
             </ToolbarFilter>
             <ToolbarFilter
-            chips={filters.name}
+            chips={[filters.name]}
             deleteChip={onDelete}
             categoryName="Name"
             showToolbarItem={currentCategory === 'Name'}
@@ -233,7 +383,7 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
             />
             </ToolbarFilter>
             <ToolbarFilter
-            chips={filters.status}
+            chips={[filters.status]}
             deleteChip={onDelete}
             categoryName="Status"
             showToolbarItem={currentCategory === 'Status'}
@@ -287,7 +437,7 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
                 </OverflowMenuItem>
                 </OverflowMenu>
             </ToolbarItem>
-            <ToolbarItem variant="pagination">{renderPagination(PaginationVariant.top)}</ToolbarItem>
+            <ToolbarItem variant='pagination'>{renderPagination("top", true)}</ToolbarItem>
             </ToolbarContent>
         </Toolbar>
         </React.Fragment>
@@ -298,7 +448,7 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
             ? rows.filter((row: any) => {
                 return (
                 (filters.name.length === 0 ||
-                    filters.name?.some((name: string) => row[0].toLowerCase().includes(name.toLowerCase()))) &&
+                    filters.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
                 (filters.type?.length === 0 || filters.type?.includes(row[3])) &&
                 (filters.status?.length === 0 || filters.status?.includes(row[4]))
                 );
@@ -368,6 +518,8 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
             return <Label color="blue">{labelText}</Label>;
           case 'Deleted':
             return <Label color="red">{labelText}</Label>;
+          default:
+            return <Label color="red">{labelText}</Label>;
         }
     };
     
@@ -402,7 +554,7 @@ export const TableComponent: React.FunctionComponent = ({ columns, rows }) => {
                 <TableHeader />
                 <TableBody />
             </Table>
-            {renderPagination(PaginationVariant.bottom)}
+            {renderPagination("bottom", true)}
           </Card>
     </React.Fragment>
   );
