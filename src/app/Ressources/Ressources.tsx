@@ -8,13 +8,12 @@ import {
   Card,
   CardBody,
   CardTitle} from '@patternfly/react-core';
-import { TableComponent } from '@app/TableComponent/TableComponent';
 import UserPlusIcon from '@patternfly/react-icons/dist/js/icons/user-plus-icon';
 import { CheckCircleIcon, TimesCircleIcon, ClockIcon } from '@patternfly/react-icons';
-
+import { RessourcesTable } from './RessourcesTable';
 
 const Ressources: React.FunctionComponent = () => {
-
+  const [openCreateRessource, setOpenCreateRessource] = React.useState(false);
   return (
     <PageSection>
       <Grid hasGutter>
@@ -51,10 +50,10 @@ const Ressources: React.FunctionComponent = () => {
       </Grid>
       <div className='flex-between'>
         <Title headingLevel="h1" size="lg"  className="pf-u-mb-xl">8 Ressources</Title>
-        <Button variant="primary"><UserPlusIcon />&nbsp;Ressource</Button>
+        <Button variant="primary" onClick={() => setOpenCreateRessource(true)}><UserPlusIcon />&nbsp;Ressource</Button>
       </div>
       <div>
-        <TableComponent />
+        <RessourcesTable openCreateRessource={openCreateRessource} setOpenCreateRessource={() => setOpenCreateRessource(false)} />
       </div>
     </PageSection>
   )
