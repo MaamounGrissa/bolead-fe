@@ -3,21 +3,16 @@ import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { RessourceForm } from './RessourceForm';
 
-export const CreateRessource: React.FunctionComponent<{ 
-    isOpen: boolean,
-    close: () => void
-}> = (props) => {
+export const UpdateRessource: React.FunctionComponent<{ 
+        isOpen: boolean, 
+        close: () => void, 
+        ressource: IRessource
+    }> = (props) => {
+    const { isOpen, close, ressource } = props;
 
-    const { isOpen, close } = props;
-    const ressource: IRessource = {
-        id: '',
-        name: '',
-        email: '',
-        phone: '',
-        status: 'Actif',
-        type: 'Technicien',
-        notes: '',
-    }
+    const handleModalToggle = () => {
+        close();
+    };
 
     return (
         <React.Fragment>
@@ -26,12 +21,12 @@ export const CreateRessource: React.FunctionComponent<{
             title="Créer ressource"
             description="Entrer les informations ci-dessout pour créer un ressource."
             isOpen={isOpen}
-            onClose={close}
+            onClose={handleModalToggle}
             actions={[
-            <Button key="create" variant="primary" form="modal-with-form-form" onClick={close}>
+            <Button key="create" variant="primary" form="modal-with-form-form" onClick={handleModalToggle}>
                 Confirmer
             </Button>,
-            <Button key="cancel" variant="link" onClick={close}>
+            <Button key="cancel" variant="link" onClick={handleModalToggle}>
                 Annuler
             </Button>
             ]}

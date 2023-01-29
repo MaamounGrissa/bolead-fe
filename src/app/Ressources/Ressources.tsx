@@ -14,6 +14,7 @@ import { RessourcesTable } from './RessourcesTable';
 
 const Ressources: React.FunctionComponent = () => {
   const [openCreateRessource, setOpenCreateRessource] = React.useState(false);
+
   return (
     <PageSection>
       <Grid hasGutter>
@@ -49,7 +50,7 @@ const Ressources: React.FunctionComponent = () => {
         </GridItem>
       </Grid>
       <div className='flex-between'>
-        <Title headingLevel="h1" size="lg"  className="pf-u-mb-xl">8 Ressources</Title>
+        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">8 Ressources</Title>
         <Button variant="primary" onClick={() => setOpenCreateRessource(true)}><UserPlusIcon />&nbsp;Ressource</Button>
       </div>
       <div>
