@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea } from '@patternfly/react-core';
+import { useAppDispatch } from '@app/store';
+import { addRessource, updateRessource } from '@app/store/ressources/ressourceSlice';
 
-export const RessourceForm: React.FunctionComponent<{ ressource: IRessource}> = ({ressource}) => {
-    
+export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, save: boolean, close: () => void}> = ({ressource, save, close}) => {
+    const dispatch = useAppDispatch();
     const [isTypeFilterDropdownOpen, setIsTypeFilterDropdownOpen] = React.useState(false);
     const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
 
@@ -36,6 +38,20 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource}> = 
             clearForm();
         }
     }, [ressource]);
+
+    React.useEffect(() => {
+        if (save) {
+            setTimeout(() => {
+                if (formData.id === '') {
+                    dispatch(addRessource(formData));
+                } else {
+                    dispatch(updateRessource(formData));
+                }
+                close()
+            }, 500);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [save]);
 
     const statusList = [
         "Actif",

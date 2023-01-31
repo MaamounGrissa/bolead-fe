@@ -7,7 +7,7 @@ export const CreateRessource: React.FunctionComponent<{
     isOpen: boolean,
     close: () => void
 }> = (props) => {
-
+    const [save, setSave] = React.useState<boolean>(false);
     const { isOpen, close } = props;
     const ressource: IRessource = {
         id: '',
@@ -28,15 +28,17 @@ export const CreateRessource: React.FunctionComponent<{
             isOpen={isOpen}
             onClose={close}
             actions={[
-            <Button key="create" variant="primary" form="modal-with-form-form" onClick={close}>
-                Confirmer
+            <Button key="create" variant="primary" form="modal-with-form-form" onClick={() => {
+                setSave(true);
+            }}>
+                Enregistrer
             </Button>,
             <Button key="cancel" variant="link" onClick={close}>
                 Annuler
             </Button>
             ]}
         >
-            <RessourceForm ressource={ressource} />
+            <RessourceForm ressource={ressource} save={save} close={() => {setSave(false); close()}} />
         </Modal>
         </React.Fragment>
     );
