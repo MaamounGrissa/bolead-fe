@@ -8,12 +8,13 @@ import {
   Card,
   CardBody,
   CardTitle} from '@patternfly/react-core';
-import { AddCircleOIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon, GripHorizontalIcon, TableIcon } from '@patternfly/react-icons';
 import { InProgressIcon, CheckCircleIcon, TimesCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { ProjetsTable } from './ProjetsTable';
 
 const Projets: React.FunctionComponent = () => {
   const [openCreateProjet, setOpenCreateProjet] = React.useState(false);
+  const [view, setView] = React.useState('GRID');
 
   return (
     <PageSection>
@@ -61,10 +62,14 @@ const Projets: React.FunctionComponent = () => {
       </Grid>
       <div className='flex-between'>
         <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">13 Projets</Title>
-        <Button variant="primary" onClick={() => setOpenCreateProjet(true)}><AddCircleOIcon />&nbsp;Projet</Button>
+        <div>
+          <Button variant="primary" onClick={() => setOpenCreateProjet(true)}><AddCircleOIcon />&nbsp;Projet</Button>
+          <Button style={{ margin: '0 5px'}} variant={view === 'GRID' ? 'primary' : 'secondary'} onClick={() => setView('GRID')} ><GripHorizontalIcon color='white'/></Button>
+          <Button variant={view === 'TABLE' ? 'primary' : 'secondary'} onClick={() => setView('TABLE')} ><TableIcon color='white'/></Button>
+        </div>
       </div>
       <div>
-        <ProjetsTable openCreateProjet={openCreateProjet} setOpenCreateProjet={() => setOpenCreateProjet(false)} />
+        <ProjetsTable view={view} openCreateProjet={openCreateProjet} setOpenCreateProjet={() => setOpenCreateProjet(false)} />
       </div>
     </PageSection>
   )
