@@ -15,3 +15,12 @@ html, body, #root {
   margin-bottom: 40px;
   margin-top: 40px;
 }
+
+.app_title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+.pf-c-page__header-brand-link:hover {
+  text-decoration: none;
+}

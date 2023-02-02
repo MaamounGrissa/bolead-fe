@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavLink, useLocation, useHistory } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   Nav,
   NavList,
@@ -11,7 +11,7 @@ import {
   SkipToContent
 } from '@patternfly/react-core';
 import { routes, IAppRoute, IAppRouteGroup } from '@app/routes';
-import logo from '@app/bgimages/logo.png';
+//import logo from '@app/bgimages/logo.png';
 
 interface IAppLayout {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
     setIsMobileView(props.mobileView);
   };
 
-  function LogoImg() {
+  /* function LogoImg() {
     const history = useHistory();
     function handleClick() {
       history.push('/');
@@ -39,11 +39,11 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
     return (
       <img width={120} src={logo} onClick={handleClick} alt="PatternFly Logo" />
     );
-  }
+  } */
 
   const Header = (
     <PageHeader
-      logo={<LogoImg />}
+      logo={<h1 className='app_title'>BOLEAD</h1>}
       showNavToggle
       isNavOpen={isNavOpen}
       onNavToggle={isMobileView ? onNavToggleMobile : onNavToggle}
@@ -77,6 +77,11 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
         {routes.map(
           (route, idx) => route.label && (!route.routes ? renderNavItem(route, idx) : renderNavGroup(route, idx))
         )}
+        <NavItem key="logout" id="logout">
+          <NavLink exact to="/login">
+            Logout
+          </NavLink>
+        </NavItem>
       </NavList>
     </Nav>
   );

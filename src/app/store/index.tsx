@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import ressourceSlice from "./ressources/ressourceSlice";
+import clientSlice from "./clients/clientSlice";
+import projetSlice from "./projets/projetSlice";
 
 export const store = configureStore({
     reducer: {
-        ressources: ressourceSlice,   
+        ressources: ressourceSlice,
+        clients: clientSlice,
+        projets: projetSlice,
     }
 })
 

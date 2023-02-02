@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
-import { RessourceForm } from './RessourceForm';
+import { ProjetForm } from './ProjetForm';
 
-export const UpdateRessource: React.FunctionComponent<{ 
+export const UpdateProjet: React.FunctionComponent<{ 
         isOpen: boolean, 
         close: () => void, 
-        ressource: IRessource
+        projet: IProjet
     }> = (props) => {
         const [save, setSave] = React.useState<boolean>(false);
-        const { isOpen, close, ressource } = props;
+        const { isOpen, close, projet } = props;
 
     return (
         <React.Fragment>
         <Modal
             variant={ModalVariant.small}
-            title="Modifier ressource"
-            description="Mêtre à jour les informations ci-dessout pour modifier une ressource."
+            title="Modifier projet"
+            description="Mêtre à jour les informations ci-dessout pour modifier un projet."
             isOpen={isOpen}
             onClose={close}
             actions={[
@@ -30,7 +30,7 @@ export const UpdateRessource: React.FunctionComponent<{
             </Button>
             ]}
         >
-            <RessourceForm ressource={ressource} save={save} close={() => {setSave(false); close()}} />
+            <ProjetForm projet={projet} save={save} close={() => {setSave(false); close()}} />
         </Modal>
         </React.Fragment>
     );

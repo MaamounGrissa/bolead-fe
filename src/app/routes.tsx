@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Route, RouteComponentProps, Switch, useLocation } from 'react-router-dom';
 import { Dashboard } from '@app/Dashboard/Dashboard';
-import { GeneralSettings } from '@app/Settings/General/GeneralSettings';
-import { ProfileSettings } from '@app/Settings/Profile/ProfileSettings';
+// import { GeneralSettings } from '@app/Settings/General/GeneralSettings';
+// import { ProfileSettings } from '@app/Settings/Profile/ProfileSettings';
 import { NotFound } from '@app/NotFound/NotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { Clients } from './Clients/Clients';
@@ -71,7 +71,7 @@ const routes: AppRouteConfig[] = [
     label: 'Support',
     path: '/support',
     title: 'PatternFly Seed | Support Page',
-  }, */
+  },
   {
     label: 'Settings',
     routes: [
@@ -91,6 +91,7 @@ const routes: AppRouteConfig[] = [
       },
     ],
   },
+  */
 ];
 
 // a custom hook for sending focus to the primary content container
