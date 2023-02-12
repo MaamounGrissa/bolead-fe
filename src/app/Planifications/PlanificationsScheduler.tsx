@@ -30,10 +30,8 @@ export const PlanificationsScheduler: React.FunctionComponent<{
         const ontypesChange = (type: string) => {
             typeFilter(type);
         };
-
         return (
             <MyStyledFlexibleSpace>
-                {/* <Filter onCurrentFilterChange={onCurrentFilterChange} currentFilter={currentFilter} /> */}
                 <LocationSelector ontypesChange={ontypesChange} />
             </MyStyledFlexibleSpace>
     )};
