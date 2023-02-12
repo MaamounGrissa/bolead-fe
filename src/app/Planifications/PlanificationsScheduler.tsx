@@ -89,7 +89,7 @@ export const PlanificationsScheduler: React.FunctionComponent<{
             <Resources
                 data={resources}
             />
-            <Toolbar flexibleSpaceComponent={FlexibleSpace} />
+            <Toolbar />
             <DateNavigator />
             <ViewSwitcher />
         </Scheduler>
