@@ -12,7 +12,7 @@ import { OutlinedCalendarAltIcon, OutlinedCalendarPlusIcon, TableIcon, UserCogIc
 import { PlanificationsTable } from './PlanificationsTable';
 
 const Planifications: React.FunctionComponent = () => {
-  const [openCreateProjet, setOpenCreateProjet] = React.useState(false);
+  const [openCreatePlanification, setOpenCreatePlanification] = React.useState(false);
   const [view, setView] = React.useState('GRID');
 
   return (
@@ -52,13 +52,13 @@ const Planifications: React.FunctionComponent = () => {
       <div className='flex-between'>
         <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">13 Planifications</Title>
         <div>
-          <Button variant="primary" onClick={() => setOpenCreateProjet(true)}><OutlinedCalendarPlusIcon />&nbsp;Rendez-vous</Button>
+          <Button variant="primary" onClick={() => setOpenCreatePlanification(true)}><OutlinedCalendarPlusIcon />&nbsp;Rendez-vous</Button>
           <Button style={{ margin: '0 5px'}} variant={view === 'GRID' ? 'primary' : 'secondary'} onClick={() => setView('GRID')} ><OutlinedCalendarAltIcon color='white'/></Button>
           <Button variant={view === 'TABLE' ? 'primary' : 'secondary'} onClick={() => setView('TABLE')} ><TableIcon color='white'/></Button>
         </div>
       </div>
       <div>
-        <PlanificationsTable view={view} openCreateProjet={openCreateProjet} setOpenCreateProjet={() => setOpenCreateProjet(false)} />
+        <PlanificationsTable view={view} openCreatePlanification={openCreatePlanification} setOpenCreatePlanification={() => setOpenCreatePlanification(false)} />
       </div>
     </PageSection>
   )

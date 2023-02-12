@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import React, { ReactNode } from 'react';
+import React from 'react';
 import {
     WeekView, Appointments, Toolbar
   } from '@devexpress/dx-react-scheduler-material-ui';
@@ -193,9 +193,7 @@ export const DayScaleCell = (({ ...restProps }) => {
   
 export const AppointmentContent = ({
     data, formatDate, ...restProps
-  }) => { 
-    console.log(data)
-    return (
+  }) => (
         <StyledAppointmentsAppointmentContent {...restProps} formatDate={formatDate} data={data}>
             <div className={classes.container}>
                 <div className={classes.title}>
@@ -217,10 +215,9 @@ export const AppointmentContent = ({
                 </div>
             </div>
         </StyledAppointmentsAppointmentContent>
-    )
-};
+);
 
-export const MyStyledFlexibleSpace = ({ children }) => (
+export const MyStyledFlexibleSpace: React.FunctionComponent<{children}> = ({ children }) => (
     <StyledToolbarFlexibleSpace className={classes.flexibleSpace}>
         {children}
     </StyledToolbarFlexibleSpace>

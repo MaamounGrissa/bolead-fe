@@ -33,8 +33,8 @@ const columnNames = {
 };
 
 export const PlanificationsTable: React.FunctionComponent<{
-    openCreateProjet: boolean, 
-    setOpenCreateProjet: () => void,
+    openCreatePlanification: boolean, 
+    setOpenCreatePlanification: () => void,
     view: string,
 }> = (props) => {
     const dispatch = useAppDispatch();
