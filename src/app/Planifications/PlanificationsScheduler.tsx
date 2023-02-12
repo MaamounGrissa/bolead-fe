@@ -79,15 +79,11 @@ export const PlanificationsScheduler: React.FunctionComponent<{
             <WeekView
                 startDayHour={8}
                 endDayHour={19}
-                timeTableCellComponent={TimeTableCell}
+                //timeTableCellComponent={TimeTableCell}
                // dayScaleCellComponent={DayScaleCell}
             />
 
-            <Appointments
-                //appointmentContentComponent={AppointmentContent}
-            />
-            <Resources
-                data={resources}
+            <Appointments //appointmentContentComponent={AppointmentContent}
             />
             <Toolbar />
             <DateNavigator />

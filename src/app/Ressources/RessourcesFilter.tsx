@@ -67,7 +67,7 @@ export const RessourcesFilter: React.FunctionComponent<{
     <SearchInput
       placeholder="Filter by name"
       value={searchValue}
-      onChange={onSearchChange}
+      onChange={(e, value: string) => onSearchChange(value)}
       onClear={() => onSearchChange('')}
     />
   );
