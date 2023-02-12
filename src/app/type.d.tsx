@@ -31,6 +31,20 @@ interface IProjet {
     notes: string
 }
 
+//Planifications
+interface IPlanification {
+    id: string
+    title: string
+    startDate: string
+    endDate: string
+    duration: number
+    type: string
+    ressource: string
+    projet: string
+    status: string
+    notes: string
+}
+
 //Store
 interface RessourceState {
     ressource: IRessource
@@ -43,4 +57,8 @@ interface ClientState {
 interface ProjetState {
     projet: IProjet
     projets: IProjet[]
+}
+interface PlanificationState {
+    planification: IPlanification
+    planifications: IPlanification[]
 }

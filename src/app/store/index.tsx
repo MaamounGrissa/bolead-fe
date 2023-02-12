@@ -3,12 +3,14 @@ import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import ressourceSlice from "./ressources/ressourceSlice";
 import clientSlice from "./clients/clientSlice";
 import projetSlice from "./projets/projetSlice";
+import planificationSlice from "./planifications/planificationSlice";
 
 export const store = configureStore({
     reducer: {
         ressources: ressourceSlice,
         clients: clientSlice,
         projets: projetSlice,
+        planifications: planificationSlice,
     }
 })
 
