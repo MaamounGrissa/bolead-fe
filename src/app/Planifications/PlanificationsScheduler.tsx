@@ -5,7 +5,7 @@ import {
   Scheduler, DayView, WeekView, Appointments, Resources, Toolbar, DateNavigator, ViewSwitcher 
 } from '@devexpress/dx-react-scheduler-material-ui';
 import moment from 'moment';
-import { AppointmentContent, DayScaleCell, LocationSelector, MyStyledFlexibleSpace, TimeTableCell } from './schedulerOptions';
+import { LocationSelector, MyStyledFlexibleSpace, TimeTableCell } from './schedulerOptions';
 import { useAppSelector } from '@app/store';
 
 const resources = [{
@@ -82,11 +82,11 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                 startDayHour={8}
                 endDayHour={19}
                 timeTableCellComponent={TimeTableCell}
-                dayScaleCellComponent={DayScaleCell}
+               // dayScaleCellComponent={DayScaleCell}
             />
 
             <Appointments
-                appointmentContentComponent={AppointmentContent}
+                //appointmentContentComponent={AppointmentContent}
             />
             <Resources
                 data={resources}

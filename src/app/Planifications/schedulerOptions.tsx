@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react';
 import {
@@ -184,17 +185,17 @@ export const TimeTableCell = (({ ...restProps }) => {
     } return <StyledWeekViewTimeTableCell {...restProps} />;
 });
   
-export const DayScaleCell = (({ ...restProps }) => {
+/* export const DayScaleCell = (({ ...restProps }) => {
     const { startDate } = restProps;
     if (startDate.getDay() === 0 || startDate.getDay() === 6) {
       return <StyledWeekViewDayScaleCell {...restProps} className={classes.weekEnd} />;
     } return <StyledWeekViewDayScaleCell {...restProps} />;
 });
-  
-export const AppointmentContent = ({
-    data, formatDate, ...restProps
-  }) => (
-        <StyledAppointmentsAppointmentContent {...restProps} formatDate={formatDate} data={data}>
+
+export const AppointmentContent = ({...restProps}) => {
+    const { data } = restProps;
+    return (
+        <StyledAppointmentsAppointmentContent data={data} {...restProps}>
             <div className={classes.container}>
                 <div className={classes.title}>
                 {data.title}
@@ -204,20 +205,20 @@ export const AppointmentContent = ({
                 </div>
                 <div className={classes.textContainer}>
                 <div className={classes.time}>
-                    {formatDate(data.startDate, { hour: 'numeric', minute: 'numeric' })}
+                    {moment(data.startDate).format("HH:mm")}
                 </div>
                 <div className={classes.time}>
                     {' - '}
                 </div>
                 <div className={classes.time}>
-                    {formatDate(data.endDate, { hour: 'numeric', minute: 'numeric' })}
+                {moment(data.endDate).format("HH:mm")}
                 </div>
                 </div>
             </div>
         </StyledAppointmentsAppointmentContent>
-);
+)}; */
 
-export const MyStyledFlexibleSpace: React.FunctionComponent<{children}> = ({ children }) => (
+export const MyStyledFlexibleSpace: React.FunctionComponent<{children: React.ReactNode}> = ({ children }) => (
     <StyledToolbarFlexibleSpace className={classes.flexibleSpace}>
         {children}
     </StyledToolbarFlexibleSpace>
