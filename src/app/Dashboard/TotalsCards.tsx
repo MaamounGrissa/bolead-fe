@@ -4,7 +4,7 @@ import { CheckCircleIcon, ExclamationTriangleIcon, InProgressIcon, OutlinedTrash
 
 const TotalsCards: React.FunctionComponent = () => (
     <Grid hasGutter>
-    <GridItem span={4} >
+    <GridItem span={12} sm={4} >
       <Card style={{ textAlign: "center" }}>
         <CardTitle style={{ textAlign: "center" }}>
           Projets
@@ -29,7 +29,7 @@ const TotalsCards: React.FunctionComponent = () => (
         </CardBody>
       </Card>
     </GridItem>
-    <GridItem span={4} >
+    <GridItem span={12} sm={4} >
       <Card style={{ textAlign: "center" }}>
         <CardTitle style={{ textAlign: "center" }}>
           Clients
@@ -54,7 +54,7 @@ const TotalsCards: React.FunctionComponent = () => (
         </CardBody>
       </Card>
     </GridItem>
-    <GridItem span={4} >
+    <GridItem span={12} sm={4} >
       <Card style={{ textAlign: "center" }}>
         <CardTitle style={{ textAlign: "center" }}>
           Ressources

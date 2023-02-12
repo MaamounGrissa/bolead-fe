@@ -18,7 +18,7 @@ const Planifications: React.FunctionComponent = () => {
   return (
     <PageSection>
       <Grid hasGutter>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               4 Visite Technique
@@ -28,7 +28,7 @@ const Planifications: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               15 Visite Commerciale
@@ -38,7 +38,7 @@ const Planifications: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               3 Audit
@@ -49,9 +49,9 @@ const Planifications: React.FunctionComponent = () => {
           </Card>
         </GridItem>
       </Grid>
-      <div className='flex-between'>
+      <div className='flex-between mobile-flex-column'>
         <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">13 Planifications</Title>
-        <div>
+        <div className='mobile-m-2'>
           <Button variant="primary" onClick={() => setOpenCreatePlanification(true)}><OutlinedCalendarPlusIcon />&nbsp;Rendez-vous</Button>
           <Button style={{ margin: '0 5px'}} variant={view === 'GRID' ? 'primary' : 'secondary'} onClick={() => setView('GRID')} ><OutlinedCalendarAltIcon color='white'/></Button>
           <Button variant={view === 'TABLE' ? 'primary' : 'secondary'} onClick={() => setView('TABLE')} ><TableIcon color='white'/></Button>

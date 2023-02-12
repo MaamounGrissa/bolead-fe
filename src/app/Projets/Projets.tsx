@@ -19,7 +19,7 @@ const Projets: React.FunctionComponent = () => {
   return (
     <PageSection>
       <Grid hasGutter>
-        <GridItem span={3} >
+        <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               4 En cours
@@ -29,7 +29,7 @@ const Projets: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={3} >
+        <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               15 Terminé
@@ -39,7 +39,7 @@ const Projets: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={3} >
+        <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               5 En pause
@@ -49,7 +49,7 @@ const Projets: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={3} >
+        <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               3 Annuler
@@ -60,9 +60,9 @@ const Projets: React.FunctionComponent = () => {
           </Card>
         </GridItem>
       </Grid>
-      <div className='flex-between'>
+      <div className='flex-between mobile-flex-column'>
         <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">13 Projets</Title>
-        <div>
+        <div className='mobile-m-2'>
           <Button variant="primary" onClick={() => setOpenCreateProjet(true)}><AddCircleOIcon />&nbsp;Projet</Button>
           <Button style={{ margin: '0 5px'}} variant={view === 'GRID' ? 'primary' : 'secondary'} onClick={() => setView('GRID')} ><GripHorizontalIcon color='white'/></Button>
           <Button variant={view === 'TABLE' ? 'primary' : 'secondary'} onClick={() => setView('TABLE')} ><TableIcon color='white'/></Button>

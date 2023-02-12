@@ -18,7 +18,7 @@ const Clients: React.FunctionComponent = () => {
   return (
     <PageSection>
       <Grid hasGutter>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               5 Actif
@@ -28,7 +28,7 @@ const Clients: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               10 Prospet
@@ -38,7 +38,7 @@ const Clients: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               15 Expiré
@@ -49,9 +49,11 @@ const Clients: React.FunctionComponent = () => {
           </Card>
         </GridItem>
       </Grid>
-      <div className='flex-between'>
+      <div className='flex-between mobile-flex-column'>
         <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">8 Clients</Title>
-        <Button variant="primary" onClick={() => setOpenCreateClient(true)}><UserPlusIcon />&nbsp;Client</Button>
+        <div className='mobile-m-2'>
+          <Button variant="primary" onClick={() => setOpenCreateClient(true)}><UserPlusIcon />&nbsp;Client</Button>
+        </div>
       </div>
       <div>
         <ClientsTable openCreateClient={openCreateClient} setOpenCreateClient={() => setOpenCreateClient(false)} />

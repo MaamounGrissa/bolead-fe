@@ -18,7 +18,7 @@ const Ressources: React.FunctionComponent = () => {
   return (
     <PageSection>
       <Grid hasGutter>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               5 Visite Validée
@@ -28,7 +28,7 @@ const Ressources: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               10 Visites en cours
@@ -38,7 +38,7 @@ const Ressources: React.FunctionComponent = () => {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={4} >
+        <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center" }}>
               15 Visites Annuler
@@ -49,9 +49,11 @@ const Ressources: React.FunctionComponent = () => {
           </Card>
         </GridItem>
       </Grid>
-      <div className='flex-between'>
+      <div className='flex-between mobile-flex-column'>
         <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">8 Ressources</Title>
-        <Button variant="primary" onClick={() => setOpenCreateRessource(true)}><UserPlusIcon />&nbsp;Ressource</Button>
+        <div className='mobile-m-2'>
+          <Button variant="primary" onClick={() => setOpenCreateRessource(true)}><UserPlusIcon />&nbsp;Ressource</Button>
+        </div>
       </div>
       <div>
         <RessourcesTable openCreateRessource={openCreateRessource} setOpenCreateRessource={() => setOpenCreateRessource(false)} />

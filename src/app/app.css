@@ -83,5 +83,13 @@ html, body, #root {
   font-size: 0.875rem;
   text-align: left;
   font-weight: 600;
+}
 
+@media (max-width: 768px) {
+  .mobile-flex-column {
+    flex-direction: column;
+  }
+  .mobile-m-2 {
+    margin: 1.5rem;
+  }
 }

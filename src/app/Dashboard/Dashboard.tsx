@@ -11,7 +11,7 @@ const Dashboard: React.FunctionComponent = () => (
     <TotalsCards />
     <div className='spacer-box'></div>
     <Grid hasGutter>
-        <GridItem span={3} >
+        <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center"}}>
             <CardTitle style={{ textAlign: "center" }}>Planifications</CardTitle>
             <CardBody>
@@ -32,7 +32,7 @@ const Dashboard: React.FunctionComponent = () => (
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={6} >
+        <GridItem span={12} sm={6} >
           <Card style={{ textAlign: "center", paddingBottom: "33px" }}>
             <CardTitle style={{ textAlign: "center" }}>Calendrier</CardTitle>
             <CardBody>
@@ -40,7 +40,7 @@ const Dashboard: React.FunctionComponent = () => (
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={3} >
+        <GridItem span={12} sm={3} >
         
         </GridItem>
     </Grid>
