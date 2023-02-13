@@ -6,7 +6,6 @@ import {
   Grid,
   GridItem,
   Card,
-  CardBody,
   CardTitle} from '@patternfly/react-core';
 import { AddCircleOIcon, GripHorizontalIcon, TableIcon } from '@patternfly/react-icons';
 import { InProgressIcon, CheckCircleIcon, TimesCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
@@ -21,42 +20,30 @@ const Projets: React.FunctionComponent = () => {
       <Grid hasGutter>
         <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              4 En cours
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <InProgressIcon size='lg' color="green" className='mr-2' /> 4 En cours
             </CardTitle>
-            <CardBody>
-              <InProgressIcon size='lg' color="green" />
-            </CardBody>
           </Card>
         </GridItem>
         <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              15 Terminé
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <CheckCircleIcon size='lg' color="green" className='mr-2' /> 15 Terminé
             </CardTitle>
-            <CardBody>
-              <CheckCircleIcon size='lg' color="green" />
-            </CardBody>
           </Card>
         </GridItem>
         <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              5 En pause
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <ExclamationTriangleIcon size='lg' color="orange" className='mr-2' /> 5 En pause
             </CardTitle>
-            <CardBody>
-              <ExclamationTriangleIcon size='lg' color="orange" />
-            </CardBody>
           </Card>
         </GridItem>
         <GridItem span={12} sm={3} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              3 Annuler
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <TimesCircleIcon size='lg' color="red" className='mr-2' /> 3 Annuler
             </CardTitle>
-            <CardBody>
-              <TimesCircleIcon size='lg' color="red" />
-            </CardBody>
           </Card>
         </GridItem>
       </Grid>
@@ -69,7 +56,7 @@ const Projets: React.FunctionComponent = () => {
         </div>
       </div>
       <div>
-        <ProjetsTable view={view} openCreateProjet={openCreateProjet} setOpenCreateProjet={() => setOpenCreateProjet(false)} />
+        <ProjetsTable view={view} openCreateProjet={openCreateProjet} setOpenCreateProjet={() => setOpenCreateProjet(!openCreateProjet)} />
       </div>
     </PageSection>
   )

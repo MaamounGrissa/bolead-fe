@@ -65,7 +65,7 @@ export const RessourcesFilter: React.FunctionComponent<{
   // Set up name search input
   const searchInput = (
     <SearchInput
-      placeholder="Filter by name"
+      placeholder="Rechercher par nom"
       value={searchValue}
       onChange={(e, value: string) => onSearchChange(value)}
       onClear={() => onSearchChange('')}
@@ -134,7 +134,7 @@ export const RessourcesFilter: React.FunctionComponent<{
         } as React.CSSProperties
       }
     >
-      Filter by status
+      Filtrer par statut
     </MenuToggle>
   );
 
@@ -270,7 +270,7 @@ export const RessourcesFilter: React.FunctionComponent<{
   );
 
   // Set up attribute selector
-  const [activeAttributeMenu, setActiveAttributeMenu] = React.useState<'Name' | 'Status' | 'Type'>('Name');
+  const [activeAttributeMenu, setActiveAttributeMenu] = React.useState<'Nom' | 'Status' | 'Type'>('Nom');
   const [isAttributeMenuOpen, setIsAttributeMenuOpen] = React.useState(false);
   const attributeToggleRef = React.useRef<HTMLButtonElement>(null);
   const attributeMenuRef = React.useRef<HTMLDivElement>(null);
@@ -333,13 +333,13 @@ export const RessourcesFilter: React.FunctionComponent<{
     <Menu
       ref={attributeMenuRef}
       onSelect={(_ev, itemId) => {
-        setActiveAttributeMenu(itemId?.toString() as 'Name' | 'Status' | 'Type');
+        setActiveAttributeMenu(itemId?.toString() as 'Nom' | 'Status' | 'Type');
         setIsAttributeMenuOpen(!isAttributeMenuOpen);
       }}
     >
       <MenuContent>
         <MenuList>
-          <MenuItem itemId="Name">Name</MenuItem>
+          <MenuItem itemId="Nom">Nom</MenuItem>
           <MenuItem itemId="Status">Status</MenuItem>
           <MenuItem itemId="Type">Type</MenuItem>
         </MenuList>
@@ -389,7 +389,7 @@ export const RessourcesFilter: React.FunctionComponent<{
               deleteChip={() => setSearchValue('')}
               deleteChipGroup={() => setSearchValue('')}
               categoryName="Name"
-              showToolbarItem={activeAttributeMenu === 'Name'}
+              showToolbarItem={activeAttributeMenu === 'Nom'}
             >
               {searchInput}
             </ToolbarFilter>

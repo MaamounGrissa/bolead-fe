@@ -59,7 +59,7 @@ export const ClientsFilter: React.FunctionComponent<{
   // Set up name search input
   const searchInput = (
     <SearchInput
-      placeholder="Filter by name"
+      placeholder="Rechercher un client"
       value={searchValue}
       onChange={(e, value: string) => onSearchChange(value)}
       onClear={() => onSearchChange('')}
@@ -128,7 +128,7 @@ export const ClientsFilter: React.FunctionComponent<{
         } as React.CSSProperties
       }
     >
-      Filter by status
+      Filter par status
     </MenuToggle>
   );
 
@@ -157,7 +157,7 @@ export const ClientsFilter: React.FunctionComponent<{
   );
 
   // Set up attribute selector
-  const [activeAttributeMenu, setActiveAttributeMenu] = React.useState<'Name' | 'Status'>('Name');
+  const [activeAttributeMenu, setActiveAttributeMenu] = React.useState<'Nom' | 'Status'>('Nom');
   const [isAttributeMenuOpen, setIsAttributeMenuOpen] = React.useState(false);
   const attributeToggleRef = React.useRef<HTMLButtonElement>(null);
   const attributeMenuRef = React.useRef<HTMLDivElement>(null);
@@ -220,13 +220,13 @@ export const ClientsFilter: React.FunctionComponent<{
     <Menu
       ref={attributeMenuRef}
       onSelect={(_ev, itemId) => {
-        setActiveAttributeMenu(itemId?.toString() as 'Name' | 'Status');
+        setActiveAttributeMenu(itemId?.toString() as 'Nom' | 'Status');
         setIsAttributeMenuOpen(!isAttributeMenuOpen);
       }}
     >
       <MenuContent>
         <MenuList>
-          <MenuItem itemId="Name">Name</MenuItem>
+          <MenuItem itemId="Nom">Nom</MenuItem>
           <MenuItem itemId="Status">Status</MenuItem>
         </MenuList>
       </MenuContent>
@@ -247,7 +247,7 @@ export const ClientsFilter: React.FunctionComponent<{
   // Set up pagination and toolbar
   const toolbarPagination = (
     <Pagination
-      titles={{ paginationTitle: 'Attribute search pagination' }}
+      titles={{ paginationTitle: 'Pagination' }}
       perPageComponent="button"
       itemCount={clients.length}
       perPage={10}
@@ -273,8 +273,8 @@ export const ClientsFilter: React.FunctionComponent<{
               chips={searchValue !== '' ? [searchValue] : ([] as string[])}
               deleteChip={() => setSearchValue('')}
               deleteChipGroup={() => setSearchValue('')}
-              categoryName="Name"
-              showToolbarItem={activeAttributeMenu === 'Name'}
+              categoryName="Nom"
+              showToolbarItem={activeAttributeMenu === 'Nom'}
             >
               {searchInput}
             </ToolbarFilter>

@@ -5,10 +5,10 @@ import { useAppDispatch, useAppSelector } from '@app/store';
 import { getRessources } from '@app/store/ressources/ressourceSlice';
 import { addProjet, updateProjet } from '@app/store/projets/projetSlice';
 import { getClients } from '@app/store/clients/clientSlice';
+import { AutoCompleteInput } from '@app/Components/AutoCompleteInput';
 
 export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolean, close: () => void}> = ({projet, save, close}) => {
     const dispatch = useAppDispatch();
-    const [isClientFilterDropdownOpen, setIsClientFilterDropdownOpen] = React.useState(false);
     const [isTypeFilterDropdownOpen, setIsTypeFilterDropdownOpen] = React.useState(false);
     const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
     const { clients } = useAppSelector(state => state.clients);
@@ -89,12 +89,6 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
         <SelectOption key={status} value={status} />
     ));
 
-    const clientsListItems = clients.map((client) => (
-        <SelectOption key={client.id} value={client.id}>
-            {client.name}
-        </SelectOption>
-    ));
-
     const handleNameInputChange = (value: string) => {
         setFormData({
             ...formData,
@@ -112,16 +106,6 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
             ...formData,
             notes: value,
         });
-    };
-    const onClientToggle = (isOpen: boolean) => {
-        setIsClientFilterDropdownOpen(isOpen);
-    };
-    const selectClient = (event: any) => {
-        setFormData({
-            ...formData,
-            client: event.target.innerText,
-        });
-        setIsTypeFilterDropdownOpen(false);
     };
     const onTypeToggle = (isOpen: boolean) => {
         setIsTypeFilterDropdownOpen(isOpen);
@@ -148,7 +132,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
         <React.Fragment>
             <Form id="modal-with-form-form">
                 <FormGroup
-                    label="Nom et prénom"
+                    label="Nom de projet"
                     isRequired
                     fieldId="modal-with-form-form-name"
                 >
@@ -163,22 +147,13 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                 </FormGroup>
                 <FormGroup
                     label="Client"
+                    isRequired
                     fieldId="modal-with-form-form-client"
                 >
-                    <Select
-                        onSelect={selectClient}
-                        selections={formData.client}
-                        position={DropdownPosition.left}
-                        onToggle={onClientToggle}
-                        isOpen={isClientFilterDropdownOpen}
-                        style={{ width: '100%' }}
-                        menuAppendTo={() => document.body}
-                        >
-                        {clientsListItems}
-                    </Select>
+                    <AutoCompleteInput optionsData={clients} />
                 </FormGroup>
                 <FormGroup
-                    label="Adresse"
+                    label="Adresse de projet"
                     isRequired
                     fieldId="modal-with-form-form-adresse"
                 >
@@ -207,22 +182,24 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                         {typeMenuItems}
                     </Select>
                 </FormGroup>
-                <FormGroup
-                    label="Status"
-                    fieldId="modal-with-form-form-status"
-                >
-                        <Select
-                        onSelect={selectStatus}
-                        selections={formData.status}
-                        position={DropdownPosition.left}
-                        onToggle={onStatusToggle}
-                        isOpen={isStatusFilterDropdownOpen}
-                        style={{ width: '100%' }}
-                        menuAppendTo={() => document.body}
-                        >
-                        {statusMenuItems}
-                    </Select>
-                </FormGroup>
+                { projet?.id?.length > 0 && 
+                    <FormGroup
+                        label="Status"
+                        fieldId="modal-with-form-form-status"
+                    >
+                            <Select
+                            onSelect={selectStatus}
+                            selections={formData.status}
+                            position={DropdownPosition.left}
+                            onToggle={onStatusToggle}
+                            isOpen={isStatusFilterDropdownOpen}
+                            style={{ width: '100%' }}
+                            menuAppendTo={() => document.body}
+                            >
+                            {statusMenuItems}
+                        </Select>
+                    </FormGroup>
+                }
                 <FormGroup
                     label="Notes"
                     fieldId="modal-with-form-form-notes"

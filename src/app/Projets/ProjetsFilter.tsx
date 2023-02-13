@@ -65,7 +65,7 @@ export const ProjetsFilter: React.FunctionComponent<{
   // Set up name search input
   const searchInput = (
     <SearchInput
-      placeholder="Filter by name"
+      placeholder="Rechercher un projet"
       value={searchValue}
       onChange={(e, value: string) => onSearchChange(value)}
       onClear={() => onSearchChange('')}
@@ -363,7 +363,7 @@ export const ProjetsFilter: React.FunctionComponent<{
   // Set up pagination and toolbar
   const toolbarPagination = (
     <Pagination
-      titles={{ paginationTitle: 'Attribute search pagination' }}
+      titles={{ paginationTitle: 'Pagination' }}
       perPageComponent="button"
       itemCount={projets.length}
       perPage={10}

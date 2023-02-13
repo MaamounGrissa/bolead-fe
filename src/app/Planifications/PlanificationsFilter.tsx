@@ -65,7 +65,7 @@ export const PlanificationsFilter: React.FunctionComponent<{
   // Set up name search input
   const searchInput = (
     <SearchInput
-      placeholder="Filter by titre"
+      placeholder="Rechercher par titre"
       value={searchValue}
       onChange={(e, value: string) => onSearchChange(value)}
       onClear={() => onSearchChange('')}
@@ -134,7 +134,7 @@ export const PlanificationsFilter: React.FunctionComponent<{
         } as React.CSSProperties
       }
     >
-      Filter by status
+      Filter par statut
     </MenuToggle>
   );
 
@@ -268,7 +268,7 @@ export const PlanificationsFilter: React.FunctionComponent<{
   );
 
   // Set up attribute selector
-  const [activeAttributeMenu, setActiveAttributeMenu] = React.useState<'Title' | 'Status' | 'Type'>('Title');
+  const [activeAttributeMenu, setActiveAttributeMenu] = React.useState<'Titre' | 'Status' | 'Type'>('Titre');
   const [isAttributeMenuOpen, setIsAttributeMenuOpen] = React.useState(false);
   const attributeToggleRef = React.useRef<HTMLButtonElement>(null);
   const attributeMenuRef = React.useRef<HTMLDivElement>(null);
@@ -331,13 +331,13 @@ export const PlanificationsFilter: React.FunctionComponent<{
     <Menu
       ref={attributeMenuRef}
       onSelect={(_ev, itemId) => {
-        setActiveAttributeMenu(itemId?.toString() as 'Title' | 'Status' | 'Type');
+        setActiveAttributeMenu(itemId?.toString() as 'Titre' | 'Status' | 'Type');
         setIsAttributeMenuOpen(!isAttributeMenuOpen);
       }}
     >
       <MenuContent>
         <MenuList>
-          <MenuItem itemId="Title">Title</MenuItem>
+          <MenuItem itemId="Titre">Titre</MenuItem>
           <MenuItem itemId="Status">Status</MenuItem>
           <MenuItem itemId="Type">Type</MenuItem>
         </MenuList>
@@ -359,7 +359,7 @@ export const PlanificationsFilter: React.FunctionComponent<{
   // Set up pagination and toolbar
   const toolbarPagination = (
     <Pagination
-      titles={{ paginationTitle: 'Attribute search pagination' }}
+      titles={{ paginationTitle: 'Pagination' }}
       perPageComponent="button"
       itemCount={planifications.length}
       perPage={10}
@@ -387,7 +387,7 @@ export const PlanificationsFilter: React.FunctionComponent<{
               deleteChip={() => setSearchValue('')}
               deleteChipGroup={() => setSearchValue('')}
               categoryName="Name"
-              showToolbarItem={activeAttributeMenu === 'Title'}
+              showToolbarItem={activeAttributeMenu === 'Titre'}
             >
               {searchInput}
             </ToolbarFilter>

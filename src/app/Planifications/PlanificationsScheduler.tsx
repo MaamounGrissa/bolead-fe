@@ -2,20 +2,20 @@
 import * as React from 'react';
 import { ViewState, SchedulerDateTime} from '@devexpress/dx-react-scheduler';
 import {
-  Scheduler, DayView, WeekView, Appointments, Resources, Toolbar, DateNavigator, ViewSwitcher 
+  Scheduler, DayView, WeekView, Appointments, Toolbar, DateNavigator, ViewSwitcher 
 } from '@devexpress/dx-react-scheduler-material-ui';
 import moment from 'moment';
 import { LocationSelector, MyStyledFlexibleSpace, TimeTableCell } from './schedulerOptions';
 import { useAppSelector } from '@app/store';
 
-const resources = [{
+/* const resources = [{
   fieldName: 'type',
   title: 'Type',
   instances: [
     { id: 'private', text: 'Private', color: '#EC407A' },
     { id: 'work', text: 'Work', color: '#7E57C2' },
   ],
-}];
+}]; */
 
 export const PlanificationsScheduler: React.FunctionComponent<{
     setOpenCreatePlanification: () => void,
@@ -65,6 +65,7 @@ export const PlanificationsScheduler: React.FunctionComponent<{
     return (
         <Scheduler
             data={filtredData}
+            locale="fr-FR"
         >
             <ViewState
                 currentDate={currentDate}
@@ -73,19 +74,19 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                 onCurrentViewNameChange={onCurrentViewNameChange}
             />
             <DayView
-                startDayHour={9}
-                endDayHour={19}
+                startDayHour={8}
+                endDayHour={20}
             />
             <WeekView
                 startDayHour={8}
-                endDayHour={19}
-                //timeTableCellComponent={TimeTableCell}
-               // dayScaleCellComponent={DayScaleCell}
+                endDayHour={20}
+                timeTableCellComponent={TimeTableCell}
+                //dayScaleCellComponent={DayScaleCell}
             />
 
             <Appointments //appointmentContentComponent={AppointmentContent}
             />
-            <Toolbar />
+            <Toolbar flexibleSpaceComponent={FlexibleSpace} />
             <DateNavigator />
             <ViewSwitcher />
         </Scheduler>

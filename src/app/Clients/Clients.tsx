@@ -20,32 +20,23 @@ const Clients: React.FunctionComponent = () => {
       <Grid hasGutter>
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              5 Actif
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <CheckCircleIcon size='lg' color="green" className='mr-2' /> 5 Actif
             </CardTitle>
-            <CardBody>
-              <CheckCircleIcon size='lg' color="green" />
-            </CardBody>
           </Card>
         </GridItem>
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              10 Prospet
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <ClockIcon size='lg' color="orange" className='mr-2' /> 10 Prospet
             </CardTitle>
-            <CardBody>
-              <ClockIcon size='lg' color="orange" />
-            </CardBody>
           </Card>
         </GridItem>
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              15 Expiré
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <TimesCircleIcon size='lg' color="red" className='mr-2' /> 15 Expiré
             </CardTitle>
-            <CardBody>
-              <TimesCircleIcon size='lg' color="red" />
-            </CardBody>
           </Card>
         </GridItem>
       </Grid>

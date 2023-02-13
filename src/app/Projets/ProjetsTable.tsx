@@ -183,7 +183,6 @@ export const ProjetsTable: React.FunctionComponent<{
                 </TableComposable>) : (
                     <ProjectsGrid 
                         filtredData={filtredData} 
-                        setOpenCreateProjet={setOpenCreateProjet} 
                         setOpenUpdateProjet={(data) => {setSelectedProjet(data); setOpenUpdateProjet(true)}}
                         setOpenDeleteProjet={(data) => {setSelectedProjet(data); setOpenDeleteProjet(true)}}
                     />

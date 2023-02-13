@@ -49,6 +49,7 @@ export const PlanificationsTable: React.FunctionComponent<{
         startDate: '',
         endDate: '',
         duration: 20,
+        trajetDuration: 0,
         type: '',
         status: '',
         ressource: '',

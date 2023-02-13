@@ -6,7 +6,6 @@ import {
   Grid,
   GridItem,
   Card,
-  CardBody,
   CardTitle} from '@patternfly/react-core';
 import UserPlusIcon from '@patternfly/react-icons/dist/js/icons/user-plus-icon';
 import { CheckCircleIcon, TimesCircleIcon, ClockIcon } from '@patternfly/react-icons';
@@ -20,32 +19,23 @@ const Ressources: React.FunctionComponent = () => {
       <Grid hasGutter>
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              5 Visite Validée
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <CheckCircleIcon size='lg' color="green" className='mr-2' /> 5 Visites Validées
             </CardTitle>
-            <CardBody>
-              <CheckCircleIcon size='lg' color="green" />
-            </CardBody>
           </Card>
         </GridItem>
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              10 Visites en cours
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+            <ClockIcon size='lg' color="orange" className='mr-2' /> 10 Visites en cours
             </CardTitle>
-            <CardBody>
-              <ClockIcon size='lg' color="orange" />
-            </CardBody>
           </Card>
         </GridItem>
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
-            <CardTitle style={{ textAlign: "center" }}>
-              15 Visites Annuler
+            <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
+              <TimesCircleIcon size='lg' color="red" className='mr-2' /> 15 Visites Annuler
             </CardTitle>
-            <CardBody>
-              <TimesCircleIcon size='lg' color="red" />
-            </CardBody>
           </Card>
         </GridItem>
       </Grid>
