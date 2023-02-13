@@ -6,7 +6,6 @@ import {
   Grid,
   GridItem,
   Card,
-  CardBody,
   CardTitle} from '@patternfly/react-core';
 import UserPlusIcon from '@patternfly/react-icons/dist/js/icons/user-plus-icon';
 import { CheckCircleIcon, TimesCircleIcon, ClockIcon } from '@patternfly/react-icons';

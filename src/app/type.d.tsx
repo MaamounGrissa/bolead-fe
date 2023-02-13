@@ -38,7 +38,6 @@ interface IPlanification {
     startDate: string
     endDate: string
     duration: number
-    trajetDuration: number
     type: string
     ressource: string
     projet: string
