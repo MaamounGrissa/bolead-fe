@@ -37,7 +37,7 @@ const Dashboard: React.FunctionComponent = () => {
           <GridItem span={12} sm={8} >
             <Card style={{ textAlign: "center"}}>
               <CardTitle style={{ textAlign: "left" }}>
-                <div className='flex-between mobile-flex-column'>
+                <div className='flex-between mobile-flex-column no-margin-y'>
                   <span>Les membres d&apos;équipe les plus occupés</span>
                   <div className='mobile-m-2'>
                     <Button className='mr-2'
