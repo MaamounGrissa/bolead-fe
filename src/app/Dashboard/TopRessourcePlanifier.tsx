@@ -21,15 +21,15 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
 
     const renderLabel = (labelText: string) => {
         if (parseInt(labelText) < 30) {
-            return <Label color="green">{labelText}</Label>;
+            return <Label color="green">{labelText} Heures</Label>;
         } else if (parseInt(labelText) < 40 && parseInt(labelText) > 30) {
-            return <Label color="orange">{labelText}</Label>;
+            return <Label color="orange">{labelText} Heures</Label>;
         } else if (parseInt(labelText) > 40) {
-            return <Label color="red">{labelText}</Label>;
+            return <Label color="red">{labelText} Heures</Label>;
         } else {
             return <Label color="grey"
                             style={{ marginRight: "5px", marginLeft: "5px"}}
-                    >{labelText}</Label>;
+                    >{labelText} Heures</Label>;
         }
     };
 
@@ -45,7 +45,7 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
 
     return (
         <React.Fragment>
-                <TableComposable aria-label="today-table">
+                <TableComposable variant='compact' aria-label="today-table">
                     <Thead>
                     <Tr>
                         <Th width={15}>{columnNames.ressource}</Th>
@@ -55,8 +55,8 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
                     </Thead>
                     <Tbody>
                     {ressources.length > 0 &&
-                        ressources.filter((ress, i) => i < 3)
-                        .map(repo => {
+                        ressources.filter((ress, i) => i < 5)
+                        .map((repo, index) => {
                             return (
                             <Tr key={repo.id}>
                                 <Td dataLabel={columnNames.ressource} modifier="truncate">
@@ -66,7 +66,7 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
                                 {repo.type}
                                 </Td>
                                 <Td dataLabel={columnNames.occupation} modifier="truncate">
-                                {renderLabel('80')}
+                                {renderLabel(index === 0 ? '52' : index === 1 ? '43' : index === 2 ? '38' : index === 3 ? '33' : '20')}
                                 </Td>
                             </Tr>
                         )})}

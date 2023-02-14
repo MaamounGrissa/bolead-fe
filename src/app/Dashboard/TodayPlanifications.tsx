@@ -55,7 +55,7 @@ export const TodayPlanifications: React.FunctionComponent = () => {
 
     return (
         <React.Fragment>
-                <TableComposable aria-label="today-table">
+                <TableComposable variant='compact' aria-label="today-table">
                     <Thead>
                     <Tr>
                         <Th width={15}>{columnNames.projet}</Th>
