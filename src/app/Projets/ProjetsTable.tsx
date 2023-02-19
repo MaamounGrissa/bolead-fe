@@ -25,7 +25,7 @@ import { ProjectsGrid } from './ProjectsGrid';
 const columnNames = {
   name: 'Nom et Prénom',
   client: 'Client',
-  ressources: 'Ressources',
+  ressource: 'Ressource',
   type: 'Type',
   status: 'Status',
   notes: 'Notes',
@@ -47,7 +47,7 @@ export const ProjetsTable: React.FunctionComponent<{
         name: '',
         client: '',
         adresse: '',
-        ressources: [],
+        ressource: '',
         status: 'Nouveau',
         type: 'Construction',
         notes: '',
@@ -129,7 +129,7 @@ export const ProjetsTable: React.FunctionComponent<{
                     <Tr>
                         <Th width={20}>{columnNames.name}</Th>
                         <Th width={15}>{columnNames.client}</Th>
-                        <Th width={25}>{columnNames.ressources}</Th>
+                        <Th width={25}>{columnNames.ressource}</Th>
                         <Th width={15}>{columnNames.type}</Th>
                         <Th width={15}>{columnNames.status}</Th>
                         <Th width={15}>{columnNames.notes}</Th>
@@ -147,12 +147,10 @@ export const ProjetsTable: React.FunctionComponent<{
                                 <Td dataLabel={columnNames.client} modifier="truncate">
                                 {repo.client}
                                 </Td>
-                                <Td dataLabel={columnNames.ressources} modifier="truncate">
-                                {repo.ressources?.map((ressource, index) => {
-                                    return <span key={index}>
-                                        {renderLabel(ressource)}
+                                <Td dataLabel={columnNames.ressource} modifier="truncate">
+                                    <span>
+                                        {renderLabel(repo.ressource)}
                                     </span>
-                                })}
                                 </Td>
                                 <Td dataLabel={columnNames.type} modifier="truncate">
                                 {repo.type}
