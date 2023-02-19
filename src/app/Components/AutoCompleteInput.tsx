@@ -15,15 +15,16 @@ interface IAutoCompleteInputData {
 }
 
 export const AutoCompleteInput: React.FunctionComponent<{
-  optionsData: IAutoCompleteInputData[]
+  optionsData: IAutoCompleteInputData[],
+  setSelectedId: (id: string) => void,
 }> = ({
-  optionsData
+  optionsData,
+  setSelectedId
 }) => {
   const [value, setValue] = React.useState('');
   const [hint, setHint] = React.useState('');
   const [autocompleteOptions, setAutocompleteOptions] = React.useState<any>([]);
   const [isAutocompleteOpen, setIsAutocompleteOpen] = React.useState(false);
-  const [selectedId, setSelectedId] = React.useState('');
   
   const searchInputRef = React.useRef<any>(null);
   const autocompleteRef = React.useRef<any>(null);
@@ -31,8 +32,6 @@ export const AutoCompleteInput: React.FunctionComponent<{
   const onClear = () => {
     setValue('');
   };
-
-  console.log(selectedId)
   
   const onChange = (newValue: string) => {
     if (newValue !== '' && searchInputRef && searchInputRef.current && searchInputRef.current.contains(document.activeElement)) {

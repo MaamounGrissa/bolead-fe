@@ -85,9 +85,7 @@ export const ProjectsGrid: React.FunctionComponent<{
                             <p><UserAltIcon style={{ marginRight: "10px" }} /><span className="mr-2">Client : </span>{projet.client}</p>
                             <p><MapMarkerIcon style={{ marginRight: "10px" }} /><span className="mr-2">Adresse : </span>{projet.adresse}</p>
                             <p><UsersIcon style={{ marginRight: "10px" }} /><span className="mr-2">Ressources : </span>{
-                                projet.ressources.map(ressource => (
-                                    renderLabel(ressource)
-                                ))
+                                renderLabel(projet.ressource)
                             }</p>
                             <div className="projet-card-status">{renderLabel(projet.status)}</div>
                         </div>

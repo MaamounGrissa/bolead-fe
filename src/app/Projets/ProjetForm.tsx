@@ -19,7 +19,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
         name: '',
         client: '',
         adresse: '',
-        ressources: [],
+        ressource: '',
         status: 'Nouveau',
         type: 'construction',
         notes: '',
@@ -31,7 +31,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
             name: '',
             client: '',
             adresse: '',
-            ressources: [],
+            ressource: '',
             status: 'Nouveau',
             type: 'construction',
             notes: '',
@@ -150,7 +150,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                     isRequired
                     fieldId="modal-with-form-form-client"
                 >
-                    <AutoCompleteInput optionsData={clients} />
+                    <AutoCompleteInput optionsData={clients} setSelectedId={(id: string) => setFormData({ ...formData, ressource: id })} />
                 </FormGroup>
                 <FormGroup
                     label="Adresse de projet"

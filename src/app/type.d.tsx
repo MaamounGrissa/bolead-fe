@@ -24,7 +24,7 @@ interface IProjet {
     id: string
     name: string
     client: string
-    ressources: string[]
+    ressource: string
     adresse: string
     type: string
     status: string
