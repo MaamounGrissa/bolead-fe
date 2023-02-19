@@ -14,7 +14,7 @@ export const CreateProjet: React.FunctionComponent<{
         name: '',
         client: '',
         adresse: '',
-        ressources: [],
+        ressource: '',
         status: 'Nouveau',
         type: 'Construction',
         notes: '',
