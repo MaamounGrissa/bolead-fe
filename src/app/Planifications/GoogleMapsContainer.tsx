@@ -5,8 +5,9 @@ import React, { useState, useRef } from 'react';
 
 
 export const GoogleMapsContainer: React.FunctionComponent = () => {
+    const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
     const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'AIzaSyD22JMxajYSk8_PUEkALzT2kpxRslSyllI',
+        googleMapsApiKey: googleKey,
         libraries: ['places'],
     })
 
