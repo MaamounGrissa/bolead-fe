@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 {/* @typescript ignore */}
 import * as React from 'react';
 import { ViewState, SchedulerDateTime} from '@devexpress/dx-react-scheduler';
@@ -5,7 +6,7 @@ import {
   Scheduler, DayView, WeekView, Appointments, Toolbar, DateNavigator, ViewSwitcher 
 } from '@devexpress/dx-react-scheduler-material-ui';
 import moment from 'moment';
-import { LocationSelector, MyStyledFlexibleSpace, TimeTableCell } from './schedulerOptions';
+import { LocationSelector, MyStyledFlexibleSpace } from './schedulerOptions';
 import { useAppSelector } from '@app/store';
 
 /* const resources = [{
@@ -18,7 +19,7 @@ import { useAppSelector } from '@app/store';
 }]; */
 
 export const PlanificationsScheduler: React.FunctionComponent<{
-    setOpenCreatePlanification: () => void,
+    setOpenCreatePlanification: (data: string) => void,
     setOpenUpdatePlanification: (data: IPlanification) => void,
     setOpenDeletePlanification: (data: IPlanification) => void,
 }> = (props) => {
@@ -35,6 +36,42 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                 <LocationSelector ontypesChange={ontypesChange} />
             </MyStyledFlexibleSpace>
     )};
+
+    const AppointmentContent = (props: any) => {
+        return (
+            <Appointments.AppointmentContent {...props}>
+                <div className="appointment-content" onClick={() => setOpenUpdatePlanification(props.data.id)}>
+                    <div className="appointment-content-title">
+                        {props.data?.title}
+                    </div>
+                    <div className="appointment-content-date">
+                        {props.data?.startDate} - {props.data?.endDate}
+                    </div>
+                    <div className="appointment-content-type">
+                        {props.data?.type} - {props.data.ressource}
+                    </div>
+                </div>
+            </Appointments.AppointmentContent>
+        );
+    };
+
+    const WeekTableCell = (props: any) => {
+        const { startDate, formatDate } = props;
+        const isFirstMonthDay = startDate.getDate() === 1;
+        const formatOptions = isFirstMonthDay ? { day: 'numeric', month: 'long' } : { day: 'numeric' };
+        return (
+            <WeekView.TimeTableCell
+                {...props}
+                formatDate={formatDate}
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...(isFirstMonthDay ? { formatDate: (date: Date) => formatDate(date, formatOptions) } : null)}
+                onClick={() => {
+                    setOpenCreatePlanification(moment(startDate).format('YYYY-MM-DDTHH:mm:ss'));
+                }}
+                style={{ cursor: 'pointer' }}
+            />
+        );
+    };
 
     const [currentDate, setCurrentDate] = React.useState<SchedulerDateTime>(moment().format('YYYY-MM-DD'));
     const onCurrentDateChange = (currentDate: SchedulerDateTime) => {
@@ -80,11 +117,10 @@ export const PlanificationsScheduler: React.FunctionComponent<{
             <WeekView
                 startDayHour={8}
                 endDayHour={20}
-                timeTableCellComponent={TimeTableCell}
-                //dayScaleCellComponent={DayScaleCell}
+                timeTableCellComponent={WeekTableCell}
             />
 
-            <Appointments //appointmentContentComponent={AppointmentContent}
+            <Appointments appointmentContentComponent={AppointmentContent}
             />
             <Toolbar flexibleSpaceComponent={FlexibleSpace} />
             <DateNavigator />

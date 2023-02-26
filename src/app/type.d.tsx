@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 //Ressources
 interface IRessource {
     id: string
@@ -43,6 +44,11 @@ interface IPlanification {
     projet: string
     status: string
     notes: string
+    origin: string
+    destination: string
+    distance: string
+    trajetDuration: number
+    trajetDurationText: string
 }
 
 //Store
@@ -61,4 +67,14 @@ interface ProjetState {
 interface PlanificationState {
     planification: IPlanification
     planifications: IPlanification[]
+}
+
+interface KeycloakUser {
+    name?: string;
+    email?: string;
+    preferred_username?: string;
+    given_name?: string;
+    family_name?: string;
+    roles?: string[];
+    [key: string]: any;
 }

@@ -6,6 +6,7 @@ import { getRessources } from '@app/store/ressources/ressourceSlice';
 import { addProjet, updateProjet } from '@app/store/projets/projetSlice';
 import { getClients } from '@app/store/clients/clientSlice';
 import { AutoCompleteInput } from '@app/Components/AutoCompleteInput';
+import { Autocomplete } from '@react-google-maps/api';
 
 export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolean, close: () => void}> = ({projet, save, close}) => {
     const dispatch = useAppDispatch();
@@ -157,14 +158,16 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                     isRequired
                     fieldId="modal-with-form-form-adresse"
                 >
-                    <TextInput
-                    isRequired
-                    type="tel"
-                    id="modal-with-form-form-adresse"
-                    name="modal-with-form-form-adresse"
-                    value={formData.adresse}
-                    onChange={handleAdresseInputChange}
-                    />
+                    <Autocomplete>
+                        <TextInput
+                            isRequired
+                            type="tel"
+                            id="modal-with-form-form-adresse"
+                            name="modal-with-form-form-adresse"
+                            value={formData.adresse}
+                            onChange={handleAdresseInputChange}
+                        />
+                    </Autocomplete>
                 </FormGroup>
                 <FormGroup
                     label="Type"

@@ -48,7 +48,7 @@ const Planifications: React.FunctionComponent = () => {
         </div>
       </div>
       <div>
-        <PlanificationsTable view={view} openCreatePlanification={openCreatePlanification} setOpenCreatePlanification={() => setOpenCreatePlanification(false)} />
+        <PlanificationsTable view={view} openCreatePlanification={openCreatePlanification} setOpenCreatePlanification={() => setOpenCreatePlanification(true)} closeModal={() => setOpenCreatePlanification(false)} />
       </div>
     </PageSection>
   )

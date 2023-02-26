@@ -4,17 +4,19 @@ import { Bullseye, DropdownPosition, FormGroup, Grid, GridItem, Select, SelectOp
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { getProjets } from '@app/store/projets/projetSlice';
 import { getRessources } from '@app/store/ressources/ressourceSlice';
-import { addPlanification, updatePlanification } from '@app/store/planifications/planificationSlice';
+import { addPlanification } from '@app/store/planifications/planificationSlice';
 import moment from 'moment';
 import { AutoCompleteInput } from '@app/Components/AutoCompleteInput';
 import { GoogleMapsContainer } from './GoogleMapsContainer';
+import { initialPlanification } from '@app/utils/constant';
 
 export const CreatePlanification: React.FunctionComponent<{ 
     isOpen: boolean,
-    close: () => void
+    close: () => void,
+    selectedDate: string,
 }> = (props) => {
    // const [save, setSave] = React.useState<boolean>(false);
-    const { isOpen, close } = props;
+    const { isOpen, close, selectedDate } = props;
    /*  const planification: IPlanification = {
         id: '',
         title: '',
@@ -37,33 +39,21 @@ export const CreatePlanification: React.FunctionComponent<{
     const { projets } = useAppSelector(state => state.projets);
     const { ressources } = useAppSelector(state => state.ressources);
 
-    const [formData, setFormData] = React.useState<IPlanification>({
-        id: '',
-        title: '',
-        startDate: '',
-        endDate: '',
-        duration: 20,
-        ressource: '',
-        projet: '',
-        type: 'Visite Technique',
-        status: 'Nouveau',
-        notes: '',
-    });
+    const [formData, setFormData] = React.useState<IPlanification>(initialPlanification);
 
     const clearForm = () => {
-        setFormData({
-            id: '',
-            title: '',
-            startDate: '',
-            endDate: '',
-            duration: 20,
-            ressource: '',
-            projet: '',
-            type: 'Visite Technique',
-            status: 'Nouveau',
-            notes: '',
-        });
+        setFormData(initialPlanification);
     };
+
+    React.useEffect(() => {
+        if (selectedDate) {
+            setFormData({
+                ...formData,
+                startDate: selectedDate,
+            });
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedDate]);
 
     React.useEffect(() => {
         dispatch(getProjets());
@@ -259,7 +249,7 @@ export const CreatePlanification: React.FunctionComponent<{
                     <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
                         <GridItem span={12}>
                             <FormGroup
-                                label="Client"
+                                label="Ressources"
                                 isRequired
                                 fieldId="modal-with-form-form-client"
                             >
@@ -295,10 +285,40 @@ export const CreatePlanification: React.FunctionComponent<{
     const Step3 = () => (
         <React.Fragment>
             <Bullseye>
-                <div className='step-container'>
+                <div className='step-container-map'>
                     <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
                         <GridItem span={12}>
-                                <GoogleMapsContainer />
+                                <GoogleMapsContainer  />
+                        </GridItem>
+                    </Grid>
+                    <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
+                        <GridItem span={4}>
+                            <FormGroup
+                                label="Distance de trajet"
+                                fieldId="modal-with-form-form-distance"
+                                >
+                                <TextInput
+                                    type="text"
+                                    id="modal-with-form-form-distance"
+                                    name="modal-with-form-form-distance"
+                                    value={formData.distance}
+                                    readOnly
+                                />
+                            </FormGroup>
+                        </GridItem>
+                        <GridItem span={4}>
+                            <FormGroup
+                                label="Durée de trajet"
+                                fieldId="modal-with-form-form-trajetDurationText"
+                                >
+                                <TextInput
+                                    type="text"
+                                    id="modal-with-form-form-trajetDurationText"
+                                    name="modal-with-form-form-trajetDurationText"
+                                    value={formData.trajetDurationText}
+                                    readOnly
+                                />
+                            </FormGroup>
                         </GridItem>
                     </Grid>
                 </div>
@@ -308,7 +328,109 @@ export const CreatePlanification: React.FunctionComponent<{
 
     const ReviewStep = () => (
         <React.Fragment>
-            <p>Review step content</p>
+            <Bullseye>
+                <div className='step-container'>
+                    <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
+                        <GridItem span={12}>
+                            <FormGroup
+                                label="Titre"
+                                fieldId="modal-with-form-form-preview-name"
+                            >
+                                <TextInput
+                                isRequired
+                                type="text"
+                                id="modal-with-form-form-preview-title"
+                                name="modal-with-form-form-preview-title"
+                                value={formData.title}
+                                readOnly
+                                />
+                            </FormGroup>
+                        </GridItem>
+                    </Grid>
+                    <Grid hasGutter style={{ marginBottom: '25px' }}>
+                        <GridItem span={8}>
+                            <FormGroup
+                                label="Date et heure"
+                                isRequired
+                                fieldId="modal-with-form-form-preview-datetime"
+                            >
+                                <TextInput
+                                isRequired
+                                type="datetime-local"
+                                id="modal-with-form-form-preview-datetime"
+                                name="modal-with-form-form-preview-datetime"
+                                value={formData.startDate}
+                                readOnly
+                                />
+                            </FormGroup>
+                        </GridItem>
+                        <GridItem span={4}>
+                            <FormGroup
+                                label="Total Durée (min)"
+                                isRequired
+                                fieldId="modal-with-form-form-preview-duration"
+                            >
+                                <TextInput
+                                isRequired
+                                type="number"
+                                id="modal-with-form-form-preview-duration"
+                                name="modal-with-form-form-preview-duration"
+                                value={formData.duration}
+                                readOnly
+                                />
+                            </FormGroup>
+                        </GridItem>
+                    </Grid>
+                    <Grid hasGutter style={{ marginBottom: '25px' }}>
+                        <GridItem span={6}>
+                            <FormGroup
+                                label="Ressource"
+                                isRequired
+                                fieldId="modal-with-form-form-preview-resource"
+                            >
+                                <TextInput
+                                isRequired
+                                type="text"
+                                id="modal-with-form-form-preview-resource"
+                                name="modal-with-form-form-preview-resource"
+                                value={formData.ressource}
+                                readOnly
+                                />
+                            </FormGroup>
+                        </GridItem>
+                        <GridItem span={6}>
+                            <FormGroup
+                                label="Projet"
+                                fieldId="modal-with-form-form-preview-projet"
+                            >
+                                <TextInput
+                                type="text"
+                                id="modal-with-form-form-preview-projet"
+                                name="modal-with-form-form-preview-projet"
+                                value={formData.projet}
+                                readOnly
+                                />
+                            </FormGroup>
+                        </GridItem>
+                    </Grid>
+                    <Grid hasGutter style={{ marginBottom: '25px' }}>
+                        <GridItem span={12}>
+                            <FormGroup
+                                label="Notes"
+                                fieldId="modal-with-form-form-preview-notes"
+                            >
+                                <TextArea
+                                type="text"
+                                id="modal-with-form-form-preview-notes"
+                                name="modal-with-form-form-preview-notes"
+                                value={formData.notes}
+                                readOnly
+                                />
+                            </FormGroup>
+                        </GridItem>
+                    </Grid>
+                </div>
+            </Bullseye>
         </React.Fragment>
     );
 

@@ -82,19 +82,19 @@ const TotalsCards: React.FunctionComponent = () => {
         <CardBody>
           <div className='body-card-container'>
             <div className='flex-row'>
-                <UsersCogIcon size='sm' color="blue" />
+                <UsersCogIcon size='sm' color="DarkSlateGray" />
                 <span>5 Techniciens</span>
             </div>
             <div className='flex-row'>
-                <UserAltIcon size='sm' color="green" />
+                <UserAltIcon size='sm' color="DarkOliveGreen" />
                 <span>10 Commercials</span>
             </div>
             <div className='flex-row'>
-                <UserTieIcon size='sm' color="orange" />
+                <UserTieIcon size='sm' color="LightCoral" />
                 <span>6 Administrateurs</span>
             </div>
             <div className='flex-row'>
-                <UserTagIcon size='sm' color="yellow" />
+                <UserTagIcon size='sm' color="DarkGoldenRod" />
                 <span>3 Comptables</span>
             </div>
             <div className='card-icon-img'>

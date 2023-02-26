@@ -1,13 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import React, { useRef } from 'react';
 import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea, Grid, GridItem } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { getRessources } from '@app/store/ressources/ressourceSlice';
 import { getProjets } from '@app/store/projets/projetSlice';
 import { addPlanification, updatePlanification } from '@app/store/planifications/planificationSlice';
 import moment from 'moment';
+import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
+import { initialPlanification } from '@app/utils/constant';
 
 export const PlanificationForm: React.FunctionComponent<{ planification: IPlanification, save: boolean, close: () => void}> = ({planification, save, close}) => {
+    const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: googleKey,
+        libraries: ['places'],
+    })
+
+    const options = {
+        componentRestrictions: { country: "fr" },
+    };
     const dispatch = useAppDispatch();
     const [isProjetFilterDropdownOpen, setIsProjetFilterDropdownOpen] = React.useState(false);
     const [isRessourceFilterDropdownOpen, setIsRessourceFilterDropdownOpen] = React.useState(false);
@@ -16,32 +27,15 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     const { projets } = useAppSelector(state => state.projets);
     const { ressources } = useAppSelector(state => state.ressources);
 
-    const [formData, setFormData] = React.useState<IPlanification>({
-        id: '',
-        title: '',
-        startDate: '',
-        endDate: '',
-        duration: 20,
-        ressource: '',
-        projet: '',
-        type: 'Visite Technique',
-        status: 'Nouveau',
-        notes: '',
-    });
+    /** @type React.MutableRefObject<HTMLInputElement> */
+    const originRef: React.MutableRefObject<any> = useRef()
+    /** @type React.MutableRefObject<HTMLInputElement> */
+    const destiantionRef: React.MutableRefObject<any> = useRef()
+
+    const [formData, setFormData] = React.useState<IPlanification>(initialPlanification);
 
     const clearForm = () => {
-        setFormData({
-            id: '',
-            title: '',
-            startDate: '',
-            endDate: '',
-            duration: 20,
-            ressource: '',
-            projet: '',
-            type: 'Visite Technique',
-            status: 'Nouveau',
-            notes: '',
-        });
+        setFormData(initialPlanification);
     };
 
     React.useEffect(() => {
@@ -175,7 +169,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
         <React.Fragment>
             <Form id="modal-with-form-form">
                 <FormGroup
-                    label="Nom et prénom"
+                    label="Titre"
                     isRequired
                     fieldId="modal-with-form-form-name"
                 >
@@ -207,7 +201,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                     </GridItem>
                     <GridItem span={4}>
                         <FormGroup
-                            label="Duration"
+                            label="Durée de visite (min)"
                             isRequired
                             fieldId="modal-with-form-form-duration"
                         >
@@ -222,6 +216,21 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                         </FormGroup>
                     </GridItem>
                 </Grid>
+                {isLoaded && (
+                    <Grid hasGutter>
+                        <GridItem span={6}>
+                            <Autocomplete options={options} >
+                                <TextInput type='text' id='origin-input' placeholder='Origin' ref={originRef} />
+                            </Autocomplete>
+                        </GridItem>
+                        <GridItem span={6}>
+                            <Autocomplete options={options} >
+                                <TextInput type='text' id='destination-input' placeholder='Destination' ref={destiantionRef} />
+                            </Autocomplete>
+                        </GridItem>
+                    </Grid>
+                )}
+                
                 <FormGroup
                     label="Ressource"
                     fieldId="modal-with-form-form-ressource"

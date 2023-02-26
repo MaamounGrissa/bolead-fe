@@ -185,39 +185,6 @@ export const TimeTableCell = (({ ...restProps }) => {
     } return <StyledWeekViewTimeTableCell {...restProps} />;
 });
   
-/* export const DayScaleCell = (({ ...restProps }) => {
-    const { startDate } = restProps;
-    if (startDate.getDay() === 0 || startDate.getDay() === 6) {
-      return <StyledWeekViewDayScaleCell {...restProps} className={classes.weekEnd} />;
-    } return <StyledWeekViewDayScaleCell {...restProps} />;
-});
-
-export const AppointmentContent = ({...restProps}) => {
-    const { data } = restProps;
-    return (
-        <StyledAppointmentsAppointmentContent data={data} {...restProps}>
-            <div className={classes.container}>
-                <div className={classes.title}>
-                {data.title}
-                </div>
-                <div className={classes.text}>
-                {data.type}
-                </div>
-                <div className={classes.textContainer}>
-                <div className={classes.time}>
-                    {moment(data.startDate).format("HH:mm")}
-                </div>
-                <div className={classes.time}>
-                    {' - '}
-                </div>
-                <div className={classes.time}>
-                {moment(data.endDate).format("HH:mm")}
-                </div>
-                </div>
-            </div>
-        </StyledAppointmentsAppointmentContent>
-)}; */
-
 export const MyStyledFlexibleSpace: React.FunctionComponent<{children: React.ReactNode}> = ({ children }) => (
     <StyledToolbarFlexibleSpace className={classes.flexibleSpace}>
         {children}

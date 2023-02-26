@@ -22,6 +22,7 @@ import { useAppDispatch, useAppSelector } from '@app/store';
 import { PlanificationsScheduler } from './PlanificationsScheduler';
 import { getPlanifications } from '@app/store/planifications/planificationSlice';
 import moment from 'moment';
+import { initialPlanification } from '@app/utils/constant';
 
 const columnNames = {
   startDate: 'Date',
@@ -35,26 +36,17 @@ const columnNames = {
 export const PlanificationsTable: React.FunctionComponent<{
     openCreatePlanification: boolean, 
     setOpenCreatePlanification: () => void,
+    closeModal: () => void,
     view: string,
 }> = (props) => {
     const dispatch = useAppDispatch();
     const { planifications } = useAppSelector(state => state.planifications)
     const [filtredData, setFiltredData] = React.useState<IPlanification[]>([]);
-    const {view, openCreatePlanification, setOpenCreatePlanification} = props;
+    const {view, openCreatePlanification, setOpenCreatePlanification, closeModal} = props;
+    const [selectedDate, setSelectedDate] = React.useState<string>(moment().format('YYYY-MM-DD'));
     const [openUpdatePlanification, setOpenUpdatePlanification] = React.useState(false);
     const [openDeletePlanification, setOpenDeletePlanification] = React.useState(false);
-    const [selectedPlanification, setSelectedPlanification] = React.useState<IPlanification>({
-        id: '',
-        title: '',
-        startDate: '',
-        endDate: '',
-        duration: 20,
-        type: '',
-        status: '',
-        ressource: '',
-        projet: '',
-        notes: '',
-    });
+    const [selectedPlanification, setSelectedPlanification] = React.useState<IPlanification>(initialPlanification);
 
     React.useEffect(() => {
         dispatch(getPlanifications());
@@ -184,13 +176,13 @@ export const PlanificationsTable: React.FunctionComponent<{
                     </>
                     ) : (
                     <PlanificationsScheduler
-                        setOpenCreatePlanification={setOpenCreatePlanification} 
+                        setOpenCreatePlanification={(data) => {setSelectedDate(data); setOpenCreatePlanification()}} 
                         setOpenUpdatePlanification={(data) => {setSelectedPlanification(data); setOpenUpdatePlanification(true)}}
                         setOpenDeletePlanification={(data) => {setSelectedPlanification(data); setOpenDeletePlanification(true)}}
                     />
                 )
             }
-            {openCreatePlanification && <CreatePlanification isOpen={openCreatePlanification} close={setOpenCreatePlanification} />}
+            {openCreatePlanification && <CreatePlanification isOpen={openCreatePlanification} close={closeModal} selectedDate={selectedDate} />}
             {openUpdatePlanification && <UpdatePlanification isOpen={openUpdatePlanification} close={() => setOpenUpdatePlanification(false)} planification={selectedPlanification} />}
             {openDeletePlanification && <DeletePlanification isOpen={openDeletePlanification} close={() => setOpenDeletePlanification(false)} planification={selectedPlanification} />}
         </React.Fragment>

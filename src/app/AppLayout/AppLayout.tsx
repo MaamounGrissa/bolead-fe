@@ -104,16 +104,23 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
       Skip to Content
     </SkipToContent>
   );
-  return (
-    <Page
-      mainContainerId={pageId}
-      header={Header}
-      sidebar={Sidebar}
-      onPageResize={onPageResize}
-      skipToContent={PageSkipToContent}>
-      {children}
-    </Page>
-  );
+/* 
+    const LoadingSpinner = (
+      <div className="loading-spinner">
+        <div className="spinner spinner-lg" > Loading ... </div>
+      </div>
+    );
+ */
+    return (
+      <Page
+        mainContainerId={pageId}
+        header={Header}
+        sidebar={Sidebar}
+        onPageResize={onPageResize}
+        skipToContent={PageSkipToContent}>
+        {children}
+      </Page>
+    );
 };
 
 export { AppLayout };

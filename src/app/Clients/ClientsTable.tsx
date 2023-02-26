@@ -20,6 +20,7 @@ import { DeleteClient } from './DeleteClient';
 import { ClientsFilter } from './ClientsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { getClients } from '@app/store/clients/clientSlice';
+import axios from 'axios';
 
 const columnNames = {
   name: 'Nom et Prénom',
@@ -39,6 +40,7 @@ export const ClientsTable: React.FunctionComponent<{
     const {openCreateClient, setOpenCreateClient} = props;
     const [openUpdateClient, setOpenUpdateClient] = React.useState(false);
     const [openDeleteClient, setOpenDeleteClient] = React.useState(false);
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const [selectedClient, setSelectedClient] = React.useState<IClient>({
         id: '',
         name: '',
@@ -48,7 +50,13 @@ export const ClientsTable: React.FunctionComponent<{
         status: '',
     });
 
+    const fetchData = async () => {
+        const data = await axios.get(`${BASE_URL}api/customer-statuses`);
+        console.log(data);
+    };
+
     React.useEffect(() => {
+        fetchData();
         dispatch(getClients());
     }, [dispatch]);
 
