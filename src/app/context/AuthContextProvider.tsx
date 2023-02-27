@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from "keycloak-js";
 import React, { createContext, useEffect, useState } from "react";
 
@@ -5,9 +6,9 @@ import React, { createContext, useEffect, useState } from "react";
  * KeycloakConfig configures the connection to the Keycloak server.
  */
 const keycloakConfig: KeycloakConfig = {
-  realm: "master",
-  clientId: "bolead-dashboard",
-  url: "http://localhost:9000/auth",
+    url: process.env.KEYCLOAK_URL || "http://keycloak.bolead.creo.tn/",
+    realm: process.env.KEYCLOAK_REALM || "jhipster",
+    clientId: process.env.KEYCLOAK_CLIENT_ID || "bolead_app_local",
 };
 
 /**
@@ -28,6 +29,7 @@ interface AuthContextValues {
   /**
    * Whether or not a user is currently authenticated
    */
+  token: string;
   isAuthenticated: boolean;
   logout: () => void;
 }
@@ -36,8 +38,9 @@ interface AuthContextValues {
  * Default values for the {@link AuthContext}
  */
 const defaultAuthContextValues: AuthContextValues = {
-  isAuthenticated: false,
-  logout: () => {console.log("logout");}
+    token: "",
+    isAuthenticated: false,
+    logout: () => {console.log("logout");}
 };
 
 /**
@@ -67,6 +70,7 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
 
   // Create the local state in which we will keep track if a user is authenticated
   const [isAuthenticated, setAuthenticated] = useState<boolean>(false);
+  const [token, setToken] = useState<any>(null);
 
   useEffect(() => {
     /**
@@ -86,9 +90,14 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
           keycloak.login();
         }
         console.log("user already authenticated");
+        const myToken: any = keycloak.token;
+        setToken(myToken);
+        localStorage.setItem("token", myToken);
         setAuthenticated(isAuthenticatedResponse);
       } catch {
         console.log("error initializing Keycloak");
+        setToken(null);
+        localStorage.removeItem("token");
         setAuthenticated(false);
       }
     }
@@ -101,7 +110,7 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, logout }}>
+    <AuthContext.Provider value={{ token, isAuthenticated, logout }}>
       {props.children}
     </AuthContext.Provider>
   );

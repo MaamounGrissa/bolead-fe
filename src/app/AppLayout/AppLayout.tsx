@@ -11,6 +11,7 @@ import {
   SkipToContent
 } from '@patternfly/react-core';
 import { routes, IAppRoute, IAppRouteGroup } from '@app/routes';
+import { AuthContext } from '@app/context/AuthContextProvider';
 //import logo from '@app/bgimages/logo.png';
 
 interface IAppLayout {
@@ -18,6 +19,7 @@ interface IAppLayout {
 }
 
 const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
+  const authContext = React.useContext(AuthContext);
   const [isNavOpen, setIsNavOpen] = React.useState(true);
   const [isMobileView, setIsMobileView] = React.useState(true);
   const [isNavOpenMobile, setIsNavOpenMobile] = React.useState(false);
@@ -104,13 +106,17 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
       Skip to Content
     </SkipToContent>
   );
-/* 
+
     const LoadingSpinner = (
       <div className="loading-spinner">
         <div className="spinner spinner-lg" > Loading ... </div>
       </div>
     );
- */
+
+    if (!authContext.isAuthenticated) {
+      return LoadingSpinner;
+    }
+
     return (
       <Page
         mainContainerId={pageId}

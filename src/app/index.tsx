@@ -7,25 +7,23 @@ import '@app/app.css';
 import { Provider } from 'react-redux';
 import { store } from './store';
 //import AuthContextProvider from './context/AuthContextProvider';
-import { ReactKeycloakProvider } from "@react-keycloak/web";
-import keycloak from './utils/keycloak';
-import Home from './Home/Home';
-import PrivateRoute from './utils/privateRoute';
+//import { ReactKeycloakProvider } from "@react-keycloak/web";
+//import keycloak from './utils/keycloak';
+//import Home from './Home/Home';
+import AuthContextProvider from './context/AuthContextProvider';
+//import PrivateRoute from './utils/privateRoute';
 
 const App: React.FunctionComponent = () => (
   <React.StrictMode>
-    <ReactKeycloakProvider authClient={keycloak}>
+    <AuthContextProvider>
       <Provider store={store}>
         <Router>
-          <Route path="/" component={Home} />
-          <PrivateRoute>
-            <AppLayout>
+          <AppLayout>
               <AppRoutes />
-            </AppLayout>
-          </PrivateRoute>
+          </AppLayout>
         </Router>
       </Provider>
-    </ReactKeycloakProvider>
+    </AuthContextProvider>
   </React.StrictMode>
 );
 

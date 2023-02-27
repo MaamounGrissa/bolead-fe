@@ -21,6 +21,7 @@ import { ClientsFilter } from './ClientsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { getClients } from '@app/store/clients/clientSlice';
 import axios from 'axios';
+import { axiosInstance } from '@app/network';
 
 const columnNames = {
   name: 'Nom et Prénom',
@@ -50,8 +51,9 @@ export const ClientsTable: React.FunctionComponent<{
         status: '',
     });
 
+
     const fetchData = async () => {
-        const data = await axios.get(`${BASE_URL}api/customer-statuses`);
+        const data = await axiosInstance.get(`${BASE_URL}api/referentiel-customer-statuses`);
         console.log(data);
     };
 
