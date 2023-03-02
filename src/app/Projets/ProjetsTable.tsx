@@ -178,7 +178,7 @@ export const ProjetsTable: React.FunctionComponent<{
                                 {repo.name}
                                 </Td>
                                 <Td dataLabel={columnNames.client} modifier="truncate">
-                                {repo.client}
+                                {repo.clientName}
                                 </Td>
                                 <Td dataLabel={columnNames.type} modifier="truncate">
                                     {projetTypes?.find(type => type.id === repo.type)?.name}

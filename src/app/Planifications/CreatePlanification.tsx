@@ -56,8 +56,8 @@ export const CreatePlanification: React.FunctionComponent<{
     }, [selectedDate]);
 
     React.useEffect(() => {
-        dispatch(getProjets());
-        dispatch(getRessources());
+        //dispatch(getProjets());
+        //dispatch(getRessources());
     }, [dispatch]);
 
     const savePlanification = () => {
@@ -90,7 +90,7 @@ export const CreatePlanification: React.FunctionComponent<{
 
     const ressourcesListItems = ressources.map((ressource) => (
         <SelectOption key={ressource.id} value={ressource.id}>
-            {ressource.name}
+            {ressource.firstName} {ressource.lastName}
         </SelectOption>
     ));
 
@@ -253,7 +253,7 @@ export const CreatePlanification: React.FunctionComponent<{
                                 isRequired
                                 fieldId="modal-with-form-form-client"
                             >
-                                <AutoCompleteInput optionsData={ressources} setSelectedId={(id: string) => setFormData({ ...formData, ressource: id })} />
+                                {/* <AutoCompleteInput optionsData={ressources} setSelectedId={(id: string) => setFormData({ ...formData, ressource: id })} /> */}
                             </FormGroup>
                         </GridItem>
                     </Grid>

@@ -78,7 +78,7 @@ export const ProjectsGrid: React.FunctionComponent<{
                     <CardTitle>{projet.name}</CardTitle>
                     <CardBody>
                         <div className="projet-card">
-                            <p><UserAltIcon style={{ marginRight: "10px" }} /><span className="mr-2">Client : </span>{projet.client}</p>
+                            <p><UserAltIcon style={{ marginRight: "10px" }} /><span className="mr-2">Client : </span>{projet.clientName}</p>
                             <p><MapMarkerIcon style={{ marginRight: "10px" }} /><span className="mr-2">Adresse : </span>{projet.adresse}</p>
                             <p><UsersIcon style={{ marginRight: "10px" }} /><span className="mr-2">Type : </span>{
                                 projetTypes?.find(type => type.id === projet.type)?.name

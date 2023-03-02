@@ -2,8 +2,8 @@
 import React, { useRef } from 'react';
 import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea, Grid, GridItem } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getRessources } from '@app/store/ressources/ressourceSlice';
-import { getProjets } from '@app/store/projets/projetSlice';
+//import { getRessources } from '@app/store/ressources/ressourceSlice';
+//import { getProjets } from '@app/store/projets/projetSlice';
 import { addPlanification, updatePlanification } from '@app/store/planifications/planificationSlice';
 import moment from 'moment';
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
@@ -39,8 +39,8 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     };
 
     React.useEffect(() => {
-        dispatch(getProjets());
-        dispatch(getRessources());
+        //dispatch(getProjets());
+        //dispatch(getRessources());
     }, [dispatch]);
 
     React.useEffect(() => {
@@ -88,7 +88,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
 
     const ressourcesListItems = ressources.map((ressource) => (
         <SelectOption key={ressource.id} value={ressource.id}>
-            {ressource.name}
+            {ressource.firstName} {ressource.lastName}
         </SelectOption>
     ));
 
