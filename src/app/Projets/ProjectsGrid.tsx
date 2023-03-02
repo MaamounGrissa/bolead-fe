@@ -1,3 +1,4 @@
+import { useAppSelector } from "@app/store";
 import { Card, CardActions, CardBody, CardHeader, CardTitle, Dropdown, DropdownItem, Gallery, KebabToggle, Label } from "@patternfly/react-core";
 import { MapMarkerIcon, PencilAltIcon, TrashAltIcon, UserAltIcon, UsersIcon } from "@patternfly/react-icons";
 import React from "react";
@@ -10,25 +11,20 @@ export const ProjectsGrid: React.FunctionComponent<{
     const {filtredData, setOpenUpdateProjet, setOpenDeleteProjet} = props;
     const [isCardKebabDropdownOpen, setIsCardKebabDropdownOpen] = React.useState(false);
     const [selectedKey, setSelectedKey] = React.useState(null);
+    const {projetStatus, projetTypes} = useAppSelector(state => state.projets)
 
-    const renderLabel = (labelText: string) => {
+    const renderLabel = (labelText: number) => {
         switch (labelText) {
-        case 'Nouveau':
-            return <Label color="blue">{labelText}</Label>;
-        case 'En cours':
-            return <Label color="green">{labelText}</Label>;
-        case 'En pause':
-            return <Label color="orange">{labelText}</Label>;
-        case 'Terminé':
-            return <Label color="purple">{labelText}</Label>;
-        case 'Annulé':
-            return <Label color="red">{labelText}</Label>;
-        case 'Supprimé':
-            return <Label color="grey">{labelText}</Label>;
+        case 1:
+            return <Label color="blue">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 2:
+            return <Label color="green">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 3:
+            return <Label color="orange">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 4:
+            return <Label color="red">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
         default:
-            return <Label color="grey" 
-                            style={{ marginRight: "2px", marginLeft: "2px"}}
-                    >{labelText}</Label>;
+            return <Label color="orange">Indéfinie</Label>;
         }
     };
 
@@ -84,8 +80,8 @@ export const ProjectsGrid: React.FunctionComponent<{
                         <div className="projet-card">
                             <p><UserAltIcon style={{ marginRight: "10px" }} /><span className="mr-2">Client : </span>{projet.client}</p>
                             <p><MapMarkerIcon style={{ marginRight: "10px" }} /><span className="mr-2">Adresse : </span>{projet.adresse}</p>
-                            <p><UsersIcon style={{ marginRight: "10px" }} /><span className="mr-2">Ressource : </span>{
-                                renderLabel(projet.ressource)
+                            <p><UsersIcon style={{ marginRight: "10px" }} /><span className="mr-2">Type : </span>{
+                                projetTypes?.find(type => type.id === projet.type)?.name
                             }</p>
                             <div className="projet-card-status">{renderLabel(projet.status)}</div>
                         </div>

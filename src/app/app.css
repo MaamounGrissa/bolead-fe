@@ -196,3 +196,12 @@ html, body, #root {
   border-radius: 3px;
   cursor: pointer;
 }
+
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease-in-out;
+  min-height: 150px;
+}

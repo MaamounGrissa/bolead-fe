@@ -2,6 +2,7 @@
 import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { ClientForm } from './ClientForm';
+import { initialClient } from '@app/utils/constant';
 
 export const CreateClient: React.FunctionComponent<{ 
     isOpen: boolean,
@@ -9,14 +10,7 @@ export const CreateClient: React.FunctionComponent<{
 }> = (props) => {
     const [save, setSave] = React.useState<boolean>(false);
     const { isOpen, close } = props;
-    const client: IClient = {
-        id: '',
-        name: '',
-        email: '',
-        phone: '',
-        status: 'Actif',
-        notes: '',
-    }
+    const client: IClient = initialClient;
 
     return (
         <React.Fragment>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 //const myBaseUrl = "http://128.199.32.128/";
-const myBaseUrl = 'http://gateway.bolead.creo.tn/services/inspections/';
+const myBaseUrl = 'http://gateway.bolead.creo.tn/services/inspections/api/';
 
 //add your BASE_URL
 const token = localStorage.getItem('token');

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import '@patternfly/react-core/dist/styles/base.css';
-import { Route, BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { AppLayout } from '@app/AppLayout/AppLayout';
 import { AppRoutes } from '@app/routes';
 import '@app/app.css';
@@ -11,6 +11,7 @@ import { store } from './store';
 //import keycloak from './utils/keycloak';
 //import Home from './Home/Home';
 import AuthContextProvider from './context/AuthContextProvider';
+import { SnackbarProvider } from 'notistack';
 //import PrivateRoute from './utils/privateRoute';
 
 const App: React.FunctionComponent = () => (
@@ -18,9 +19,11 @@ const App: React.FunctionComponent = () => (
     <AuthContextProvider>
       <Provider store={store}>
         <Router>
-          <AppLayout>
-              <AppRoutes />
-          </AppLayout>
+          <SnackbarProvider maxSnack={3}>
+            <AppLayout>
+                <AppRoutes />
+            </AppLayout>
+          </SnackbarProvider>
         </Router>
       </Provider>
     </AuthContextProvider>

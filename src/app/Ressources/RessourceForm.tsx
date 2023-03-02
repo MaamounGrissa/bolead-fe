@@ -1,34 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea } from '@patternfly/react-core';
-import { useAppDispatch } from '@app/store';
+import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea, Grid, GridItem } from '@patternfly/react-core';
+import { useAppDispatch, useAppSelector } from '@app/store';
 import { addRessource, updateRessource } from '@app/store/ressources/ressourceSlice';
+import { initialRessource } from '@app/utils/constant';
+import { useSnackbar } from 'notistack';
+import { axiosInstance } from '@app/network';
 
 export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, save: boolean, close: () => void}> = ({ressource, save, close}) => {
     const dispatch = useAppDispatch();
+    const { enqueueSnackbar } = useSnackbar();
     const [isTypeFilterDropdownOpen, setIsTypeFilterDropdownOpen] = React.useState(false);
     const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
-
-    const [formData, setFormData] = React.useState<IRessource>({
-        id: '',
-        name: '',
-        email: '',
-        phone: '',
-        status: 'Actif',
-        type: 'Technicien',
-        notes: '',
-    });
+    const { ressourceStatus, ressourceTypes } = useAppSelector(state => state.ressources);
+    const [formData, setFormData] = React.useState<IRessource>(initialRessource);
 
     const clearForm = () => {
-        setFormData({
-            id: '',
-            name: '',
-            email: '',
-            phone: '',
-            status: 'Actif',
-            type: 'Technicien',
-            notes: '',
-        });
+        setFormData(initialRessource);
     };
 
     React.useEffect(() => {
@@ -39,12 +27,106 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
         }
     }, [ressource]);
 
+    // Ressource DTO
+
+    /* {
+        "team": {
+            "id": 1
+        },
+        "status": {
+            "id": 1
+        },
+        "contact": {
+            "firstName": "Mammoun",
+            "lastName": "grissa",
+            "email": "maamoun@grissa",
+            "phone": 648526532,
+            "address": {
+            "street": "34 Rue Auber",
+            "streetLine2": "App 34",
+            "city": "Paris",
+            "postcode": 75001,
+            "country": "France"
+            }
+        }
+    } */
+
+    const addRessourceRequest = async (RessourceForm: any) => {
+        await axiosInstance.post('members', RessourceForm).then((response) => {
+            enqueueSnackbar('Ressource ajouté avec succès', {
+                variant: 'success',
+            });
+            return response;
+        }).catch((error) => {
+            enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
+                variant: 'error',
+            });
+        });
+    };
+
+    const editRessourceRequest = async (RessourceForm: any) => {
+        await axiosInstance.put('members/' + formData.id, RessourceForm).then((response) => {
+            enqueueSnackbar('Ressource modifié avec succès', {
+                variant: 'success',
+            });
+            return response;
+        }).catch((error) => {
+            enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
+                variant: 'error',
+            });
+        });
+    };
+
     React.useEffect(() => {
         if (save) {
             setTimeout(() => {
                 if (formData.id === '') {
+                    const newRessource = {
+                        team: {
+                            id: formData.type,
+                        },
+                        status: {
+                            id: formData.status,
+                        },
+                        contact: {
+                            firstName: formData.firstName,
+                            lastName: formData.lastName,
+                            email: formData.email,
+                            phone: formData.phone,
+                            address: {
+                                street: formData.notes,
+                                streetLine2: '',
+                                city: '',
+                                postcode: '',
+                                country: 'France',
+                            }
+                        }
+                    }
+                    addRessourceRequest(newRessource);
                     dispatch(addRessource(formData));
                 } else {
+                    const newRessource = {
+                        team: {
+                            id: formData.type,
+                        },
+                        status: {
+                            id: formData.status,
+                        },
+                        contact: {
+                            firstName: formData.firstName,
+                            lastName: formData.lastName,
+                            email: formData.email,
+                            phone: formData.phone,
+                            address: {
+                                street: '',
+                                streetLine2: '',
+                                city: '',
+                                postcode: '',
+                                country: 'France',
+                            }
+                        }
+                    }
+                    editRessourceRequest(newRessource);
                     dispatch(updateRessource(formData));
                 }
                 close()
@@ -53,33 +135,17 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [save]);
 
-    const statusList = [
-        "Actif",
-        "Inactif",
-        "Supprimé",
-    ];
-
-    const typeList= [
-        "Technicien",
-        "Commercial",
-        "Comptable",
-        "Administrateur",
-    ]
-
-    const typeMenuItems = typeList.map((type) => (
-        <SelectOption key={type} value={type} />
+    const typeMenuItems = ressourceTypes?.map((type) => (
+        <SelectOption key={type.id} value={type.id}>
+            {type.name}
+        </SelectOption>
     ));
 
-    const statusMenuItems = statusList.map((status) => (
-        <SelectOption key={status} value={status} />
+    const statusMenuItems = ressourceStatus?.map((status) => (
+        <SelectOption key={status.id} value={status.id}>
+            {status.name}
+        </SelectOption>
     ));
-
-    const handleNameInputChange = (value: string) => {
-        setFormData({
-            ...formData,
-            name: value,
-        });
-    };
 
     const handleEmailInputChange = (value: string) => {
         setFormData({
@@ -123,20 +189,41 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     return (
         <React.Fragment>
             <Form id="modal-with-form-form">
-                <FormGroup
-                    label="Nom et prénom"
-                    isRequired
-                    fieldId="modal-with-form-form-name"
-                >
-                    <TextInput
-                    isRequired
-                    type="text"
-                    id="modal-with-form-form-name"
-                    name="modal-with-form-form-name"
-                    value={formData.name}
-                    onChange={handleNameInputChange}
-                    />
-                </FormGroup>
+                <Grid hasGutter>
+                    <GridItem span={6}>
+                        <FormGroup
+                            label="Prénom"
+                            isRequired
+                            fieldId="modal-with-form-form-firstName"
+                        >
+                            <TextInput
+                            isRequired
+                            type="text"
+                            id="modal-with-form-form-firstName"
+                            name="modal-with-form-form-name"
+                            value={formData.firstName}
+                            onChange={(value) => setFormData({...formData, firstName: value})}
+                            />
+                        </FormGroup>
+                    </GridItem>
+                    <GridItem span={6}>
+                        <FormGroup
+                            label="Nom"
+                            isRequired
+                            fieldId="modal-with-form-form-lastName"
+                        >
+                            <TextInput
+                            isRequired
+                            type="text"
+                            id="modal-with-form-form-lastName"
+                            name="modal-with-form-form-lastName"
+                            value={formData.lastName}
+                            onChange={(value) => setFormData({...formData, lastName: value})}
+                            />
+                        </FormGroup>
+                    </GridItem>
+                </Grid>
+                
                 <FormGroup
                     label="Email"
                     isRequired

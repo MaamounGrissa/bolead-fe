@@ -19,7 +19,10 @@ import { UpdateRessource } from './UpdateRessource';
 import { DeleteRessource } from './DeleteRessource';
 import { RessourcesFilter } from './RessourcesFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getRessources } from '@app/store/ressources/ressourceSlice';
+import { getRessourceStatus, getRessourceTypes, getRessources } from '@app/store/ressources/ressourceSlice';
+import { initialRessource } from '@app/utils/constant';
+import { axiosInstance } from '@app/network';
+import { useSnackbar } from 'notistack';
 
 const columnNames = {
   name: 'Nom et Prénom',
@@ -34,37 +37,74 @@ export const RessourcesTable: React.FunctionComponent<{
     openCreateRessource: boolean, 
     setOpenCreateRessource: () => void
 }> = (props) => {
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useAppDispatch();
-    const { ressources } = useAppSelector(state => state.ressources)
+    const { ressources, ressourceStatus, ressourceTypes } = useAppSelector(state => state.ressources)
     const [filtredData, setFiltredData] = React.useState<IRessource[]>([]);
+    const [page, setPage] = React.useState(0);
+    const [size, setSize] = React.useState(100);
     const {openCreateRessource, setOpenCreateRessource} = props;
     const [openUpdateRessource, setOpenUpdateRessource] = React.useState(false);
     const [openDeleteRessource, setOpenDeleteRessource] = React.useState(false);
-    const [selectedRessource, setSelectedRessource] = React.useState<IRessource>({
-        id: '',
-        name: '',
-        email: '',
-        phone: '',
-        notes: '',
-        status: '',
-        type: ''
-    });
+    const [selectedRessource, setSelectedRessource] = React.useState<IRessource>(initialRessource);
+
+    const fetchRessourceStatus = async () => {
+        await axiosInstance.get(`referentiel-member-statuses`).then(response => {
+            dispatch(getRessourceStatus(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    const fetchRessourceTypes = async () => {
+        await axiosInstance.get(`teams`).then(response => {
+            dispatch(getRessourceTypes(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    const fetchRessourcesList = async () => {
+        await axiosInstance.get(`members`, {
+            params: {
+                page: page,
+                size: size,
+                sort: 'createdAt,desc',
+            },
+        }).then(response => {
+            dispatch(getRessources(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
 
     React.useEffect(() => {
-        dispatch(getRessources());
+        fetchRessourceStatus();
+        fetchRessourceTypes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
+    React.useEffect(() => {
+        fetchRessourcesList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, size]);
 
-    const renderLabel = (labelText: string) => {
+
+    const renderLabel = (labelText: number) => {
         switch (labelText) {
-        case 'Actif':
-            return <Label color="green">{labelText}</Label>;
-        case 'Inactif':
-            return <Label color="orange">{labelText}</Label>;
-        case 'Supprimer':
-            return <Label color="red">{labelText}</Label>;
+        case 1:
+            return <Label color="blue">{ressourceStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 2:
+            return <Label color="green">{ressourceStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 3:
+            return <Label color="orange">{ressourceStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 4:
+            return <Label color="red">{ressourceStatus?.find(stat => stat.id === labelText)?.name}</Label>;
         default:
-            return <Label color="orange">{labelText}</Label>;
+            return <Label color="orange">Indéfinie</Label>;
         }
     };
 
@@ -110,6 +150,10 @@ export const RessourcesTable: React.FunctionComponent<{
             <RessourcesFilter 
                 ressources={ressources} 
                 filterData={(data: IRessource[]) => setFiltredData(data)} 
+                page={page}
+                handleSetPage={(page: number) => setPage(page)}
+                size={size}
+                handleSetSize={(size: number) => setSize(size)}
             />
             <TableComposable aria-label="Selectable table">
                 <Thead>
@@ -127,9 +171,9 @@ export const RessourcesTable: React.FunctionComponent<{
                     filtredData.map(repo => {
                         const actionsRow: IAction[] | null = actions(repo);
                         return (
-                        <Tr key={repo.name}>
+                        <Tr key={repo.id}>
                             <Td dataLabel={columnNames.name} modifier="truncate">
-                            {repo.name}
+                            {repo.firstName} {repo.lastName}
                             </Td>
                             <Td dataLabel={columnNames.email} modifier="truncate">
                             {repo.email}
@@ -138,7 +182,7 @@ export const RessourcesTable: React.FunctionComponent<{
                             {repo.phone}
                             </Td>
                             <Td dataLabel={columnNames.type} modifier="truncate">
-                            {repo.type}
+                            {ressourceTypes?.find(type => type.id === repo.type)?.name}
                             </Td>
                             <Td dataLabel={columnNames.status} modifier="truncate">
                             {renderLabel(repo.status)}
@@ -149,7 +193,7 @@ export const RessourcesTable: React.FunctionComponent<{
                             <Td isActionCell>
                                 <ActionsColumn
                                 items={actionsRow}
-                                isDisabled={repo.name === '4'} // Also arbitrary for the example
+                                //isDisabled={repo.name === '4'} // Also arbitrary for the example
                                 //actionsToggle={exampleChoice === 'customToggle' ? customActionsToggle : undefined}
                                 />
                             </Td>

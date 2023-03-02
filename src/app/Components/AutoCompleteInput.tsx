@@ -17,9 +17,11 @@ interface IAutoCompleteInputData {
 export const AutoCompleteInput: React.FunctionComponent<{
   optionsData: IAutoCompleteInputData[],
   setSelectedId: (id: string) => void,
+  selectedId: string
 }> = ({
   optionsData,
-  setSelectedId
+  setSelectedId,
+  selectedId
 }) => {
   const [value, setValue] = React.useState('');
   const [hint, setHint] = React.useState('');
@@ -32,6 +34,12 @@ export const AutoCompleteInput: React.FunctionComponent<{
   const onClear = () => {
     setValue('');
   };
+
+  console.log('selectedId', selectedId)
+
+  React.useEffect(() => {
+    setValue(optionsData.find((option) => option.id === selectedId)?.name || '');
+  }, [selectedId, optionsData]);
   
   const onChange = (newValue: string) => {
     if (newValue !== '' && searchInputRef && searchInputRef.current && searchInputRef.current.contains(document.activeElement)) {
@@ -56,7 +64,6 @@ export const AutoCompleteInput: React.FunctionComponent<{
       setIsAutocompleteOpen(false);
     }
     setValue(optionsData.find((option) => option.id === newValue)?.name || newValue);
-    setSelectedId(newValue);
   };
   
   // Whenever an autocomplete option is selected, set the search input value, close the menu, and put the browser
@@ -64,6 +71,7 @@ export const AutoCompleteInput: React.FunctionComponent<{
   const onSelect = (e, itemId) => {
     e.stopPropagation();
     setValue(optionsData.find((option) => option.id === itemId)?.name || itemId);
+    setSelectedId(itemId);
     setIsAutocompleteOpen(false);
     searchInputRef.current.focus();
   };

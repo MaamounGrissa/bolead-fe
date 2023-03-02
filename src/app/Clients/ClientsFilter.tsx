@@ -17,15 +17,21 @@ import {
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import { useAppSelector } from '@app/store';
 
 export const ClientsFilter: React.FunctionComponent<{
   clients: IClient[], 
-  filterData: (data: IClient[]) => void
+  filterData: (data: IClient[]) => void,
+  page: number,
+  handleSetPage: (page: number) => void,
+  size: number,
+  handleSetSize: (size: number) => void,
 }> = (props) => {
-    const { clients, filterData } = props;
+    const { clients, filterData, page, handleSetPage, size, handleSetSize } = props;
     // Set up repo filtering
     const [searchValue, setSearchValue] = React.useState('');
     const [statusSelection, setStatusSelection] = React.useState('');
+    const { clientStatus } = useAppSelector(state => state.clients)
 
   const onSearchChange = (value: string) => {
     setSearchValue(value);
@@ -39,10 +45,10 @@ export const ClientsFilter: React.FunctionComponent<{
     } catch (err) {
       searchValueInput = new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     }
-    const matchesSearchValue = repo.name.search(searchValueInput) >= 0;
+    const matchesSearchValue = repo.firstName.search(searchValueInput) >= 0 || repo.lastName.search(searchValueInput) >= 0;
 
     // Search status with status selection
-    const matchesStatusValue = repo.status.toLowerCase() === statusSelection.toLowerCase();
+    const matchesStatusValue = repo.status === parseInt(statusSelection);
 
     return (
       (searchValue === '' || matchesSearchValue) &&
@@ -136,10 +142,11 @@ export const ClientsFilter: React.FunctionComponent<{
     <Menu ref={statusMenuRef} id="attribute-search-status-menu" onSelect={onStatusSelect} selected={statusSelection}>
       <MenuContent>
         <MenuList>
-          <MenuItem itemId="Actif">Actif</MenuItem>
-          <MenuItem itemId="Prospet">Prospet</MenuItem>
-          <MenuItem itemId="Expire">Expire</MenuItem>
-          <MenuItem itemId="Supprimer">Supprimer</MenuItem>
+          {
+            clientStatus.map((status, index) => (
+              <MenuItem key={index} itemId={status.id}>{status.name}</MenuItem>
+            ))
+          }
         </MenuList>
       </MenuContent>
     </Menu>
@@ -250,8 +257,10 @@ export const ClientsFilter: React.FunctionComponent<{
       titles={{ paginationTitle: 'Pagination' }}
       perPageComponent="button"
       itemCount={clients.length}
-      perPage={10}
-      page={1}
+      perPage={size}
+      onPerPageSelect={(_ev, perPage) => handleSetSize(perPage)}
+      page={page}
+      onSetPage={(_ev, page) => handleSetPage(page)}
       widgetId="attribute-search-mock-pagination"
       isCompact
     />

@@ -19,15 +19,16 @@ import { UpdateClient } from './UpdateClient';
 import { DeleteClient } from './DeleteClient';
 import { ClientsFilter } from './ClientsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getClients } from '@app/store/clients/clientSlice';
-import axios from 'axios';
+import { getClients, getClientStatus } from '@app/store/clients/clientSlice';
 import { axiosInstance } from '@app/network';
+import { initialClient } from '@app/utils/constant';
+import { useSnackbar } from 'notistack';
 
 const columnNames = {
   name: 'Nom et Prénom',
   email: 'Email',
   phone: 'Téléphone',
-  notes: 'Notes',
+  address: 'Adresse',
   status: 'Status',
 };
 
@@ -35,46 +36,62 @@ export const ClientsTable: React.FunctionComponent<{
     openCreateClient: boolean, 
     setOpenCreateClient: () => void
 }> = (props) => {
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useAppDispatch();
-    const { clients } = useAppSelector(state => state.clients)
+    const { clients, clientStatus } = useAppSelector(state => state.clients)
     const [filtredData, setFiltredData] = React.useState<IClient[]>([]);
+    const [page, setPage] = React.useState(0);
+    const [size, setSize] = React.useState(100);
     const {openCreateClient, setOpenCreateClient} = props;
     const [openUpdateClient, setOpenUpdateClient] = React.useState(false);
     const [openDeleteClient, setOpenDeleteClient] = React.useState(false);
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
-    const [selectedClient, setSelectedClient] = React.useState<IClient>({
-        id: '',
-        name: '',
-        email: '',
-        phone: '',
-        notes: '',
-        status: '',
-    });
+    const [selectedClient, setSelectedClient] = React.useState<IClient>(initialClient);
 
+    const fetchClientStatus = async () => {
+        await axiosInstance.get(`referentiel-customer-statuses`).then(response => {
+            dispatch(getClientStatus(response.data));
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
 
-    const fetchData = async () => {
-        const data = await axiosInstance.get(`${BASE_URL}api/referentiel-customer-statuses`);
-        console.log(data);
+    const fetchClientList = async () => {
+        await axiosInstance.get(`customers`, {
+            params: {
+                page: page,
+                size: size,
+                sort: 'createdAt,desc',
+            },
+        }).then(response => {
+            dispatch(getClients(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
     };
 
     React.useEffect(() => {
-        fetchData();
-        dispatch(getClients());
+        fetchClientStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
+    React.useEffect(() => {
+        fetchClientList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, size]);
 
-    const renderLabel = (labelText: string) => {
+    const renderLabel = (labelText: number) => {
         switch (labelText) {
-        case 'Actif':
-            return <Label color="green">{labelText}</Label>;
-        case 'Prospet':
-            return <Label color="blue">{labelText}</Label>;
-        case 'Expire':
-            return <Label color="orange">{labelText}</Label>;
-        case 'Supprimer':
-            return <Label color="red">{labelText}</Label>;
+        case 1:
+            return <Label color="blue">{clientStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 2:
+            return <Label color="green">{clientStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 3:
+            return <Label color="orange">{clientStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 4:
+            return <Label color="red">{clientStatus?.find(stat => stat.id === labelText)?.name}</Label>;
         default:
-            return <Label color="orange">{labelText}</Label>;
+            return <Label color="orange">Indéfinie</Label>;
         }
     };
 
@@ -119,7 +136,12 @@ export const ClientsTable: React.FunctionComponent<{
         <React.Fragment>
             <ClientsFilter 
                 clients={clients} 
-                filterData={(data: IClient[]) => setFiltredData(data)} 
+                filterData={(data: IClient[]) => setFiltredData(data)}
+                page={page}
+                handleSetPage={(page: number) => setPage(page)}
+                size={size}
+                handleSetSize={(size: number) => setSize(size)}
+
             />
             <TableComposable aria-label="Selectable table">
                 <Thead>
@@ -127,8 +149,8 @@ export const ClientsTable: React.FunctionComponent<{
                     <Th width={20}>{columnNames.name}</Th>
                     <Th width={10}>{columnNames.email}</Th>
                     <Th width={10}>{columnNames.phone}</Th>
-                    <Th width={15}>{columnNames.status}</Th>
-                    <Th width={20}>{columnNames.notes}</Th>
+                    <Th width={15} textCenter>{columnNames.status}</Th>
+                    <Th width={20}>{columnNames.address}</Th>
                 </Tr>
                 </Thead>
                 <Tbody>
@@ -136,9 +158,9 @@ export const ClientsTable: React.FunctionComponent<{
                     filtredData.map(repo => {
                         const actionsRow: IAction[] | null = actions(repo);
                         return (
-                        <Tr key={repo.name}>
+                        <Tr key={repo.firstName}>
                             <Td dataLabel={columnNames.name} modifier="truncate">
-                            {repo.name}
+                            {repo.firstName} {repo.lastName}
                             </Td>
                             <Td dataLabel={columnNames.email} modifier="truncate">
                             {repo.email}
@@ -146,16 +168,16 @@ export const ClientsTable: React.FunctionComponent<{
                             <Td dataLabel={columnNames.phone} modifier="truncate">
                             {repo.phone}
                             </Td>
-                            <Td dataLabel={columnNames.status} modifier="truncate">
+                            <Td dataLabel={columnNames.status} modifier="truncate" textCenter>
                             {renderLabel(repo.status)}
                             </Td>
-                            <Td dataLabel={columnNames.notes} modifier="truncate">
-                            {repo.notes}
+                            <Td dataLabel={columnNames.address} modifier="truncate">
+                            {repo.address}
                             </Td>
                             <Td isActionCell>
                                 <ActionsColumn
                                 items={actionsRow}
-                                isDisabled={repo.name === '4'} // Also arbitrary for the example
+                                //isDisabled={repo.name === '4'} // Also arbitrary for the example
                                 //actionsToggle={exampleChoice === 'customToggle' ? customActionsToggle : undefined}
                                 />
                             </Td>

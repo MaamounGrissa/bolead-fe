@@ -2,6 +2,7 @@
 import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { RessourceForm } from './RessourceForm';
+import { initialRessource } from '@app/utils/constant';
 
 export const CreateRessource: React.FunctionComponent<{ 
     isOpen: boolean,
@@ -9,15 +10,7 @@ export const CreateRessource: React.FunctionComponent<{
 }> = (props) => {
     const [save, setSave] = React.useState<boolean>(false);
     const { isOpen, close } = props;
-    const ressource: IRessource = {
-        id: '',
-        name: '',
-        email: '',
-        phone: '',
-        status: 'Actif',
-        type: 'Technicien',
-        notes: '',
-    }
+    const ressource: IRessource = initialRessource;
 
     return (
         <React.Fragment>

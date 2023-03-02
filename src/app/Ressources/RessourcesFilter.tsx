@@ -18,16 +18,22 @@ import {
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import { useAppSelector } from '@app/store';
 
 export const RessourcesFilter: React.FunctionComponent<{
   ressources: IRessource[], 
-  filterData: (data: IRessource[]) => void
+  filterData: (data: IRessource[]) => void,
+  page: number,
+  handleSetPage: (page: number) => void,
+  size: number,
+  handleSetSize: (size: number) => void,
 }> = (props) => {
-    const { ressources, filterData } = props;
+    const { ressources, filterData, page, handleSetPage, size, handleSetSize } = props;
     // Set up repo filtering
     const [searchValue, setSearchValue] = React.useState('');
     const [typeSelections, setTypeSelections] = React.useState<string[]>([]);
     const [statusSelection, setStatusSelection] = React.useState('');
+    const { ressourceStatus, ressourceTypes } = useAppSelector(state => state.ressources);
 
   const onSearchChange = (value: string) => {
     setSearchValue(value);
@@ -41,13 +47,13 @@ export const RessourcesFilter: React.FunctionComponent<{
     } catch (err) {
       searchValueInput = new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     }
-    const matchesSearchValue = repo.name.search(searchValueInput) >= 0;
+    const matchesSearchValue = repo.firstName.search(searchValueInput) >= 0 || repo.lastName.search(searchValueInput) >= 0;
 
     // Search status with status selection
-    const matchesStatusValue = repo.status.toLowerCase() === statusSelection.toLowerCase();
+    const matchesStatusValue = repo.status === parseInt(statusSelection);
 
     // Search type with type selections
-    const matchesTypeValue = typeSelections.includes(repo.type);
+    const matchesTypeValue = typeSelections.filter(selection => parseInt(selection) === repo.type)?.length > 0;
 
     return (
       (searchValue === '' || matchesSearchValue) &&
@@ -142,9 +148,11 @@ export const RessourcesFilter: React.FunctionComponent<{
     <Menu ref={statusMenuRef} id="attribute-search-status-menu" onSelect={onStatusSelect} selected={statusSelection}>
       <MenuContent>
         <MenuList>
-          <MenuItem itemId="Actif">Actif</MenuItem>
-          <MenuItem itemId="Inactif">Inactif</MenuItem>
-          <MenuItem itemId="Supprimer">Supprimer</MenuItem>
+          {
+            ressourceStatus?.map((status, index) => (
+              <MenuItem key={index} itemId={status.id}>{status.name}</MenuItem>
+            ))
+          }
         </MenuList>
       </MenuContent>
     </Menu>
@@ -242,18 +250,11 @@ export const RessourcesFilter: React.FunctionComponent<{
     >
       <MenuContent>
         <MenuList>
-          <MenuItem hasCheck isSelected={typeSelections.includes('Technicien')} itemId="Technicien">
-            Technicien
-          </MenuItem>
-          <MenuItem hasCheck isSelected={typeSelections.includes('Commercial')} itemId="Commercial">
-            Commercial
-          </MenuItem>
-          <MenuItem hasCheck isSelected={typeSelections.includes('Comptable')} itemId="Comptable">
-            Comptable
-          </MenuItem>
-          <MenuItem hasCheck isSelected={typeSelections.includes('Administrateur')} itemId="Administrateur">
-            Administrateur
-          </MenuItem>
+          {
+            ressourceTypes?.map((type, index) => (
+              <MenuItem key={index} itemId={type.id}>{type.name}</MenuItem>
+            ))
+          }
         </MenuList>
       </MenuContent>
     </Menu>
@@ -364,8 +365,10 @@ export const RessourcesFilter: React.FunctionComponent<{
       titles={{ paginationTitle: 'Attribute search pagination' }}
       perPageComponent="button"
       itemCount={ressources.length}
-      perPage={10}
-      page={1}
+      perPage={size}
+      onPerPageSelect={(_ev, perPage) => handleSetSize(perPage)}
+      page={page}
+      onSetPage={(_ev, page) => handleSetPage(page)}
       widgetId="attribute-search-mock-pagination"
       isCompact
     />

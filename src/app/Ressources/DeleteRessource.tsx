@@ -2,17 +2,31 @@ import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { useAppDispatch } from '@app/store';
 import { deleteRessource } from '@app/store/ressources/ressourceSlice';
+import { useSnackbar } from 'notistack';
+import { axiosInstance } from '@app/network';
 
 export const DeleteRessource: React.FunctionComponent<{
     isOpen: boolean,
     close: () => void,
     ressource: IRessource
 }> = (props) => {
-    const dispatch = useAppDispatch();
-    const { isOpen, close, ressource } = props;
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
+  const { isOpen, close, ressource } = props;
+
+  const deleteRessourceRequest = async () => {
+    await axiosInstance.delete(`members/${ressource.id}`).then(response => {
+      enqueueSnackbar('Ressource supprimé avec succès', { variant: 'success' });
+      return response;
+    }).catch(error => {
+      enqueueSnackbar('Erreur lors de la suppression du ressource', { variant: 'error' });
+      return error;
+    });
+};
 
     const handleDelete = () => {
         setTimeout(() => {
+            deleteRessourceRequest();
             dispatch(deleteRessource(ressource.id));
             close();
         }, 500);
@@ -35,7 +49,7 @@ export const DeleteRessource: React.FunctionComponent<{
           </Button>
         ]}
       >
-        Vous êtes sur le point de supprimer cette ressource : {ressource.id} - {ressource.name}.
+        Vous êtes sur le point de supprimer cette ressource : {ressource.id} - {ressource.firstName} {ressource.lastName}.
       </Modal>
     </React.Fragment>
   );

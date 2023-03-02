@@ -19,13 +19,15 @@ import { UpdateProjet } from './UpdateProjet';
 import { DeleteProjet } from './DeleteProjet';
 import { ProjetsFilter } from './ProjetsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getProjets } from '@app/store/projets/projetSlice';
+import { getProjetStatus, getProjetTypes, getProjets } from '@app/store/projets/projetSlice';
 import { ProjectsGrid } from './ProjectsGrid';
+import { axiosInstance } from '@app/network';
+import { initialProjet } from '@app/utils/constant';
+import { useSnackbar } from 'notistack';
 
 const columnNames = {
-  name: 'Nom et Prénom',
+  name: 'Référence',
   client: 'Client',
-  ressource: 'Ressource',
   type: 'Type',
   status: 'Status',
   notes: 'Notes',
@@ -36,46 +38,74 @@ export const ProjetsTable: React.FunctionComponent<{
     setOpenCreateProjet: () => void,
     view: string,
 }> = (props) => {
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useAppDispatch();
-    const { projets } = useAppSelector(state => state.projets)
+    const { projets, projetStatus, projetTypes } = useAppSelector(state => state.projets)
     const [filtredData, setFiltredData] = React.useState<IProjet[]>([]);
+    const [page, setPage] = React.useState(0);
+    const [size, setSize] = React.useState(100);
     const {view, openCreateProjet, setOpenCreateProjet} = props;
     const [openUpdateProjet, setOpenUpdateProjet] = React.useState(false);
     const [openDeleteProjet, setOpenDeleteProjet] = React.useState(false);
-    const [selectedProjet, setSelectedProjet] = React.useState<IProjet>({
-        id: '',
-        name: '',
-        client: '',
-        adresse: '',
-        ressource: '',
-        status: 'Nouveau',
-        type: 'Construction',
-        notes: '',
-    });
+    const [selectedProjet, setSelectedProjet] = React.useState<IProjet>(initialProjet);
+
+    const fetchProjetStatus = async () => {
+        await axiosInstance.get(`referentiel-project-statuses`).then(response => {
+            dispatch(getProjetStatus(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    const fetchProjetTypes = async () => {
+        await axiosInstance.get(`referentiel-project-types`).then(response => {
+            dispatch(getProjetTypes(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    const fetchProjetList = async () => {
+        await axiosInstance.get(`projects`, {
+            params: {
+                page: page,
+                size: size,
+                sort: 'createdAt,desc',
+            },
+        }).then(response => {
+            dispatch(getProjets(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
 
     React.useEffect(() => {
-        dispatch(getProjets());
+        fetchProjetStatus();
+        fetchProjetTypes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
+    React.useEffect(() => {
+        fetchProjetList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, size]);
 
-    const renderLabel = (labelText: string) => {
+
+    const renderLabel = (labelText: number) => {
         switch (labelText) {
-        case 'Nouveau':
-            return <Label color="blue">{labelText}</Label>;
-        case 'En cours':
-            return <Label color="green">{labelText}</Label>;
-        case 'En pause':
-            return <Label color="orange">{labelText}</Label>;
-        case 'Terminé':
-            return <Label color="purple">{labelText}</Label>;
-        case 'Annulé':
-            return <Label color="red">{labelText}</Label>;
-        case 'Supprimé':
-            return <Label color="grey">{labelText}</Label>;
+        case 1:
+            return <Label color="blue">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 2:
+            return <Label color="green">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 3:
+            return <Label color="orange">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 4:
+            return <Label color="red">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
         default:
-            return <Label color="grey" 
-                            style={{ marginRight: "5px", marginLeft: "5px"}}
-                    >{labelText}</Label>;
+            return <Label color="orange">Indéfinie</Label>;
         }
     };
 
@@ -121,6 +151,10 @@ export const ProjetsTable: React.FunctionComponent<{
             <ProjetsFilter 
                 projets={projets} 
                 filterData={(data: IProjet[]) => setFiltredData(data)} 
+                page={page}
+                handleSetPage={(page: number) => setPage(page)}
+                size={size}
+                handleSetSize={(size: number) => setSize(size)}
             />
             {
                 view === 'TABLE' ? (
@@ -129,7 +163,6 @@ export const ProjetsTable: React.FunctionComponent<{
                     <Tr>
                         <Th width={20}>{columnNames.name}</Th>
                         <Th width={15}>{columnNames.client}</Th>
-                        <Th width={25}>{columnNames.ressource}</Th>
                         <Th width={15}>{columnNames.type}</Th>
                         <Th width={15}>{columnNames.status}</Th>
                         <Th width={15}>{columnNames.notes}</Th>
@@ -147,13 +180,8 @@ export const ProjetsTable: React.FunctionComponent<{
                                 <Td dataLabel={columnNames.client} modifier="truncate">
                                 {repo.client}
                                 </Td>
-                                <Td dataLabel={columnNames.ressource} modifier="truncate">
-                                    <span>
-                                        {renderLabel(repo.ressource)}
-                                    </span>
-                                </Td>
                                 <Td dataLabel={columnNames.type} modifier="truncate">
-                                {repo.type}
+                                    {projetTypes?.find(type => type.id === repo.type)?.name}
                                 </Td>
                                 <Td dataLabel={columnNames.status} modifier="truncate">
                                 {renderLabel(repo.status)}

@@ -1,39 +1,36 @@
+import { initialProjet } from "@app/utils/constant";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: ProjetState = {
-    projet: {
-        id: '',
-        name: '',
-        client: '',
-        adresse: '',
-        type: '',
-        status: '',
-        notes: '',
-        ressource: ''
-    },
-    projets: [
-        {id: 'IX1', name: 'Immeuble X1', client: 'xx1', adresse: 'Tunis', type: 'Construction', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX2', name: 'Immeuble X2', client: 'xx2', adresse: 'Tunis', type: 'Construction', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX3', name: 'Immeuble X3', client: 'xx3', adresse: 'Tunis', type: 'Peinture', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX4', name: 'Immeuble X4', client: 'xx4', adresse: 'Tunis', type: 'Peinture', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX5', name: 'Immeuble X5', client: 'xx5', adresse: 'Tunis', type: 'Peinture', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX6', name: 'Immeuble X6', client: 'xx6', adresse: 'Tunis', type: 'Construction', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX7', name: 'Immeuble X7', client: 'xx7', adresse: 'Tunis', type: 'Construction', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX8', name: 'Immeuble X8', client: 'xx8', adresse: 'Tunis', type: 'Construction', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX9', name: 'Immeuble X9', client: 'xx9', adresse: 'Tunis', type: 'Construction', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX10', name: 'Immeuble X10', client: 'xx10', adresse: 'Tunis', type: 'Electricité', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX12', name: 'Immeuble X12', client: 'xx12', adresse: 'Tunis', type: 'Electricité', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX13', name: 'Immeuble X13', client: 'xx13', adresse: 'Tunis', type: 'Plomberie', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-        {id: 'IX14', name: 'Immeuble X14', client: 'xx14', adresse: 'Tunis', type: 'Plomberie', status: 'En cours', notes: 'Lorem text, test lorem text', ressource: 'xx1'},
-    ],
+    projet: initialProjet,
+    projets: [],
+    projetStatus: [{
+        id: 0,
+        name: 'Sélectionner un status'
+    }],
+    projetTypes: [{
+        id: 0,
+        name: 'Sélectionner un type'
+    }]
 };
 
 export const projetSlice = createSlice({
     name: 'projet',
     initialState,
     reducers: {
-        getProjets: (state) => {
-            state.projets = initialState.projets;
+        getProjets: (state, action: PayloadAction<IProjetAPI[]>) => {
+            state.projets = action.payload?.map((projet) => {
+                return {
+                    id: projet.uuid || '',
+                    name: projet.reference || '',
+                    clientName: `${projet.customer?.contact?.firstName} ${projet.customer?.contact?.lastName}` || '',
+                    clientId: projet.customer?.uuid || '',
+                    adresse: projet.customer?.contact?.address?.street || '',
+                    type: projet.referentielProjectTypes[0]?.id || 0,
+                    status: projet.status?.id|| 0,
+                    notes: projet.tags || '',
+                };
+            });
         },
         getProjet: (state, action: PayloadAction<string>) => {
             const index = state.projets.findIndex(projet => projet.id === action.payload);
@@ -49,9 +46,19 @@ export const projetSlice = createSlice({
         deleteProjet: (state, action: PayloadAction<string>) => {
             const index = state.projets.findIndex(projet => projet.id === action.payload);
             state.projets.splice(index, 1);
-        }
+        },
+        getProjetStatus: (state, action: PayloadAction<IProjetStatusAPI[]>) => {
+            state.projetStatus = action.payload.map((status) => {
+                return {id: status.id, name: status.status};
+            });
+        },
+        getProjetTypes: (state, action: PayloadAction<IProjetTypesAPI[]>) => {
+            state.projetTypes = action.payload.map((type) => {
+                return {id: type.id, name: type.type};
+            });
+        },
     }
 });
 
-export const { getProjets, getProjet, addProjet, updateProjet, deleteProjet } = projetSlice.actions;
+export const { getProjets, getProjet, addProjet, updateProjet, deleteProjet, getProjetStatus, getProjetTypes } = projetSlice.actions;
 export default projetSlice.reducer;

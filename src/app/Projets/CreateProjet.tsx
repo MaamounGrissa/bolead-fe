@@ -2,6 +2,7 @@
 import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { ProjetForm } from './ProjetForm';
+import { initialProjet } from '@app/utils/constant';
 
 export const CreateProjet: React.FunctionComponent<{ 
     isOpen: boolean,
@@ -9,16 +10,7 @@ export const CreateProjet: React.FunctionComponent<{
 }> = (props) => {
     const [save, setSave] = React.useState<boolean>(false);
     const { isOpen, close } = props;
-    const projet: IProjet = {
-        id: '',
-        name: '',
-        client: '',
-        adresse: '',
-        ressource: '',
-        status: 'Nouveau',
-        type: 'Construction',
-        notes: '',
-    }
+    const projet: IProjet = initialProjet
 
     return (
         <React.Fragment>

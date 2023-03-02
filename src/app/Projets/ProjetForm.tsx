@@ -2,62 +2,142 @@
 import React from 'react';
 import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getRessources } from '@app/store/ressources/ressourceSlice';
 import { addProjet, updateProjet } from '@app/store/projets/projetSlice';
-import { getClients } from '@app/store/clients/clientSlice';
+import { getClientsList } from '@app/store/clients/clientSlice';
 import { AutoCompleteInput } from '@app/Components/AutoCompleteInput';
-import { Autocomplete } from '@react-google-maps/api';
+import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
+import { initialProjet } from '@app/utils/constant';
+import { axiosInstance } from '@app/network';
+import { useSnackbar } from 'notistack';
+import { HashLoader } from 'react-spinners';
 
 export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolean, close: () => void}> = ({projet, save, close}) => {
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useAppDispatch();
+    const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: googleKey,
+        libraries: ['places'],
+    })
+
+    const options = {
+        componentRestrictions: { country: "fr" },
+    };
+     /** @type React.MutableRefObject<HTMLInputElement> */
+     const addressRef: React.MutableRefObject<any> = React.useRef()
     const [isTypeFilterDropdownOpen, setIsTypeFilterDropdownOpen] = React.useState(false);
     const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
-    const { clients } = useAppSelector(state => state.clients);
+    const { clientsList } = useAppSelector(state => state.clients);
+    const { projetStatus, projetTypes } = useAppSelector(state => state.projets);
     //const { ressources } = useAppSelector(state => state.ressources);
 
-    const [formData, setFormData] = React.useState<IProjet>({
-        id: '',
-        name: '',
-        client: '',
-        adresse: '',
-        ressource: '',
-        status: 'Nouveau',
-        type: 'construction',
-        notes: '',
-    });
+    const [formData, setFormData] = React.useState<IProjet>(initialProjet);
 
     const clearForm = () => {
-        setFormData({
-            id: '',
-            name: '',
-            client: '',
-            adresse: '',
-            ressource: '',
-            status: 'Nouveau',
-            type: 'construction',
-            notes: '',
+        setFormData(initialProjet);
+    };
+
+    const fetchClientList = async () => {
+        await axiosInstance.get(`customers`).then((res) => {
+            dispatch(getClientsList(res.data));
+        }).catch((err) => {
+            console.log(err);
         });
     };
 
     React.useEffect(() => {
-        dispatch(getClients());
-        dispatch(getRessources());
+        fetchClientList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
     React.useEffect(() => {
-        if (projet) {
+        if (projet.id?.length > 0) {
             setFormData(projet);
         } else {
             clearForm();
         }
     }, [projet]);
 
+    // Projet DTO
+
+    /* reference: string
+    tags: string
+    status: {
+        id: number
+    },
+    referentielProjectTypes: [
+        {
+            id: number
+        }
+    ],
+    customer: {
+        uuid: string
+    } */
+
+    const addProjetRequest = async (ProjetForm: any) => {
+        await axiosInstance.post('projects', ProjetForm).then((response) => {
+            enqueueSnackbar('Projet ajouté avec succès', {
+                variant: 'success',
+            });
+            return response;
+        }).catch((error) => {
+            enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
+                variant: 'error',
+            });
+        });
+    };
+
+    const editProjetRequest = async (ProjetForm: any) => {
+        await axiosInstance.put('projects/' + formData.id, ProjetForm).then((response) => {
+            enqueueSnackbar('Projet modifié avec succès', {
+                variant: 'success',
+            });
+            return response;
+        }).catch((error) => {
+            enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
+                variant: 'error',
+            });
+        });
+    };
+
     React.useEffect(() => {
         if (save) {
             setTimeout(() => {
                 if (formData.id === '') {
+                    const newProjet = {
+                        reference: formData.name,
+                        tags: formData.notes,
+                        status: {
+                            id: formData.status,
+                        },
+                        referentielProjectTypes: [
+                            {
+                                id: formData.type,
+                            }
+                        ],
+                        customer: {
+                            uuid: formData.clientId,
+                        }
+                    };
+                    addProjetRequest(newProjet);
                     dispatch(addProjet(formData));
                 } else {
+                    const updatedProjet = {
+                        reference: formData.name,
+                        tags: formData.notes,
+                        status: {
+                            id: formData.status,
+                        },
+                        referentielProjectTypes: [
+                            {
+                                id: formData.type,
+                            }
+                        ],
+                        customer: {
+                            uuid: formData.clientId,
+                        }
+                    };
+                    editProjetRequest(updatedProjet);
                     dispatch(updateProjet(formData));
                 }
                 close()
@@ -66,28 +146,16 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [save]);
 
-    const statusList = [
-        "Nouveau",
-        "En cours",
-        "En pause",
-        "Terminé",
-        "Annulé",
-        "Supprimé",
-    ];
-
-    const typeList= [
-        "Construction",
-        "Peinture",
-        "Electricité",
-        "Plomberie",
-    ]
-
-    const typeMenuItems = typeList.map((type) => (
-        <SelectOption key={type} value={type} />
+    const typeMenuItems = projetTypes?.map((type) => (
+        <SelectOption key={type.id} value={type.id}>
+            {type.name}
+        </SelectOption>
     ));
 
-    const statusMenuItems = statusList.map((status) => (
-        <SelectOption key={status} value={status} />
+    const statusMenuItems = projetStatus?.map((status) => (
+        <SelectOption key={status.id} value={status.id}>
+            {status.name}
+        </SelectOption>
     ));
 
     const handleNameInputChange = (value: string) => {
@@ -129,6 +197,18 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
         setIsStatusFilterDropdownOpen(false);
     };
 
+    if (!isLoaded) {
+        return <div className="loading-spinner">
+        <HashLoader
+          color="#444"
+          loading={true}
+          size={50}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+    </div>
+    }
+
     return (
         <React.Fragment>
             <Form id="modal-with-form-form">
@@ -151,15 +231,20 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                     isRequired
                     fieldId="modal-with-form-form-client"
                 >
-                    <AutoCompleteInput optionsData={clients} setSelectedId={(id: string) => setFormData({ ...formData, ressource: id })} />
+                    <AutoCompleteInput 
+                        optionsData={clientsList}
+                        setSelectedId={(id: string) => setFormData({ ...formData, clientId: id })} 
+                        selectedId={formData.clientId}
+                        />
                 </FormGroup>
                 <FormGroup
                     label="Adresse de projet"
                     isRequired
                     fieldId="modal-with-form-form-adresse"
                 >
-                    <Autocomplete>
+                    <Autocomplete options={options} onPlaceChanged={() => setFormData({ ...formData, adresse: addressRef.current?.value})} >
                         <TextInput
+                            ref={addressRef}
                             isRequired
                             type="tel"
                             id="modal-with-form-form-adresse"

@@ -3,23 +3,20 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 const initialState: ClientState = {
     client: {
         id: '',
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',  
         phone: '',
-        status: 'Prospect',
+        status: 1,
         notes: '',
+        address: '',
     },
-    clients: [
-        {id: 'xx1', name: 'Maamoun Grissa', email: 'maamoun.grissa@creo.tn', phone: '101010101', notes: 'Lorem text, test lorem text', status: 'Supprimer'},
-        {id: 'xx2',  name: 'Bilel Grissa', email: 'bilel.grissa@creo.tn', phone: '101010102', notes: 'Lorem text, test lorem text', status: 'Actif'},
-        {id: 'xx3',  name: 'Faycel Yousfi', email: 'faycel.yousfi@creo.tn', phone: '101010103', notes: 'Lorem text, test lorem text', status: 'Inactif'},
-        {id: 'xx4',  name: 'Achref Mtir', email: 'achref.mtir@creo.tn', phone: '101010104', notes: 'Lorem text, test lorem text, Lorem text, test lorem text', status: 'Actif'},
-        {id: 'xx5',  name: 'Sourour Ben salah', email: 'sourour.bensalah@creo.tn', phone: '101010105', notes: 'Lorem text, test lorem text', status: 'Actif'},
-        {id: 'xx6',  name: 'Fedi Mtir', email: 'fedi.mtir@creo.tn', phone: '20', notes: 'Lorem text, test lorem text', status: 'Supprimer'},
-        {id: 'xx7',  name: 'Syrine ben salah', email: 'syrine.bensalah@creo.tn', phone: '101010107', notes: 'Lorem text', status: 'Actif'},
-        {id: 'xx8',  name: 'Haroun Grissa', email: '3', phone: 'haroun.grissa@creo.tn', notes: 'Lorem text, test lorem text', status: 'Actif'},
-        {id: 'xx9',  name: 'test1', email: '1', phone: 'test1@creo.tn', notes: 'Lorem text', status: 'Actif'},
-        {id: 'x10',  name: 'test2', email: '1', phone: 'test2@creo.tn', notes: 'Lorem text, test lorem text', status: 'Actif'}
+    clients: [],
+    clientStatus: [
+        {id: 0, name: 'Sélectionner le statut'},
+    ],
+    clientsList: [
+        {id: '0', name: 'Sélectionner le client'}
     ],
 };
 
@@ -27,8 +24,19 @@ export const clientSlice = createSlice({
     name: 'client',
     initialState,
     reducers: {
-        getClients: (state) => {
-            state.clients = initialState.clients;
+        getClients: (state, action: PayloadAction<IClientAPI[]>) => {
+            state.clients = action.payload?.map((client) => {
+                return {
+                    id: client.uuid || '', 
+                    firstName: client.contact?.firstName  || '', 
+                    lastName: client.contact?.lastName || '', 
+                    email: client.contact?.email || '', 
+                    phone: client.contact?.phone || '', 
+                    status: client.status?.id || 0,
+                    address: client.contact?.address?.street || '',
+                    notes: '',
+                };
+            });
         },
         getClient: (state, action: PayloadAction<string>) => {
             const index = state.clients.findIndex(client => client.id === action.payload);
@@ -44,9 +52,22 @@ export const clientSlice = createSlice({
         deleteClient: (state, action: PayloadAction<string>) => {
             const index = state.clients.findIndex(client => client.id === action.payload);
             state.clients.splice(index, 1);
+        },
+        getClientStatus: (state, action: PayloadAction<IClientStatusAPI[]>) => {
+            state.clientStatus = action.payload.map((status) => {
+                return {id: status.id, name: status.status};
+            });
+        },
+        getClientsList: (state, action: PayloadAction<IClientAPI[]>) => {
+            state.clientsList = action.payload?.map((client) => {
+                return {
+                    id: client.uuid || '',
+                    name: `${client.contact?.firstName} ${client.contact?.lastName}` || ''
+                };
+            });
         }
     }
 });
 
-export const { getClients, getClient, addClient, updateClient, deleteClient } = clientSlice.actions;
+export const { getClients, getClient, addClient, updateClient, deleteClient, getClientStatus, getClientsList } = clientSlice.actions;
 export default clientSlice.reducer;

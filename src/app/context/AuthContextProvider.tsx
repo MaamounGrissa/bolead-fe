@@ -66,7 +66,7 @@ interface AuthContextProviderProps {
  * @param props
  */
 const AuthContextProvider = (props: AuthContextProviderProps) => {
-  console.log("rendering AuthContextProvider");
+  //console.log("rendering AuthContextProvider");
 
   // Create the local state in which we will keep track if a user is authenticated
   const [isAuthenticated, setAuthenticated] = useState<boolean>(false);

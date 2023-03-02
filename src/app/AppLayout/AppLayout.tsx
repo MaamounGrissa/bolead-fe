@@ -13,6 +13,13 @@ import {
 import { routes, IAppRoute, IAppRouteGroup } from '@app/routes';
 import { AuthContext } from '@app/context/AuthContextProvider';
 //import logo from '@app/bgimages/logo.png';
+import { HashLoader } from 'react-spinners';
+
+const override: React.CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "red",
+};
 
 interface IAppLayout {
   children: React.ReactNode;
@@ -109,7 +116,14 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
 
     const LoadingSpinner = (
       <div className="loading-spinner">
-        <div className="spinner spinner-lg" > Loading ... </div>
+          <HashLoader
+            color="#444"
+            loading={true}
+            cssOverride={override}
+            size={50}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
       </div>
     );
 
