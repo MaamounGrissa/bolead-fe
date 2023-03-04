@@ -3,16 +3,10 @@ import '@patternfly/react-core/dist/styles/base.css';
 import '@app/app.css';
 import { Provider } from 'react-redux';
 import { store } from './store';
-//import AuthContextProvider from './context/AuthContextProvider';
-//import { ReactKeycloakProvider } from "@react-keycloak/web";
-//import keycloak from './utils/keycloak';
-//import Home from './Home/Home';
-//import AuthContextProvider from './context/AuthContextProvider';
 import { SnackbarProvider } from 'notistack';
-//import PrivateRoute from './utils/privateRoute';
 import { ReactKeycloakProvider } from '@react-keycloak/web'
 import keycloak from './utils/keycloak';
-import MyApp from './myApp';
+import MyApp from './MyApp';
 
 const App: React.FunctionComponent = () => {
 
