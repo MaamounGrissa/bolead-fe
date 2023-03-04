@@ -21,9 +21,9 @@ import { ProjetsFilter } from './ProjetsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { getProjetStatus, getProjetTypes, getProjets } from '@app/store/projets/projetSlice';
 import { ProjectsGrid } from './ProjectsGrid';
-import { axiosInstance } from '@app/network';
 import { initialProjet } from '@app/utils/constant';
 import { useSnackbar } from 'notistack';
+import { useAxios } from '@app/network';
 
 const columnNames = {
   name: 'Référence',
@@ -39,6 +39,7 @@ export const ProjetsTable: React.FunctionComponent<{
     view: string,
 }> = (props) => {
     const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
     const { projets, projetStatus, projetTypes } = useAppSelector(state => state.projets)
     const [filtredData, setFiltredData] = React.useState<IProjet[]>([]);
@@ -50,7 +51,7 @@ export const ProjetsTable: React.FunctionComponent<{
     const [selectedProjet, setSelectedProjet] = React.useState<IProjet>(initialProjet);
 
     const fetchProjetStatus = async () => {
-        await axiosInstance.get(`referentiel-project-statuses`).then(response => {
+        await axiosInstance?.current?.get(`referentiel-project-statuses`).then(response => {
             dispatch(getProjetStatus(response.data));
             return;
         }).catch(error => {
@@ -59,7 +60,7 @@ export const ProjetsTable: React.FunctionComponent<{
     };
 
     const fetchProjetTypes = async () => {
-        await axiosInstance.get(`referentiel-project-types`).then(response => {
+        await axiosInstance?.current?.get(`referentiel-project-types`).then(response => {
             dispatch(getProjetTypes(response.data));
             return;
         }).catch(error => {
@@ -68,7 +69,7 @@ export const ProjetsTable: React.FunctionComponent<{
     };
 
     const fetchProjetList = async () => {
-        await axiosInstance.get(`projects`, {
+        await axiosInstance?.current?.get(`projects`, {
             params: {
                 page: page,
                 size: size,

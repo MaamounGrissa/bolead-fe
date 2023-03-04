@@ -81,15 +81,18 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
       try {
         const isAuthenticatedResponse = await keycloak.init(
           keycloakInitOptions
-        );
-
+        ).then(res => {
+          console.log("authenticated", res)
+          return res;
+        });
+        
         if (!isAuthenticatedResponse) {
           console.log(
             "user is not yet authenticated. forwarding user to login."
           );
           keycloak.login();
         }
-        console.log("user already authenticated");
+        console.log("user already authenticated", isAuthenticatedResponse);
         const myToken: any = keycloak.token;
         setToken(myToken);
         localStorage.setItem("token", myToken);

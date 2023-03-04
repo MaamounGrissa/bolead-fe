@@ -1,8 +1,5 @@
 import * as React from 'react';
 import '@patternfly/react-core/dist/styles/base.css';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { AppLayout } from '@app/AppLayout/AppLayout';
-import { AppRoutes } from '@app/routes';
 import '@app/app.css';
 import { Provider } from 'react-redux';
 import { store } from './store';
@@ -10,24 +7,40 @@ import { store } from './store';
 //import { ReactKeycloakProvider } from "@react-keycloak/web";
 //import keycloak from './utils/keycloak';
 //import Home from './Home/Home';
-import AuthContextProvider from './context/AuthContextProvider';
+//import AuthContextProvider from './context/AuthContextProvider';
 import { SnackbarProvider } from 'notistack';
 //import PrivateRoute from './utils/privateRoute';
+import { ReactKeycloakProvider } from '@react-keycloak/web'
+import keycloak from './utils/keycloak';
+import MyApp from './myApp';
 
-const App: React.FunctionComponent = () => (
+const App: React.FunctionComponent = () => {
+
+  const eventLogger = (event: unknown, error: unknown) => {
+    console.log('onKeycloakEvent', event, error)
+  }
+  
+  const tokenLogger = (tokens: unknown) => {
+    console.log('onKeycloakTokens', tokens)
+  }
+
+  return (
   <React.StrictMode>
-    <AuthContextProvider>
+    <ReactKeycloakProvider
+      authClient={keycloak}
+      onEvent={eventLogger}
+      onTokens={tokenLogger}
+      initOptions={{
+        onLoad: 'login-required',
+      }}
+    >
       <Provider store={store}>
-        <Router>
-          <SnackbarProvider maxSnack={3}>
-            <AppLayout>
-                <AppRoutes />
-            </AppLayout>
-          </SnackbarProvider>
-        </Router>
+        <SnackbarProvider maxSnack={3}>
+          <MyApp />
+        </SnackbarProvider>
       </Provider>
-    </AuthContextProvider>
+    </ReactKeycloakProvider>
   </React.StrictMode>
-);
+)};
 
 export default App;

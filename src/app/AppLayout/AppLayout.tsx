@@ -11,22 +11,13 @@ import {
   SkipToContent
 } from '@patternfly/react-core';
 import { routes, IAppRoute, IAppRouteGroup } from '@app/routes';
-import { AuthContext } from '@app/context/AuthContextProvider';
 //import logo from '@app/bgimages/logo.png';
-import { HashLoader } from 'react-spinners';
-
-const override: React.CSSProperties = {
-  display: "block",
-  margin: "0 auto",
-  borderColor: "red",
-};
 
 interface IAppLayout {
   children: React.ReactNode;
 }
 
 const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
-  const authContext = React.useContext(AuthContext);
   const [isNavOpen, setIsNavOpen] = React.useState(true);
   const [isMobileView, setIsMobileView] = React.useState(true);
   const [isNavOpenMobile, setIsNavOpenMobile] = React.useState(false);
@@ -113,23 +104,6 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
       Skip to Content
     </SkipToContent>
   );
-
-    const LoadingSpinner = (
-      <div className="loading-spinner">
-          <HashLoader
-            color="#444"
-            loading={true}
-            cssOverride={override}
-            size={50}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
-      </div>
-    );
-
-    if (!authContext.isAuthenticated) {
-      return LoadingSpinner;
-    }
 
     return (
       <Page

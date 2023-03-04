@@ -3,7 +3,7 @@ import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { useAppDispatch } from '@app/store';
 import { deleteRessource } from '@app/store/ressources/ressourceSlice';
 import { useSnackbar } from 'notistack';
-import { axiosInstance } from '@app/network';
+import { useAxios } from '@app/network';
 
 export const DeleteRessource: React.FunctionComponent<{
     isOpen: boolean,
@@ -11,11 +11,12 @@ export const DeleteRessource: React.FunctionComponent<{
     ressource: IRessource
 }> = (props) => {
   const { enqueueSnackbar } = useSnackbar();
+  const axiosInstance = useAxios();
   const dispatch = useAppDispatch();
   const { isOpen, close, ressource } = props;
 
   const deleteRessourceRequest = async () => {
-    await axiosInstance.delete(`members/${ressource.id}`).then(response => {
+    await axiosInstance?.current?.delete(`members/${ressource.id}`).then(response => {
       enqueueSnackbar('Ressource supprimé avec succès', { variant: 'success' });
       return response;
     }).catch(error => {

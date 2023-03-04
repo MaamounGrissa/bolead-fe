@@ -5,11 +5,12 @@ import { useAppDispatch, useAppSelector } from '@app/store';
 import { addRessource, updateRessource } from '@app/store/ressources/ressourceSlice';
 import { initialRessource } from '@app/utils/constant';
 import { useSnackbar } from 'notistack';
-import { axiosInstance } from '@app/network';
+import { useAxios } from '@app/network';
 
 export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, save: boolean, close: () => void}> = ({ressource, save, close}) => {
     const dispatch = useAppDispatch();
     const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const [isTypeFilterDropdownOpen, setIsTypeFilterDropdownOpen] = React.useState(false);
     const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
     const { ressourceStatus, ressourceTypes } = useAppSelector(state => state.ressources);
@@ -52,7 +53,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     } */
 
     const addRessourceRequest = async (RessourceForm: any) => {
-        await axiosInstance.post('members', RessourceForm).then((response) => {
+        await axiosInstance?.current?.post('members', RessourceForm).then((response) => {
             enqueueSnackbar('Ressource ajouté avec succès', {
                 variant: 'success',
             });
@@ -65,7 +66,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     };
 
     const editRessourceRequest = async (RessourceForm: any) => {
-        await axiosInstance.put('members/' + formData.id, RessourceForm).then((response) => {
+        await axiosInstance?.current?.put('members/' + formData.id, RessourceForm).then((response) => {
             enqueueSnackbar('Ressource modifié avec succès', {
                 variant: 'success',
             });

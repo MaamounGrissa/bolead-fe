@@ -143,4 +143,5 @@ const AppRoutes = (): React.ReactElement => (
   </Switch>
 );
 
+
 export { AppRoutes, routes };

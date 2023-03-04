@@ -7,12 +7,13 @@ import { getClientsList } from '@app/store/clients/clientSlice';
 import { AutoCompleteInput } from '@app/Components/AutoCompleteInput';
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 import { initialProjet } from '@app/utils/constant';
-import { axiosInstance } from '@app/network';
+import { useAxios } from '@app/network';
 import { useSnackbar } from 'notistack';
 import { HashLoader } from 'react-spinners';
 
 export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolean, close: () => void}> = ({projet, save, close}) => {
     const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
     const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
     const { isLoaded } = useJsApiLoader({
@@ -38,7 +39,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
     };
 
     const fetchClientList = async () => {
-        await axiosInstance.get(`customers`).then((res) => {
+        await axiosInstance?.current?.get(`customers`).then((res) => {
             dispatch(getClientsList(res.data));
         }).catch((err) => {
             console.log(err);
@@ -75,7 +76,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
     } */
 
     const addProjetRequest = async (ProjetForm: any) => {
-        await axiosInstance.post('projects', ProjetForm).then((response) => {
+        await axiosInstance?.current?.post('projects', ProjetForm).then((response) => {
             enqueueSnackbar('Projet ajouté avec succès', {
                 variant: 'success',
             });
@@ -88,7 +89,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
     };
 
     const editProjetRequest = async (ProjetForm: any) => {
-        await axiosInstance.put('projects/' + formData.id, ProjetForm).then((response) => {
+        await axiosInstance?.current?.put('projects/' + formData.id, ProjetForm).then((response) => {
             enqueueSnackbar('Projet modifié avec succès', {
                 variant: 'success',
             });

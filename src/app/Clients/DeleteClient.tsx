@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { useAppDispatch } from '@app/store';
 import { deleteClient } from '@app/store/clients/clientSlice';
-import { axiosInstance } from '@app/network';
+import { useAxios } from '@app/network';
 import { useSnackbar } from 'notistack';
 
 export const DeleteClient: React.FunctionComponent<{
@@ -11,11 +11,12 @@ export const DeleteClient: React.FunctionComponent<{
     client: IClient
 }> = (props) => {
     const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
     const { isOpen, close, client } = props;
 
     const deleteClientRequest = async () => {
-        await axiosInstance.delete(`customers/${client.id}`).then(response => {
+        await axiosInstance?.current?.delete(`customers/${client.id}`).then(response => {
           enqueueSnackbar('Client supprimé avec succès', { variant: 'success' });
           return response;
         }).catch(error => {

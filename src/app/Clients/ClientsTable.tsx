@@ -20,9 +20,9 @@ import { DeleteClient } from './DeleteClient';
 import { ClientsFilter } from './ClientsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { getClients, getClientStatus } from '@app/store/clients/clientSlice';
-import { axiosInstance } from '@app/network';
 import { initialClient } from '@app/utils/constant';
 import { useSnackbar } from 'notistack';
+import { useAxios } from '@app/network';
 
 const columnNames = {
   name: 'Nom et Prénom',
@@ -37,6 +37,7 @@ export const ClientsTable: React.FunctionComponent<{
     setOpenCreateClient: () => void
 }> = (props) => {
     const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
     const { clients, clientStatus } = useAppSelector(state => state.clients)
     const [filtredData, setFiltredData] = React.useState<IClient[]>([]);
@@ -48,7 +49,7 @@ export const ClientsTable: React.FunctionComponent<{
     const [selectedClient, setSelectedClient] = React.useState<IClient>(initialClient);
 
     const fetchClientStatus = async () => {
-        await axiosInstance.get(`referentiel-customer-statuses`).then(response => {
+        await axiosInstance?.current?.get(`referentiel-customer-statuses`).then(response => {
             dispatch(getClientStatus(response.data));
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -56,7 +57,7 @@ export const ClientsTable: React.FunctionComponent<{
     };
 
     const fetchClientList = async () => {
-        await axiosInstance.get(`customers`, {
+        await axiosInstance?.current?.get(`customers`, {
             params: {
                 page: page,
                 size: size,

@@ -3,17 +3,18 @@ import React from 'react';
 import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, Grid, GridItem } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { addClient, updateClient } from '@app/store/clients/clientSlice';
-import { axiosInstance } from '@app/network';
 import { useSnackbar } from 'notistack';
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 import { HashLoader } from 'react-spinners';
 import { initialClient } from '@app/utils/constant';
+import { useAxios } from '@app/network';
 
 export const ClientForm: React.FunctionComponent<{ 
     client: IClient, 
     save: boolean, close: () => void
 }> = ({client, save, close}) => {
     const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
     const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
     const { isLoaded } = useJsApiLoader({
@@ -115,7 +116,7 @@ export const ClientForm: React.FunctionComponent<{
     }, [save]);
 
     const addClientRequest = async (clientForm: any) => {
-        await axiosInstance.post('customers', clientForm).then((response) => {
+        await axiosInstance?.current?.post('customers', clientForm).then((response) => {
             enqueueSnackbar('Client ajouté avec succès', {
                 variant: 'success',
             });
@@ -128,7 +129,7 @@ export const ClientForm: React.FunctionComponent<{
     };
 
     const editClientRequest = async (clientForm: any) => {
-        await axiosInstance.put('customers/' + formData.id, clientForm).then((response) => {
+        await axiosInstance?.current?.put('customers/' + formData.id, clientForm).then((response) => {
             enqueueSnackbar('Client modifié avec succès', {
                 variant: 'success',
             });

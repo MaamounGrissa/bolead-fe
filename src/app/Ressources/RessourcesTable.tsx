@@ -21,8 +21,8 @@ import { RessourcesFilter } from './RessourcesFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { getRessourceStatus, getRessourceTypes, getRessources } from '@app/store/ressources/ressourceSlice';
 import { initialRessource } from '@app/utils/constant';
-import { axiosInstance } from '@app/network';
 import { useSnackbar } from 'notistack';
+import { useAxios } from '@app/network';
 
 const columnNames = {
   name: 'Nom et Prénom',
@@ -38,6 +38,7 @@ export const RessourcesTable: React.FunctionComponent<{
     setOpenCreateRessource: () => void
 }> = (props) => {
     const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
     const { ressources, ressourceStatus, ressourceTypes } = useAppSelector(state => state.ressources)
     const [filtredData, setFiltredData] = React.useState<IRessource[]>([]);
@@ -49,7 +50,7 @@ export const RessourcesTable: React.FunctionComponent<{
     const [selectedRessource, setSelectedRessource] = React.useState<IRessource>(initialRessource);
 
     const fetchRessourceStatus = async () => {
-        await axiosInstance.get(`referentiel-member-statuses`).then(response => {
+        await axiosInstance?.current?.get(`referentiel-member-statuses`).then(response => {
             dispatch(getRessourceStatus(response.data));
             return;
         }).catch(error => {
@@ -58,7 +59,7 @@ export const RessourcesTable: React.FunctionComponent<{
     };
 
     const fetchRessourceTypes = async () => {
-        await axiosInstance.get(`teams`).then(response => {
+        await axiosInstance?.current?.get(`teams`).then(response => {
             dispatch(getRessourceTypes(response.data));
             return;
         }).catch(error => {
@@ -67,7 +68,7 @@ export const RessourcesTable: React.FunctionComponent<{
     };
 
     const fetchRessourcesList = async () => {
-        await axiosInstance.get(`members`, {
+        await axiosInstance?.current?.get(`members`, {
             params: {
                 page: page,
                 size: size,

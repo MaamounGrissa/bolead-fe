@@ -1,4 +1,4 @@
-import { axiosInstance } from '@app/network';
+import { useAxios } from '@app/network';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { getRessourceTypes, getRessources } from '@app/store/ressources/ressourceSlice';
 import { Bullseye, EmptyState, EmptyStateBody, EmptyStateIcon, Label, Title } from '@patternfly/react-core';
@@ -15,11 +15,12 @@ const columnNames = {
 
 export const TopRessourcePlanifier: React.FunctionComponent = () => {
     const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
     const { ressourcesList, ressourceTypes } = useAppSelector(state => state.ressources)
     
     const fetchRessourceTypes = async () => {
-        await axiosInstance.get(`teams`).then(response => {
+        await axiosInstance?.current?.get(`teams`).then(response => {
             dispatch(getRessourceTypes(response.data));
             return;
         }).catch(error => {
@@ -28,7 +29,7 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
     };
 
     const fetchRessourcesList = async () => {
-        await axiosInstance.get(`members`).then(response => {
+        await axiosInstance?.current?.get(`members`).then(response => {
             dispatch(getRessources(response.data));
             return;
         }).catch(error => {

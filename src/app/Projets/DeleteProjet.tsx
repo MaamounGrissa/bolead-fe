@@ -2,8 +2,8 @@ import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { useAppDispatch } from '@app/store';
 import { deleteProjet } from '@app/store/projets/projetSlice';
-import { axiosInstance } from '@app/network';
 import { useSnackbar } from 'notistack';
+import { useAxios } from '@app/network';
 
 export const DeleteProjet: React.FunctionComponent<{
     isOpen: boolean,
@@ -11,11 +11,12 @@ export const DeleteProjet: React.FunctionComponent<{
     projet: IProjet
 }> = (props) => {
   const { enqueueSnackbar } = useSnackbar();
+  const axiosInstance = useAxios();
   const dispatch = useAppDispatch();
   const { isOpen, close, projet } = props;
 
   const deleteProjetRequest = async () => {
-      await axiosInstance.delete(`projects/${projet.id}`).then(response => {
+      await axiosInstance?.current?.delete(`projects/${projet.id}`).then(response => {
         enqueueSnackbar('Projet supprimé avec succès', { variant: 'success' });
         return response;
       }).catch(error => {
