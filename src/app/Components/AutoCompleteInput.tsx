@@ -17,32 +17,37 @@ interface IAutoCompleteInputData {
 export const AutoCompleteInput: React.FunctionComponent<{
   optionsData: IAutoCompleteInputData[],
   setSelectedId: (id: string) => void,
-  selectedId: string
+  selectedId: string,
+  elementId: string,
 }> = ({
   optionsData,
   setSelectedId,
-  selectedId
+  selectedId,
+  elementId,
 }) => {
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState<any>('');
   const [hint, setHint] = React.useState('');
   const [autocompleteOptions, setAutocompleteOptions] = React.useState<any>([]);
   const [isAutocompleteOpen, setIsAutocompleteOpen] = React.useState(false);
   
   const searchInputRef = React.useRef<any>(null);
   const autocompleteRef = React.useRef<any>(null);
-  
+
   const onClear = () => {
     setValue('');
   };
 
-  console.log('selectedId', selectedId)
-
   React.useEffect(() => {
-    setValue(optionsData.find((option) => option.id === selectedId)?.name || '');
+    if (selectedId && optionsData) {
+      setValue(optionsData.find((option) => option.id === selectedId)?.name || '');
+    } else {
+      setValue('');
+    }
   }, [selectedId, optionsData]);
   
   const onChange = (newValue: string) => {
     if (newValue !== '' && searchInputRef && searchInputRef.current && searchInputRef.current.contains(document.activeElement)) {
+
       setIsAutocompleteOpen(true);
       
       // When the value of the search input changes, build a list of no more than 10 autocomplete options.
@@ -70,10 +75,10 @@ export const AutoCompleteInput: React.FunctionComponent<{
   // focus back on the search input
   const onSelect = (e, itemId) => {
     e.stopPropagation();
-    setValue(optionsData.find((option) => option.id === itemId)?.name || itemId);
+    setValue(optionsData?.find((option) => option.id === itemId)?.name || itemId);
     setSelectedId(itemId);
     setIsAutocompleteOpen(false);
-    searchInputRef.current.focus();
+    searchInputRef.current?.focus();
   };
   
   const handleMenuKeys = event => {
@@ -139,7 +144,7 @@ export const AutoCompleteInput: React.FunctionComponent<{
       onClear={onClear}
       ref={searchInputRef}
       //hint={hint}
-      id="autocomplete-search-ressource"
+      id={elementId}
     />
   );
   
@@ -147,13 +152,13 @@ export const AutoCompleteInput: React.FunctionComponent<{
     <Menu ref={autocompleteRef} onSelect={onSelect}>
       <MenuContent>
         <MenuList>
-          {autocompleteOptions.map((option) => option)}
+          {autocompleteOptions?.map((option: any) => option)}
         </MenuList>
       </MenuContent>
     </Menu>
   );
   
-  const htmlE: HTMLElement = document.querySelector('#autocomplete-search-ressource') as HTMLElement;
+  const htmlE: HTMLElement = document.querySelector(`#${elementId}`) as HTMLElement;
 
   return (
     <Popper

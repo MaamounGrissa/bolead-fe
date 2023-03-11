@@ -59,27 +59,16 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
         }
     }, [projet]);
 
-    // Projet DTO
-
-    /* reference: string
-    tags: string
-    status: {
-        id: number
-    },
-    referentielProjectTypes: [
-        {
-            id: number
-        }
-    ],
-    customer: {
-        uuid: string
-    } */
-
     const addProjetRequest = async (ProjetForm: any) => {
         await axiosInstance?.current?.post('projects', ProjetForm).then((response) => {
             enqueueSnackbar('Projet ajouté avec succès', {
                 variant: 'success',
             });
+            console.log(response)
+            dispatch(addProjet(formData));
+            setTimeout(() => {
+                close();
+            }, 500);
             return response;
         }).catch((error) => {
             enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
@@ -93,6 +82,11 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
             enqueueSnackbar('Projet modifié avec succès', {
                 variant: 'success',
             });
+            console.log(response)
+            dispatch(updateProjet(formData));
+            setTimeout(() => {
+                close();
+            }, 500);
             return response;
         }).catch((error) => {
             enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
@@ -121,7 +115,6 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                         }
                     };
                     addProjetRequest(newProjet);
-                    dispatch(addProjet(formData));
                 } else {
                     const updatedProjet = {
                         reference: formData.name,
@@ -139,9 +132,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                         }
                     };
                     editProjetRequest(updatedProjet);
-                    dispatch(updateProjet(formData));
                 }
-                close()
             }, 500);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -230,9 +221,10 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                 <FormGroup
                     label="Client"
                     isRequired
-                    fieldId="modal-with-form-form-client"
+                    fieldId="autocomplete-clients"
                 >
-                    <AutoCompleteInput 
+                    <AutoCompleteInput
+                        elementId='autocomplete-clients'
                         optionsData={clientsList}
                         setSelectedId={(id: string) => setFormData({ ...formData, clientId: id })} 
                         selectedId={formData.clientId}

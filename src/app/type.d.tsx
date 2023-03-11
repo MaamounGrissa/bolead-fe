@@ -41,17 +41,18 @@ interface IPlanification {
     title: string
     startDate: string
     endDate: string
-    duration: number
-    type: string
+    duration: string
+    type: number
     ressource: string
     projet: string
-    status: string
+    status: number
     notes: string
     origin: string
     destination: string
     distance: string
-    trajetDuration: number
+    trajetDuration: string
     trajetDurationText: string
+    travelMode: string
 }
 
 // API
@@ -247,6 +248,60 @@ interface IRessourceAPI {
     }
 }
 
+/* {
+    "comment": "my Pri",
+    "startTime": "2023-03-03T17:07:00.083Z",
+    "endTime": "2023-03-03T18:08:00.083Z",
+    "duration": "15",
+    "travelMode": "CAR",
+    "travelDuration": "2",
+    "status": {
+      "id": 1
+    },
+    "type": {
+      "id": 1
+    },
+    "customer": {
+      "uuid": "50924da1-88d3-4693-a0ed-45e29d45668c"
+    },
+    "member": {
+      "uuid": "4f944f53-1f77-4d2b-880e-3f5289aaa02c"
+    },
+    "project": {
+      "uuid": "e81aa690-42ed-40ad-94ef-aeff9c9bed0d"
+    }
+  } */
+
+interface IPlanificationAPI {
+    title: string,
+    origin: string,
+    destination: string,
+    distance: string,
+    id: number,
+    uuid: string,
+    comment: string,
+    startTime: string,
+    endTime: string,
+    duration: string,
+    travelMode: string,
+    travelDuration: string,
+    status: {
+        id: number
+    },
+    type: {
+        id: number
+    },
+    customer: {
+        uuid: string
+    },
+    member: {
+        uuid: string
+    },
+    project: {
+        uuid: string
+    }
+}
+
 interface IRessourcesList {
     id: string,
     name: string,
@@ -306,6 +361,33 @@ interface IProjetTypesAPI {
     type: string
 }
 
+interface IProjetList {
+    id: string
+    name: string
+    type: number
+    address: string
+}
+
+interface IPlanificationStatus {
+    id: number
+    name: string
+}
+
+interface IPlanificationStatusAPI {
+    id: number
+    status: string
+}
+
+interface IPlanificationTypes {
+    id: number
+    name: string
+}
+
+interface IPlanificationTypesAPI {
+    id: number
+    type: string
+}
+
 //Store
 interface RessourceState {
     ressource: IRessource
@@ -313,22 +395,29 @@ interface RessourceState {
     ressourceStatus: IRessourceStatus[]
     ressourceTypes: IRessourceTeam[]
     ressourcesList: IRessourcesList[]
+    totalCount: number
 }
 interface ClientState {
     client: IClient
     clients: IClient[]
     clientStatus: IClientStatus[]
     clientsList: IclientsList[]
+    totalCount: number
 }
 interface ProjetState {
     projet: IProjet
     projets: IProjet[]
     projetStatus: IProjetStatus[]
     projetTypes: IProjetTypes[]
+    projetsList: IProjetList[]
+    totalCount: number
 }
 interface PlanificationState {
     planification: IPlanification
     planifications: IPlanification[]
+    planificationStatus: IPlanificationStatus[]
+    planificationTypes: IPlanificationTypes[]
+    totalCount: number
 }
 
 interface KeycloakUser {

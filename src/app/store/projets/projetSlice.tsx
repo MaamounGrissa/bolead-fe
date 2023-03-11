@@ -2,6 +2,7 @@ import { initialProjet } from "@app/utils/constant";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: ProjetState = {
+    totalCount: 0,
     projet: initialProjet,
     projets: [],
     projetStatus: [{
@@ -11,7 +12,13 @@ const initialState: ProjetState = {
     projetTypes: [{
         id: 0,
         name: 'Sélectionner un type'
-    }]
+    }],
+    projetsList: [{
+        id: '0',
+        name: 'Sélectionner un projet',
+        type: 0,
+        address: '',
+    }],
 };
 
 export const projetSlice = createSlice({
@@ -21,7 +28,7 @@ export const projetSlice = createSlice({
         getProjets: (state, action: PayloadAction<IProjetAPI[]>) => {
             state.projets = action.payload?.map((projet) => {
                 return {
-                    id: projet.uuid || '',
+                    id: projet.id.toString() || '',
                     name: projet.reference || '',
                     clientName: `${projet.customer?.contact?.firstName} ${projet.customer?.contact?.lastName}` || '',
                     clientId: projet.customer?.uuid || '',
@@ -57,8 +64,16 @@ export const projetSlice = createSlice({
                 return {id: type.id, name: type.type};
             });
         },
+        getProjetsList: (state, action: PayloadAction<IProjetAPI[]>) => {
+            state.projetsList = action.payload.map((projet) => {
+                return {id: projet.uuid, name: projet.reference, type: projet.referentielProjectTypes[0]?.id, address: projet.customer?.contact?.address?.street || ''};
+            });
+        },
+        setProjetsTotalCount: (state, action: PayloadAction<number>) => {
+            state.totalCount = action.payload;
+        },
     }
 });
 
-export const { getProjets, getProjet, addProjet, updateProjet, deleteProjet, getProjetStatus, getProjetTypes } = projetSlice.actions;
+export const { getProjets, getProjet, addProjet, updateProjet, deleteProjet, getProjetStatus, getProjetTypes, getProjetsList, setProjetsTotalCount} = projetSlice.actions;
 export default projetSlice.reducer;

@@ -10,9 +10,11 @@ import {
 import UserPlusIcon from '@patternfly/react-icons/dist/js/icons/user-plus-icon';
 import { CheckCircleIcon, TimesCircleIcon, ClockIcon } from '@patternfly/react-icons';
 import { ClientsTable } from './ClientsTable';
+import { useAppSelector } from '@app/store';
 
 const Clients: React.FunctionComponent = () => {
   const [openCreateClient, setOpenCreateClient] = React.useState(false);
+  const { totalCount } = useAppSelector(state => state.clients)
 
   return (
     <PageSection>
@@ -40,7 +42,7 @@ const Clients: React.FunctionComponent = () => {
         </GridItem>
       </Grid>
       <div className='flex-between mobile-flex-column'>
-        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">8 Clients</Title>
+        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">{totalCount} Clients</Title>
         <div className='mobile-m-2'>
           <Button variant="primary" onClick={() => setOpenCreateClient(true)}><UserPlusIcon />&nbsp;Client</Button>
         </div>

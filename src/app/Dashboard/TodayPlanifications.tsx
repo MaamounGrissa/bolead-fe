@@ -1,9 +1,11 @@
+import { useAxios } from '@app/network';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getPlanifications } from '@app/store/planifications/planificationSlice';
+import { getPlanificationStatus, getPlanifications } from '@app/store/planifications/planificationSlice';
 import { Bullseye, EmptyState, EmptyStateBody, EmptyStateIcon, Label, Title } from '@patternfly/react-core';
 import { CalendarAltIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
 import React from 'react';
 
 const columnNames = {
@@ -16,30 +18,44 @@ const columnNames = {
 
 export const TodayPlanifications: React.FunctionComponent = () => {
     const dispatch = useAppDispatch();
-    const { planifications } = useAppSelector(state => state.planifications)
+    const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
+    const { planifications, planificationStatus } = useAppSelector(state => state.planifications);
+
+    const fetchPlanificationStatus = async () => {
+        await axiosInstance?.current?.get(`referentiel-inspection-statuses`).then(response => {
+            dispatch(getPlanificationStatus(response.data));
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    const fetchPlanifications = async () => {
+        await axiosInstance?.current?.get(`inspections`).then(response => {
+            dispatch(getPlanifications(response.data));
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
 
     React.useEffect(() => {
-        dispatch(getPlanifications());
-    }, [dispatch]);
+        fetchPlanificationStatus();
+        fetchPlanifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const renderLabel = (labelText: string) => {
+    const renderLabel = (labelText: number) => {
         switch (labelText) {
-        case 'Nouveau':
-            return <Label color="blue">{labelText}</Label>;
-        case 'En cours':
-            return <Label color="green">{labelText}</Label>;
-        case 'En pause':
-            return <Label color="orange">{labelText}</Label>;
-        case 'Terminé':
-            return <Label color="purple">{labelText}</Label>;
-        case 'Annulé':
-            return <Label color="red">{labelText}</Label>;
-        case 'Supprimé':
-            return <Label color="grey">{labelText}</Label>;
+        case 1:
+            return <Label color="blue">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 2:
+            return <Label color="green">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 3:
+            return <Label color="orange">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 4:
+            return <Label color="red">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
         default:
-            return <Label color="grey" 
-                            style={{ marginRight: "5px", marginLeft: "5px"}}
-                    >{labelText}</Label>;
+            return <Label color="orange">Indéfinie</Label>;
         }
     };
 
@@ -66,8 +82,8 @@ export const TodayPlanifications: React.FunctionComponent = () => {
                     </Tr>
                     </Thead>
                     <Tbody>
-                    {planifications.length > 0 &&
-                        planifications.filter(plan => moment(plan.startDate).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD"))
+                    {planifications?.length > 0 &&
+                        planifications?.filter(plan => moment(plan.startDate).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD"))
                         .map(repo => {
                             return (
                             <Tr key={repo.id}>

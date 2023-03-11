@@ -1,19 +1,25 @@
+
+export const mapCenter = { lat: 48.7215803, lng: 2.2839578 }
+
+export const defaultAdress = "15 Rue du Buisson aux Fraises batiment b3, 91300 Massy, France";
+
 export const initialPlanification: IPlanification = {
     id: '',
     title: '',
     startDate: '',
     endDate: '',
-    duration: 20,
-    type: 'Visite Technique',
-    status: 'Nouveau',
+    duration: '20',
+    type: 2,
+    status: 1,
     ressource: '',
     projet: '',
     notes: '',
-    origin: '',
+    origin: defaultAdress,
     destination: '',
     distance: '',
-    trajetDuration: 0,
+    trajetDuration: '0',
     trajetDurationText: '',
+    travelMode: 'CAR',
 }
 
 export const initialClient: IClient = {
@@ -48,7 +54,3 @@ export const initialRessource: IRessource = {
     type: 1,
     notes: '',
 }
-
-export const mapCenter = { lat: 48.7215803, lng: 2.2839578 }
-
-export const defaultAdress = "15 Rue du Buisson aux Fraises batiment b3, 91300 Massy, France";

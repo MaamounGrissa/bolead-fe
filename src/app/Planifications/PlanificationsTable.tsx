@@ -20,17 +20,22 @@ import { DeletePlanification } from './DeletePlanification';
 import { PlanificationsFilter } from './PlanificationsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { PlanificationsScheduler } from './PlanificationsScheduler';
-import { getPlanifications } from '@app/store/planifications/planificationSlice';
+import { getPlanificationStatus, getPlanificationTypes, getPlanifications, setPlanificationsTotalCount } from '@app/store/planifications/planificationSlice';
 import moment from 'moment';
 import { initialPlanification } from '@app/utils/constant';
+import { useAxios } from '@app/network';
+import { useSnackbar } from 'notistack';
+import { getRessourcesList } from '@app/store/ressources/ressourceSlice';
+import { getProjetsList } from '@app/store/projets/projetSlice';
 
 const columnNames = {
-  startDate: 'Date',
-  ressource: 'Ressource',
-  projet: 'Projet',
-  type: 'Type',
-  status: 'Status',
-  notes: 'Notes',
+    id: '#',
+    startDate: 'Date',
+    ressource: 'Ressource',
+    projet: 'Projet',
+    type: 'Type',
+    status: 'Status',
+    notes: 'Notes',
 };
 
 export const PlanificationsTable: React.FunctionComponent<{
@@ -40,7 +45,11 @@ export const PlanificationsTable: React.FunctionComponent<{
     view: string,
 }> = (props) => {
     const dispatch = useAppDispatch();
-    const { planifications } = useAppSelector(state => state.planifications)
+    const axiosInstance = useAxios();
+    const { enqueueSnackbar } = useSnackbar();
+    const { planifications, planificationStatus, planificationTypes } = useAppSelector(state => state.planifications)
+    const [page, setPage] = React.useState(0);
+    const [size, setSize] = React.useState(100);
     const [filtredData, setFiltredData] = React.useState<IPlanification[]>([]);
     const {view, openCreatePlanification, setOpenCreatePlanification, closeModal} = props;
     const [selectedDate, setSelectedDate] = React.useState<string>(moment().format('YYYY-MM-DD'));
@@ -48,29 +57,82 @@ export const PlanificationsTable: React.FunctionComponent<{
     const [openDeletePlanification, setOpenDeletePlanification] = React.useState(false);
     const [selectedPlanification, setSelectedPlanification] = React.useState<IPlanification>(initialPlanification);
 
+    const fetchPlanificationStatus = async () => {
+        await axiosInstance?.current?.get(`referentiel-inspection-statuses`).then(response => {
+            dispatch(getPlanificationStatus(response.data));
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    const fetchPlanificationTypes = async () => {
+        await axiosInstance?.current?.get(`referentiel-inspection-types`).then(response => {
+            dispatch(getPlanificationTypes(response.data));
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    const fetchRessourcesList = async () => {
+        await axiosInstance?.current?.get(`members`).then(response => {
+            dispatch(getRessourcesList(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    const fetchProjetList = async () => {
+        await axiosInstance?.current?.get(`projects`).then(response => {
+            dispatch(getProjetsList(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+
+    const fetchPlanifications = async () => {
+        await axiosInstance?.current?.get(`inspections`, {
+            params: {
+                page: page,
+                size: size,
+                sort: 'startTime,desc',
+            }
+        }).then(response => {
+            dispatch(getPlanifications(response.data));
+            dispatch(setPlanificationsTotalCount(parseInt(response.headers['x-total-count'])));
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
     React.useEffect(() => {
-        dispatch(getPlanifications());
-    }, [dispatch]);
+        fetchPlanificationStatus();
+        fetchPlanificationTypes();
+        fetchRessourcesList();
+        fetchProjetList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    React.useEffect(() => {
+        fetchPlanifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, size]);
 
 
-    const renderLabel = (labelText: string) => {
+    const renderLabel = (labelText: number) => {
         switch (labelText) {
-        case 'Nouveau':
-            return <Label color="blue">{labelText}</Label>;
-        case 'En cours':
-            return <Label color="green">{labelText}</Label>;
-        case 'En pause':
-            return <Label color="orange">{labelText}</Label>;
-        case 'Terminé':
-            return <Label color="purple">{labelText}</Label>;
-        case 'Annulé':
-            return <Label color="red">{labelText}</Label>;
-        case 'Supprimé':
-            return <Label color="grey">{labelText}</Label>;
+        case 1:
+            return <Label color="blue">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 2:
+            return <Label color="green">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 3:
+            return <Label color="orange">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+        case 4:
+            return <Label color="red">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
         default:
-            return <Label color="grey" 
-                            style={{ marginRight: "5px", marginLeft: "5px"}}
-                    >{labelText}</Label>;
+            return <Label color="orange">Indéfinie</Label>;
         }
     };
 
@@ -119,10 +181,15 @@ export const PlanificationsTable: React.FunctionComponent<{
                         <PlanificationsFilter 
                             planifications={planifications} 
                             filterData={(data: IPlanification[]) => setFiltredData(data)} 
+                            page={page}
+                            handleSetPage={(page: number) => setPage(page)}
+                            size={size}
+                            handleSetSize={(size: number) => setSize(size)}
                         />
                         <TableComposable aria-label="Selectable table">
                             <Thead>
                             <Tr>
+                                <Th width={10}>{columnNames.id}</Th>
                                 <Th width={20}>{columnNames.startDate}</Th>
                                 <Th width={15}>{columnNames.ressource}</Th>
                                 <Th width={15}>{columnNames.projet}</Th>
@@ -137,6 +204,9 @@ export const PlanificationsTable: React.FunctionComponent<{
                                     const actionsRow: IAction[] | null = actions(repo);
                                     return (
                                     <Tr key={repo.id}>
+                                        <Td dataLabel={columnNames.id} modifier="truncate">
+                                        {repo.id}
+                                        </Td>
                                         <Td dataLabel={columnNames.startDate} modifier="truncate">
                                         {moment(repo.startDate).format("DD/MM/YYYY HH:mm")}
                                         </Td>
@@ -147,7 +217,7 @@ export const PlanificationsTable: React.FunctionComponent<{
                                         {repo.projet}
                                         </Td>
                                         <Td dataLabel={columnNames.type} modifier="truncate">
-                                        {repo.type}
+                                        {planificationTypes?.find(type => type.id === repo.type)?.name}
                                         </Td>
                                         <Td dataLabel={columnNames.status} modifier="truncate">
                                         {renderLabel(repo.status)}

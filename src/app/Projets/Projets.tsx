@@ -10,10 +10,12 @@ import {
 import { AddCircleOIcon, GripHorizontalIcon, TableIcon } from '@patternfly/react-icons';
 import { InProgressIcon, CheckCircleIcon, TimesCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { ProjetsTable } from './ProjetsTable';
+import { useAppSelector } from '@app/store';
 
 const Projets: React.FunctionComponent = () => {
   const [openCreateProjet, setOpenCreateProjet] = React.useState(false);
   const [view, setView] = React.useState('GRID');
+  const { totalCount } = useAppSelector((state) => state.projets);
 
   return (
     <PageSection>
@@ -48,7 +50,7 @@ const Projets: React.FunctionComponent = () => {
         </GridItem>
       </Grid>
       <div className='flex-between mobile-flex-column'>
-        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">13 Projets</Title>
+        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">{totalCount} Projets</Title>
         <div className='mobile-m-2'>
           <Button variant="primary" onClick={() => setOpenCreateProjet(true)}><AddCircleOIcon />&nbsp;Projet</Button>
           <Button style={{ margin: '0 5px'}} variant={view === 'GRID' ? 'primary' : 'secondary'} onClick={() => setView('GRID')} ><GripHorizontalIcon color='white'/></Button>

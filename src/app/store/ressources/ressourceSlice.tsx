@@ -2,6 +2,7 @@ import { initialRessource } from "@app/utils/constant";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: RessourceState = {
+    totalCount: 0,
     ressource: initialRessource,
     ressources: [],
     ressourcesList: [],
@@ -22,14 +23,14 @@ export const ressourceSlice = createSlice({
         getRessources: (state, action: PayloadAction<IRessourceAPI[]>) => {
             state.ressources = action.payload?.map((ressource) => {
                 return {
-                    id: ressource.uuid || '',
+                    id: ressource.id.toString() || '',
                     firstName: ressource.contact?.firstName || '',
                     lastName: ressource.contact?.lastName || '',
                     email: ressource.contact?.email || '',
                     phone: ressource.contact?.phone || '',
                     type: ressource.team?.id || 0,
                     status: ressource.status?.id || 0,
-                    notes: ressource.contact?.address?.street || '',      
+                    notes: ressource.contact?.address?.streetLine2 || '',      
                 };
             });
         },
@@ -67,9 +68,12 @@ export const ressourceSlice = createSlice({
                     status: ressource.status?.id || 0,        
                 };
             });
-        }
+        },
+        setRessourcesTotalCount: (state, action: PayloadAction<number>) => {
+            state.totalCount = action.payload;
+        },
     }
 });
 
-export const { getRessources, getRessource, addRessource, updateRessource, deleteRessource, getRessourceStatus, getRessourceTypes, getRessourcesList } = ressourceSlice.actions;
+export const { getRessources, getRessource, addRessource, updateRessource, deleteRessource, getRessourceStatus, getRessourceTypes, getRessourcesList, setRessourcesTotalCount } = ressourceSlice.actions;
 export default ressourceSlice.reducer;

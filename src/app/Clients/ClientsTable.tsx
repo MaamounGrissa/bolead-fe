@@ -19,17 +19,18 @@ import { UpdateClient } from './UpdateClient';
 import { DeleteClient } from './DeleteClient';
 import { ClientsFilter } from './ClientsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getClients, getClientStatus } from '@app/store/clients/clientSlice';
+import { getClients, getClientStatus, setClientsTotalCount } from '@app/store/clients/clientSlice';
 import { initialClient } from '@app/utils/constant';
 import { useSnackbar } from 'notistack';
 import { useAxios } from '@app/network';
 
 const columnNames = {
-  name: 'Nom et Prénom',
-  email: 'Email',
-  phone: 'Téléphone',
-  address: 'Adresse',
-  status: 'Status',
+    id: '#',
+    name: 'Nom et Prénom',
+    email: 'Email',
+    phone: 'Téléphone',
+    address: 'Adresse',
+    status: 'Status',
 };
 
 export const ClientsTable: React.FunctionComponent<{
@@ -65,6 +66,7 @@ export const ClientsTable: React.FunctionComponent<{
             },
         }).then(response => {
             dispatch(getClients(response.data));
+            dispatch(setClientsTotalCount(parseInt(response.headers['x-total-count'])));
             return;
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -147,11 +149,12 @@ export const ClientsTable: React.FunctionComponent<{
             <TableComposable aria-label="Selectable table">
                 <Thead>
                 <Tr>
-                    <Th width={20}>{columnNames.name}</Th>
-                    <Th width={10}>{columnNames.email}</Th>
-                    <Th width={10}>{columnNames.phone}</Th>
-                    <Th width={15} textCenter>{columnNames.status}</Th>
+                    <Th width={10}>{columnNames.id}</Th>
+                    <Th width={15}>{columnNames.name}</Th>
+                    <Th width={15}>{columnNames.email}</Th>
+                    <Th width={15}>{columnNames.phone}</Th>
                     <Th width={20}>{columnNames.address}</Th>
+                    <Th width={10} textCenter>{columnNames.status}</Th>
                 </Tr>
                 </Thead>
                 <Tbody>
@@ -160,6 +163,9 @@ export const ClientsTable: React.FunctionComponent<{
                         const actionsRow: IAction[] | null = actions(repo);
                         return (
                         <Tr key={repo.firstName}>
+                            <Td dataLabel={columnNames.id} modifier="truncate">
+                            {repo.id}
+                            </Td>
                             <Td dataLabel={columnNames.name} modifier="truncate">
                             {repo.firstName} {repo.lastName}
                             </Td>
@@ -169,11 +175,11 @@ export const ClientsTable: React.FunctionComponent<{
                             <Td dataLabel={columnNames.phone} modifier="truncate">
                             {repo.phone}
                             </Td>
-                            <Td dataLabel={columnNames.status} modifier="truncate" textCenter>
-                            {renderLabel(repo.status)}
-                            </Td>
                             <Td dataLabel={columnNames.address} modifier="truncate">
                             {repo.address}
+                            </Td>
+                            <Td dataLabel={columnNames.status} modifier="truncate" textCenter>
+                            {renderLabel(repo.status)}
                             </Td>
                             <Td isActionCell>
                                 <ActionsColumn

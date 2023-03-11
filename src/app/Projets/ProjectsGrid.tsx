@@ -1,6 +1,6 @@
 import { useAppSelector } from "@app/store";
-import { Card, CardActions, CardBody, CardHeader, CardTitle, Dropdown, DropdownItem, Gallery, KebabToggle, Label } from "@patternfly/react-core";
-import { MapMarkerIcon, PencilAltIcon, TrashAltIcon, UserAltIcon, UsersIcon } from "@patternfly/react-icons";
+import { Button, Card, CardActions, CardBody, CardHeader, CardTitle, Dropdown, DropdownItem, EmptyState, EmptyStateBody, EmptyStateIcon, EmptyStatePrimary, Gallery, Grid, GridItem, KebabToggle, Label, Title } from "@patternfly/react-core";
+import { MapMarkerIcon, PencilAltIcon, SearchIcon, TrashAltIcon, UserAltIcon, UsersIcon } from "@patternfly/react-icons";
 import React from "react";
 
 export const ProjectsGrid: React.FunctionComponent<{
@@ -32,62 +32,92 @@ export const ProjectsGrid: React.FunctionComponent<{
         setIsCardKebabDropdownOpen(kebabStatus);
         setSelectedKey(key);
     };
+
+    const emptyState = (
+        <EmptyState>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title size="lg" headingLevel="h4">
+            Aucun résultat trouvé
+        </Title>
+        <EmptyStateBody>Aucun résultat ne correspond aux critères du filtre. Effacez tous les filtres et réessayez.</EmptyStateBody>
+        <EmptyStatePrimary>
+            <Button
+            variant="link"
+            onClick={() => {
+                console.log('Clear all filters')
+            }}
+            >
+            Effacer tous les filtres
+            </Button>
+        </EmptyStatePrimary>
+        </EmptyState>
+    );
   
     return (
-        <Gallery style={{ marginTop: "20px" }} hasGutter aria-label="Selectable card container">
-            {filtredData.map((projet, key) => (
-                <Card
-                    hasSelectableInput
-                    isCompact
-                    key={projet.id}
-                    id={projet.id.replace(/ /g, '-')}
-                    //onKeyDown={e => this.onKeyDown(e, product.id)}
-                    //onClick={() => this.onClick(product.id)}
-                    //onSelectableInputChange={() => this.onClick(product.id)}
-                    //isSelected={selectedItems.includes(product.id)}
-                >
-                    <CardHeader>
-                    {/* <img src={icons[product.icon]} alt={`${product.name} icon`} style={{ maxWidth: '60px' }} /> */}
-                    <CardActions>
-                        <Dropdown
-                        isPlain
-                        position="right"
-                        toggle={
-                            <KebabToggle
-                            onToggle={(kebabStatus) => onCardKebabDropdownToggle(kebabStatus, key)}
-                            />
-                        }
-                        isOpen={selectedKey === key && isCardKebabDropdownOpen}
-                        dropdownItems={[
-                            <DropdownItem 
-                                key="edit" 
-                                onClick={(e) => {e.preventDefault(); setOpenUpdateProjet(projet)}} 
+        <React.Fragment>
+            {
+                filtredData?.length > 0 ? (
+                    <Gallery style={{ marginTop: "20px" }} hasGutter aria-label="Selectable card container">
+                        {filtredData?.map((projet, key) => (
+                            <Card
+                                hasSelectableInput
+                                isCompact
+                                key={projet.id}
+                                id={projet.id.replace(/ /g, '-')}
+                                //onKeyDown={e => this.onKeyDown(e, product.id)}
+                                //onClick={() => this.onClick(product.id)}
+                                //onSelectableInputChange={() => this.onClick(product.id)}
+                                //isSelected={selectedItems.includes(product.id)}
                             >
-                                <span className="action-icon-container"><PencilAltIcon style={{ marginRight: "10px" }}/>Modifier</span>
-                            </DropdownItem>,
-                            <DropdownItem 
-                                key="delete" 
-                                onClick={(e) => {e.preventDefault(); setOpenDeleteProjet(projet)}}
-                            >
-                                <span className="action-icon-container"><TrashAltIcon style={{ marginRight: "10px" }} />Supprimer</span>
-                            </DropdownItem>
-                        ]}
-                        />
-                    </CardActions>
-                    </CardHeader>
-                    <CardTitle>{projet.name}</CardTitle>
-                    <CardBody>
-                        <div className="projet-card">
-                            <p><UserAltIcon style={{ marginRight: "10px" }} /><span className="mr-2">Client : </span>{projet.clientName}</p>
-                            <p><MapMarkerIcon style={{ marginRight: "10px" }} /><span className="mr-2">Adresse : </span>{projet.adresse}</p>
-                            <p><UsersIcon style={{ marginRight: "10px" }} /><span className="mr-2">Type : </span>{
-                                projetTypes?.find(type => type.id === projet.type)?.name
-                            }</p>
-                            <div className="projet-card-status">{renderLabel(projet.status)}</div>
-                        </div>
-                    </CardBody>
-                </Card>
-            ))}
-        </Gallery>
+                            <CardHeader>
+                            {/* <img src={icons[product.icon]} alt={`${product.name} icon`} style={{ maxWidth: '60px' }} /> */}
+                                <CardActions>
+                                    <Dropdown
+                                    isPlain
+                                    position="right"
+                                    toggle={
+                                        <KebabToggle
+                                        onToggle={(kebabStatus) => onCardKebabDropdownToggle(kebabStatus, key)}
+                                        />
+                                    }
+                                    isOpen={selectedKey === key && isCardKebabDropdownOpen}
+                                    dropdownItems={[
+                                        <DropdownItem 
+                                            key="edit" 
+                                            onClick={(e) => {e.preventDefault(); setOpenUpdateProjet(projet)}} 
+                                        >
+                                            <span className="action-icon-container"><PencilAltIcon style={{ marginRight: "10px" }}/>Modifier</span>
+                                        </DropdownItem>,
+                                        <DropdownItem 
+                                            key="delete" 
+                                            onClick={(e) => {e.preventDefault(); setOpenDeleteProjet(projet)}}
+                                        >
+                                            <span className="action-icon-container"><TrashAltIcon style={{ marginRight: "10px" }} />Supprimer</span>
+                                        </DropdownItem>
+                                    ]}
+                                    />
+                                </CardActions>
+                                </CardHeader>
+                                <CardTitle>{projet.name}</CardTitle>
+                                <CardBody>
+                                    <div className="projet-card">
+                                        <p><UserAltIcon style={{ marginRight: "10px" }} /><span className="mr-2">Client: </span>{projet.clientName}</p>
+                                        <p><MapMarkerIcon style={{ marginRight: "10px" }} /><span className="mr-2">Adresse: </span>{projet.adresse}</p>
+                                        <p><UsersIcon style={{ marginRight: "10px" }} /><span className="mr-2">Type: </span>{
+                                            projetTypes?.find(type => type.id === projet.type)?.name
+                                        }</p>
+                                        <div className="projet-card-status">{renderLabel(projet.status)}</div>
+                                    </div>
+                                </CardBody>
+                        </Card>
+                        ))}
+                    </Gallery>
+                ) : 
+                    <Grid hasGutter>
+                        <GridItem span={12}>{emptyState}</GridItem>
+                    </Grid>
+            }
+        </React.Fragment>
+        
     );
 };

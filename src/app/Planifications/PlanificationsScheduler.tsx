@@ -8,6 +8,7 @@ import {
 import moment from 'moment';
 import { LocationSelector, MyStyledFlexibleSpace } from './schedulerOptions';
 import { useAppSelector } from '@app/store';
+import { TrashAltIcon } from '@patternfly/react-icons';
 
 /* const resources = [{
   fieldName: 'type',
@@ -24,7 +25,6 @@ export const PlanificationsScheduler: React.FunctionComponent<{
     setOpenDeletePlanification: (data: IPlanification) => void,
 }> = (props) => {
     const { setOpenCreatePlanification, setOpenUpdatePlanification, setOpenDeletePlanification } = props;
-    console.log(setOpenCreatePlanification, setOpenUpdatePlanification, setOpenDeletePlanification);
     const { planifications } = useAppSelector(state => state.planifications);
     
     const FlexibleSpace = () => {
@@ -49,6 +49,11 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                     </div>
                     <div className="appointment-content-type">
                         {props.data?.type} - {props.data.ressource}
+                    </div>
+                    <div className='appointment-delete-action'>
+                        <TrashAltIcon color='red' size='lg' onClick={() => {
+                            setOpenDeletePlanification(props.data.id);
+                        }} />
                     </div>
                 </div>
             </Appointments.AppointmentContent>
@@ -94,7 +99,7 @@ export const PlanificationsScheduler: React.FunctionComponent<{
         }
     }, [data]);
     const typeFilter = (type: string) => {
-        setFiltredData(data.filter((item) => item.type === type));
+        setFiltredData(data.filter((item) => item.type === parseInt(type)));
     };
 
     //console.log(filtredData);

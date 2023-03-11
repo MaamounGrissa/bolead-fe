@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Bullseye, DropdownPosition, FormGroup, Grid, GridItem, Select, SelectOption, TextArea, TextInput, Wizard } from '@patternfly/react-core';
-import { useAppDispatch, useAppSelector } from '@app/store';
-import { getProjets } from '@app/store/projets/projetSlice';
-import { getRessources } from '@app/store/ressources/ressourceSlice';
-import { addPlanification } from '@app/store/planifications/planificationSlice';
-import moment from 'moment';
-import { AutoCompleteInput } from '@app/Components/AutoCompleteInput';
-import { GoogleMapsContainer } from './GoogleMapsContainer';
+import { Wizard } from '@patternfly/react-core';
 import { initialPlanification } from '@app/utils/constant';
+import { CreateStep1 } from './CreateStep1';
+import { CreateStep2 } from './CreateStep2';
+import { CreateStep4 } from './CreateStep4';
+import { CreateStep3 } from './CreateStep3';
+import moment from 'moment-timezone';
+import { useSnackbar } from 'notistack';
+import { useAxios } from '@app/network';
+import { useAppDispatch, useAppSelector } from '@app/store';
+import { addPlanification } from '@app/store/planifications/planificationSlice';
 
 export const CreatePlanification: React.FunctionComponent<{ 
     isOpen: boolean,
@@ -16,34 +18,13 @@ export const CreatePlanification: React.FunctionComponent<{
     selectedDate: string,
 }> = (props) => {
    // const [save, setSave] = React.useState<boolean>(false);
-    const { isOpen, close, selectedDate } = props;
-   /*  const planification: IPlanification = {
-        id: '',
-        title: '',
-        startDate: moment().format('YYYY-MM-DDTHH:mm'),
-        endDate: moment().format('YYYY-MM-DDTHH:mm'),
-        duration: 0,
-        ressource: '',
-        projet: '',
-        type: '',
-        status: '',
-        notes: '',
-    } */
-    const title = 'Planification';
-
+    const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
-    const [isProjetFilterDropdownOpen, setIsProjetFilterDropdownOpen] = React.useState(false);
-    const [isRessourceFilterDropdownOpen, setIsRessourceFilterDropdownOpen] = React.useState(false);
-    const [isTypeFilterDropdownOpen, setIsTypeFilterDropdownOpen] = React.useState(false);
-    const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
-    const { projets } = useAppSelector(state => state.projets);
-    const { ressources } = useAppSelector(state => state.ressources);
-
+    const { isOpen, close, selectedDate } = props;
+    const title = 'Planification';
     const [formData, setFormData] = React.useState<IPlanification>(initialPlanification);
-
-    const clearForm = () => {
-        setFormData(initialPlanification);
-    };
+    const { projetsList } = useAppSelector(state => state.projets);
 
     React.useEffect(() => {
         if (selectedDate) {
@@ -51,395 +32,155 @@ export const CreatePlanification: React.FunctionComponent<{
                 ...formData,
                 startDate: selectedDate,
             });
+        } else {
+            setFormData({
+                ...formData,
+                startDate: new Date().toString(),
+            });
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedDate]);
 
-    React.useEffect(() => {
-        //dispatch(getProjets());
-        //dispatch(getRessources());
-    }, [dispatch]);
-
-    const savePlanification = () => {
-        setTimeout(() => {
-            dispatch(addPlanification(formData));
-            close()
-        }, 500);
-    };
-
-    const statusList = [
-        "Nouveau",
-        "En cours",
-        "Terminé",
-        "Annulé",
-    ];
-
-    const typeList= [
-        "Visite Technique",
-        "Visite Commercial",
-        "Audit",
-    ]
-
-    const typeMenuItems = typeList.map((type) => (
-        <SelectOption key={type} value={type} />
-    ));
-
-    const statusMenuItems = statusList.map((status) => (
-        <SelectOption key={status} value={status} />
-    ));
-
-    const ressourcesListItems = ressources.map((ressource) => (
-        <SelectOption key={ressource.id} value={ressource.id}>
-            {ressource.firstName} {ressource.lastName}
-        </SelectOption>
-    ));
-
-    const projetsListItems = projets.map((projet) => (
-        <SelectOption key={projet.id} value={projet.id}>
-            {projet.name}
-        </SelectOption>
-    ));
-
-    const handleTitleInputChange = (value: string) => {
+    const handleTitleChange = (value: string) => {
         setFormData({
             ...formData,
             title: value,
         });
     };
-    const handleStartDateInputChange = (value: string) => {
+
+    const handleStartDateChange = (value: string) => {
         setFormData({
             ...formData,
             startDate: value,
-            endDate: formData.duration ? moment(value).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm') : moment(value).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };
-    const handleDurationInputChange = (value: string) => {
+
+    const handleDurationChange = (value: string) => {
         setFormData({
             ...formData,
-            duration: parseInt(value),
-            endDate: formData.startDate ? moment(formData.startDate).add(parseInt(value), 'minutes').format('YYYY-MM-DDTHH:mm') : moment().add(parseInt(value), 'minutes').format('YYYY-MM-DDTHH:mm')
+            duration: value,
         });
     };
-    const handleNotesInputChange = (value: string) => {
+
+    const handleNotesChange = (value: string) => {
         setFormData({
             ...formData,
             notes: value,
         });
     };
-    const onRessourceToggle = (isOpen: boolean) => {
-        setIsRessourceFilterDropdownOpen(isOpen);
-    };
-    const selectRessource = (event: any) => {
+
+    const handleSelectType = (value: number) => {
         setFormData({
             ...formData,
-            ressource: event.target.innerText,
+            type: value,
         });
-        setIsTypeFilterDropdownOpen(false);
     };
-    const onProjetToggle = (isOpen: boolean) => {
-        setIsProjetFilterDropdownOpen(isOpen);
-    };
-    const selectProjet = (event: any) => {
+    
+    const handleSelectProjet = (value: string) => {
         setFormData({
             ...formData,
-            projet: event.target.innerText,
+            projet: value,
+            destination: projetsList?.find((projet) => projet.id === value)?.address || '',
         });
-        setIsTypeFilterDropdownOpen(false);
     };
-    const onTypeToggle = (isOpen: boolean) => {
-        setIsTypeFilterDropdownOpen(isOpen);
-    };
-    const selectType = (event: any) => {
+
+    const handleSelectRessource = (value: string) => {
         setFormData({
             ...formData,
-            type: event.target.innerText,
+            ressource: value,
         });
-        setIsTypeFilterDropdownOpen(false);
     };
-    const onStatusToggle = (isOpen: boolean) => {
-        setIsStatusFilterDropdownOpen(isOpen);
-    };
-    const selectStatus = (event: any) => {
+
+    const handleSetTrajet = (data: any) => {
         setFormData({
             ...formData,
-            status: event.target.innerText,
+            origin: data.origin,
+            destination: data.destination,
+            distance: data.distance,
+            trajetDuration: data.trajetDuration,
+            trajetDurationText: data.trajetDurationText,
+            travelMode: data.travelMode,
         });
-        setIsStatusFilterDropdownOpen(false);
     };
 
-    const Step1 = () => (
-        <React.Fragment>
-            <Bullseye>
-                <div className='step-container'>
-                    <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
-                        <GridItem span={12}>
-                            <FormGroup
-                                label="Titre"
-                                fieldId="modal-with-form-form-name"
-                            >
-                                <TextInput
-                                isRequired
-                                type="text"
-                                id="modal-with-form-form-title"
-                                name="modal-with-form-form-title"
-                                value={formData.title}
-                                onChange={handleTitleInputChange}
-                                />
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                    <Grid hasGutter style={{ marginBottom: '25px' }}>
-                        <GridItem span={8}>
-                            <FormGroup
-                                label="Date et heure"
-                                isRequired
-                                fieldId="modal-with-form-form-datetime"
-                            >
-                                <TextInput
-                                isRequired
-                                type="datetime-local"
-                                id="modal-with-form-form-datetime"
-                                name="modal-with-form-form-datetime"
-                                value={formData.startDate}
-                                onChange={handleStartDateInputChange}
-                                />
-                            </FormGroup>
-                        </GridItem>
-                        <GridItem span={4}>
-                            <FormGroup
-                                label="Duration"
-                                isRequired
-                                fieldId="modal-with-form-form-duration"
-                            >
-                                <TextInput
-                                isRequired
-                                type="number"
-                                id="modal-with-form-form-duration"
-                                name="modal-with-form-form-duration"
-                                value={formData.duration}
-                                onChange={handleDurationInputChange}
-                                />
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                    <Grid hasGutter style={{ marginBottom: '25px' }}>
-                        <GridItem span={12}>
-                            <FormGroup
-                                label="Notes"
-                                fieldId="modal-with-form-form-name"
-                            >
-                                <TextArea
-                                id="modal-with-form-form-notes"
-                                name="modal-with-form-form-notes"
-                                value={formData.notes}
-                                onChange={handleNotesInputChange}
-                                />
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                </div>
-            </Bullseye>
-        </React.Fragment>
-    );
+    const addPlanificationRequest = async (planificationForm: any) => {
+        await axiosInstance?.current?.post('inspections', planificationForm).then((response) => {
+            enqueueSnackbar('Rendez-vous planifiée avec succès', {
+                variant: 'success',
+            });
+            console.log(response)
+            dispatch(addPlanification(response.data));
+            return response;
+        }).catch((error) => {
+            enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
+                variant: 'error',
+            });
+        });
+    };
 
-    const Step2 = () => (
-        <React.Fragment>
-            <Bullseye>
-                <div className='step-container'>
-                    <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
-                        <GridItem span={12}>
-                            <FormGroup
-                                label="Ressources"
-                                isRequired
-                                fieldId="modal-with-form-form-client"
-                            >
-                                {/* <AutoCompleteInput optionsData={ressources} setSelectedId={(id: string) => setFormData({ ...formData, ressource: id })} /> */}
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                    <Grid hasGutter style={{ marginBottom: '25px' }}>
-                        <GridItem span={12}>
-                            <FormGroup
-                                label="Projets"
-                                fieldId="modal-with-form-form-projet"
-                            >
-                                <Select
-                                    onSelect={selectProjet}
-                                    selections={formData.projet}
-                                    position={DropdownPosition.left}
-                                    onToggle={onProjetToggle}
-                                    isOpen={isProjetFilterDropdownOpen}
-                                    style={{ width: '100%' }}
-                                    menuAppendTo={() => document.body}
-                                    >
-                                    {projetsListItems}
-                                </Select>
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                </div>
-            </Bullseye>
-        </React.Fragment>
-    );
+    const handleSave = () => {
+        const payload = {
+            title: formData.title,
+            origin: formData.origin,
+            destination: formData.destination,
+            distance: formData.distance,
+            startTime: moment(formData.startDate).format('YYYY-MM-DDTHH:mm:ss.083'),
+            endTime: moment(formData.startDate).add(formData.duration, 'minutes').add(formData.trajetDuration, 'minutes').format('YYYY-MM-DDTHH:mm:ss.083'),
+            duration: parseInt(formData.duration),
+            travelMode: formData.travelMode,
+            travelDuration: parseInt(formData.trajetDuration),
+            comment: formData.notes,
+            status: {
+                id: 1,
+            },
+            type: {
+                id: formData.type,
+            },
+            member: {
+                uuid: formData.ressource,
+            },
+            projet: {
+                uuid: formData.projet,
+            },
+            customer: {
+                uuid: '',
+            },
+        };
 
-    const Step3 = () => (
-        <React.Fragment>
-            <Bullseye>
-                <div className='step-container-map'>
-                    <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
-                        <GridItem span={12}>
-                                <GoogleMapsContainer  />
-                        </GridItem>
-                    </Grid>
-                    <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
-                        <GridItem span={4}>
-                            <FormGroup
-                                label="Distance de trajet"
-                                fieldId="modal-with-form-form-distance"
-                                >
-                                <TextInput
-                                    type="text"
-                                    id="modal-with-form-form-distance"
-                                    name="modal-with-form-form-distance"
-                                    value={formData.distance}
-                                    readOnly
-                                />
-                            </FormGroup>
-                        </GridItem>
-                        <GridItem span={4}>
-                            <FormGroup
-                                label="Durée de trajet"
-                                fieldId="modal-with-form-form-trajetDurationText"
-                                >
-                                <TextInput
-                                    type="text"
-                                    id="modal-with-form-form-trajetDurationText"
-                                    name="modal-with-form-form-trajetDurationText"
-                                    value={formData.trajetDurationText}
-                                    readOnly
-                                />
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                </div>
-            </Bullseye>
-        </React.Fragment>
-    );
-
-    const ReviewStep = () => (
-        <React.Fragment>
-            <Bullseye>
-                <div className='step-container'>
-                    <Grid hasGutter style={{ marginTop: '20px', marginBottom: '25px' }}>
-                        <GridItem span={12}>
-                            <FormGroup
-                                label="Titre"
-                                fieldId="modal-with-form-form-preview-name"
-                            >
-                                <TextInput
-                                isRequired
-                                type="text"
-                                id="modal-with-form-form-preview-title"
-                                name="modal-with-form-form-preview-title"
-                                value={formData.title}
-                                readOnly
-                                />
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                    <Grid hasGutter style={{ marginBottom: '25px' }}>
-                        <GridItem span={8}>
-                            <FormGroup
-                                label="Date et heure"
-                                isRequired
-                                fieldId="modal-with-form-form-preview-datetime"
-                            >
-                                <TextInput
-                                isRequired
-                                type="datetime-local"
-                                id="modal-with-form-form-preview-datetime"
-                                name="modal-with-form-form-preview-datetime"
-                                value={formData.startDate}
-                                readOnly
-                                />
-                            </FormGroup>
-                        </GridItem>
-                        <GridItem span={4}>
-                            <FormGroup
-                                label="Total Durée (min)"
-                                isRequired
-                                fieldId="modal-with-form-form-preview-duration"
-                            >
-                                <TextInput
-                                isRequired
-                                type="number"
-                                id="modal-with-form-form-preview-duration"
-                                name="modal-with-form-form-preview-duration"
-                                value={formData.duration}
-                                readOnly
-                                />
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                    <Grid hasGutter style={{ marginBottom: '25px' }}>
-                        <GridItem span={6}>
-                            <FormGroup
-                                label="Ressource"
-                                isRequired
-                                fieldId="modal-with-form-form-preview-resource"
-                            >
-                                <TextInput
-                                isRequired
-                                type="text"
-                                id="modal-with-form-form-preview-resource"
-                                name="modal-with-form-form-preview-resource"
-                                value={formData.ressource}
-                                readOnly
-                                />
-                            </FormGroup>
-                        </GridItem>
-                        <GridItem span={6}>
-                            <FormGroup
-                                label="Projet"
-                                fieldId="modal-with-form-form-preview-projet"
-                            >
-                                <TextInput
-                                type="text"
-                                id="modal-with-form-form-preview-projet"
-                                name="modal-with-form-form-preview-projet"
-                                value={formData.projet}
-                                readOnly
-                                />
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                    <Grid hasGutter style={{ marginBottom: '25px' }}>
-                        <GridItem span={12}>
-                            <FormGroup
-                                label="Notes"
-                                fieldId="modal-with-form-form-preview-notes"
-                            >
-                                <TextArea
-                                type="text"
-                                id="modal-with-form-form-preview-notes"
-                                name="modal-with-form-form-preview-notes"
-                                value={formData.notes}
-                                readOnly
-                                />
-                            </FormGroup>
-                        </GridItem>
-                    </Grid>
-                </div>
-            </Bullseye>
-        </React.Fragment>
-    );
+        addPlanificationRequest(payload);
+    };
 
     const steps = [
-        { name: 'Rendez-vous', component: <Step1 />},
-        { name: 'Participants', component: <Step2 />},
-        { name: 'Trajet', component: <Step3 />},
-        { name: 'Aperçu', component: <ReviewStep />, nextButtonText: 'Planifier'}
+        { 
+            name: 'Rendez-vous',
+            component: <CreateStep1 
+                            formData={formData} 
+                            handleTitleChange={handleTitleChange}
+                            handleStartDateChange={handleStartDateChange}
+                            handleDurationChange={handleDurationChange}
+                            handleNotesChange={handleNotesChange}
+                        />
+        },
+        { 
+            name: 'Participants',
+            component: <CreateStep2
+                            formData={formData}
+                            handleSelectType={handleSelectType}
+                            handleSelectProjet={handleSelectProjet}
+                            handleSelectRessource={handleSelectRessource}
+                        />
+        },
+        { 
+            name: 'Trajet',
+            component: <CreateStep3 formData={formData} handleSetFormData={handleSetTrajet} />
+        },
+        {
+            name: 'Aperçu',
+            component: <CreateStep4 formData={formData} />,
+            nextButtonText: 'Planifier'
+        }
     ];
+
     return (
         <React.Fragment>
             <Wizard
@@ -452,26 +193,8 @@ export const CreatePlanification: React.FunctionComponent<{
                 nextButtonText='Suivant'
                 backButtonText='Précédent'
                 cancelButtonText='Annuler'
+                onSave={handleSave}
             />
-        {/* <Modal
-            variant={ModalVariant.small}
-            title="Créer planification"
-            description="Entrer les informations ci-dessout pour créer un planification."
-            isOpen={isOpen}
-            onClose={close}
-            actions={[
-            <Button key="create" variant="primary" onClick={() => {
-                setSave(true);
-            }}>
-                Enregistrer
-            </Button>,
-            <Button key="cancel" variant="link" onClick={close}>
-                Annuler
-            </Button>
-            ]}
-        >
-            <PlanificationForm planification={planification} save={save} close={() => {setSave(false); close()}} />
-        </Modal> */}
         </React.Fragment>
     );
 };

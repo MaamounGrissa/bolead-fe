@@ -7,12 +7,17 @@ import {
   GridItem,
   Card,
   CardTitle} from '@patternfly/react-core';
-import { OutlinedCalendarAltIcon, OutlinedCalendarPlusIcon, TableIcon, UserCogIcon, UserSecretIcon, UserTieIcon } from '@patternfly/react-icons';
+import { FilePdfIcon, OutlinedCalendarAltIcon, OutlinedCalendarPlusIcon, TableIcon, UserCogIcon, UserSecretIcon, UserTieIcon } from '@patternfly/react-icons';
 import { PlanificationsTable } from './PlanificationsTable';
+import { VisiteTechniqueHTML } from './VisiteTechnique';
+import { useAppSelector } from '@app/store';
 
 const Planifications: React.FunctionComponent = () => {
   const [openCreatePlanification, setOpenCreatePlanification] = React.useState(false);
   const [view, setView] = React.useState('GRID');
+  const { totalCount } = useAppSelector((state) => state.planifications);
+
+  const [showPdf, setShowPdf] = React.useState(false);
 
   return (
     <PageSection>
@@ -40,9 +45,10 @@ const Planifications: React.FunctionComponent = () => {
         </GridItem>
       </Grid>
       <div className='flex-between mobile-flex-column'>
-        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">13 Planifications</Title>
+        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">{totalCount} Planifications</Title>
         <div className='mobile-m-2'>
-          <Button variant="primary" onClick={() => setOpenCreatePlanification(true)}><OutlinedCalendarPlusIcon />&nbsp;Rendez-vous</Button>
+          <Button variant="primary" onClick={() => setShowPdf(true)}><FilePdfIcon />&nbsp;PDF</Button>
+          <Button style={{ margin: '0 5px'}} variant="primary" onClick={() => setOpenCreatePlanification(true)}><OutlinedCalendarPlusIcon />&nbsp;Rendez-vous</Button>
           <Button style={{ margin: '0 5px'}} variant={view === 'GRID' ? 'primary' : 'secondary'} onClick={() => setView('GRID')} ><OutlinedCalendarAltIcon color='white'/></Button>
           <Button variant={view === 'TABLE' ? 'primary' : 'secondary'} onClick={() => setView('TABLE')} ><TableIcon color='white'/></Button>
         </div>
@@ -50,6 +56,7 @@ const Planifications: React.FunctionComponent = () => {
       <div>
         <PlanificationsTable view={view} openCreatePlanification={openCreatePlanification} setOpenCreatePlanification={() => setOpenCreatePlanification(true)} closeModal={() => setOpenCreatePlanification(false)} />
       </div>
+      <VisiteTechniqueHTML isOpen={showPdf} close={() => setShowPdf(false)} />
     </PageSection>
   )
 }

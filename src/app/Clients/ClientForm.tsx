@@ -37,6 +37,40 @@ export const ClientForm: React.FunctionComponent<{
         setFormData(initialClient);
     };
 
+    const addClientRequest = async (clientForm: any) => {
+        await axiosInstance?.current?.post('customers', clientForm).then((response) => {
+            enqueueSnackbar('Client ajouté avec succès', {
+                variant: 'success',
+            });
+            dispatch(addClient(formData));
+            setTimeout(() => {
+                close();
+            }, 500);
+            return response;
+        }).catch((error) => {
+            enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
+                variant: 'error',
+            });
+        });
+    };
+
+    const editClientRequest = async (clientForm: any) => {
+        await axiosInstance?.current?.put('customers/' + formData.id, clientForm).then((response) => {
+            enqueueSnackbar('Client modifié avec succès', {
+                variant: 'success',
+            });
+            dispatch(updateClient(formData));
+            setTimeout(() => {
+                close();
+            }, 500);
+            return response;
+        }).catch((error) => {
+            enqueueSnackbar('Erreur lors de la modification du client. ' + error.message, {
+                variant: 'error',
+            });
+        });
+    };
+
     React.useEffect(() => {
         if (client) {
             setFormData(client);
@@ -76,17 +110,16 @@ export const ClientForm: React.FunctionComponent<{
                             firstName: formData.firstName,
                             lastName: formData.lastName,
                             email: formData.email,
-                            phone: parseInt(formData.phone),
+                            phone: formData.phone,
                             address: {
                                 street: formData.address,
-                                city: '',
-                                postcode: 0,
+                                city: 'Paris',
+                                postcode: 1000,
                                 country: 'France',
                             }
                         },
                     }
                     addClientRequest(newClient);
-                    dispatch(addClient(formData));
                 } else {
                     const updatedClient = {
                         uuid: formData.id,
@@ -107,40 +140,11 @@ export const ClientForm: React.FunctionComponent<{
                         },
                     }
                     editClientRequest(updatedClient);
-                    dispatch(updateClient(formData));
                 }
-                close()
             }, 500);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [save]);
-
-    const addClientRequest = async (clientForm: any) => {
-        await axiosInstance?.current?.post('customers', clientForm).then((response) => {
-            enqueueSnackbar('Client ajouté avec succès', {
-                variant: 'success',
-            });
-            return response;
-        }).catch((error) => {
-            enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
-                variant: 'error',
-            });
-        });
-    };
-
-    const editClientRequest = async (clientForm: any) => {
-        await axiosInstance?.current?.put('customers/' + formData.id, clientForm).then((response) => {
-            enqueueSnackbar('Client modifié avec succès', {
-                variant: 'success',
-            });
-            return response;
-        }).catch((error) => {
-            enqueueSnackbar('Erreur lors de la modification du client. ' + error.message, {
-                variant: 'error',
-            });
-        });
-    };
-
 
     const statusMenuItems = clientStatus?.map((status) => (
         <SelectOption key={status.id} value={status.name} />

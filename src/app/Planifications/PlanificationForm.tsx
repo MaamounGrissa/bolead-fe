@@ -8,8 +8,14 @@ import { addPlanification, updatePlanification } from '@app/store/planifications
 import moment from 'moment';
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 import { initialPlanification } from '@app/utils/constant';
+import { useSnackbar } from 'notistack';
+import { useAxios } from '@app/network';
+import { getProjetsList } from '@app/store/projets/projetSlice';
+import { getRessourcesList } from '@app/store/ressources/ressourceSlice';
 
 export const PlanificationForm: React.FunctionComponent<{ planification: IPlanification, save: boolean, close: () => void}> = ({planification, save, close}) => {
+    const { enqueueSnackbar } = useSnackbar();
+    const axiosInstance = useAxios();
     const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: googleKey,
@@ -24,8 +30,9 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     const [isRessourceFilterDropdownOpen, setIsRessourceFilterDropdownOpen] = React.useState(false);
     const [isTypeFilterDropdownOpen, setIsTypeFilterDropdownOpen] = React.useState(false);
     const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
-    const { projets } = useAppSelector(state => state.projets);
-    const { ressources } = useAppSelector(state => state.ressources);
+    const { projetsList } = useAppSelector(state => state.projets);
+    const { ressourcesList } = useAppSelector(state => state.ressources);
+    const { planificationStatus, planificationTypes } = useAppSelector(state => state.planifications);
 
     /** @type React.MutableRefObject<HTMLInputElement> */
     const originRef: React.MutableRefObject<any> = useRef()
@@ -33,6 +40,28 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     const destiantionRef: React.MutableRefObject<any> = useRef()
 
     const [formData, setFormData] = React.useState<IPlanification>(initialPlanification);
+
+    const fetchProjetsList = async () => {
+        await axiosInstance?.current?.get(`customers`).then((res) => {
+            dispatch(getProjetsList(res.data));
+        }).catch((err) => {
+            console.log(err);
+        });
+    };
+
+    const fetchRessourcesList = async () => {
+        await axiosInstance?.current?.get(`members`).then((res) => {
+            dispatch(getRessourcesList(res.data));
+        }).catch((error) => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
+    React.useEffect(() => {
+        fetchProjetsList();
+        fetchRessourcesList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch]);
 
     const clearForm = () => {
         setFormData(initialPlanification);
@@ -65,34 +94,25 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [save]);
 
-    const statusList = [
-        "Nouveau",
-        "En cours",
-        "Terminé",
-        "Annulé",
-    ];
-
-    const typeList= [
-        "Visite Technique",
-        "Visite Commercial",
-        "Audit",
-    ]
-
-    const typeMenuItems = typeList.map((type) => (
-        <SelectOption key={type} value={type} />
-    ));
-
-    const statusMenuItems = statusList.map((status) => (
-        <SelectOption key={status} value={status} />
-    ));
-
-    const ressourcesListItems = ressources.map((ressource) => (
-        <SelectOption key={ressource.id} value={ressource.id}>
-            {ressource.firstName} {ressource.lastName}
+    const typeMenuItems = planificationTypes?.map((type) => (
+        <SelectOption key={type.id} value={type.id} >
+            {type.name}
         </SelectOption>
     ));
 
-    const projetsListItems = projets.map((projet) => (
+    const statusMenuItems = planificationStatus?.map((status) => (
+        <SelectOption key={status.id} value={status.id} >
+            {status.name}
+        </SelectOption>
+    ));
+
+    const ressourcesListItems = ressourcesList?.map((ressource) => (
+        <SelectOption key={ressource.id} value={ressource.id}>
+            {ressource.name}
+        </SelectOption>
+    )); 
+
+    const projetsListItems = projetsList?.map((projet) => (
         <SelectOption key={projet.id} value={projet.id}>
             {projet.name}
         </SelectOption>
@@ -114,7 +134,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     const handleDurationInputChange = (value: string) => {
         setFormData({
             ...formData,
-            duration: parseInt(value),
+            duration: value,
             endDate: formData.startDate ? moment(formData.startDate).add(parseInt(value), 'minutes').format('YYYY-MM-DDTHH:mm') : moment().add(parseInt(value), 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };

@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: ClientState = {
+    totalCount: 0,
     client: {
         id: '',
         firstName: '',
@@ -27,7 +28,7 @@ export const clientSlice = createSlice({
         getClients: (state, action: PayloadAction<IClientAPI[]>) => {
             state.clients = action.payload?.map((client) => {
                 return {
-                    id: client.uuid || '', 
+                    id: client.id.toString() || '', 
                     firstName: client.contact?.firstName  || '', 
                     lastName: client.contact?.lastName || '', 
                     email: client.contact?.email || '', 
@@ -65,9 +66,12 @@ export const clientSlice = createSlice({
                     name: `${client.contact?.firstName} ${client.contact?.lastName}` || ''
                 };
             });
-        }
+        },
+        setClientsTotalCount: (state, action: PayloadAction<number>) => {
+            state.totalCount = action.payload;
+        },
     }
 });
 
-export const { getClients, getClient, addClient, updateClient, deleteClient, getClientStatus, getClientsList } = clientSlice.actions;
+export const { getClients, getClient, addClient, updateClient, deleteClient, getClientStatus, getClientsList, setClientsTotalCount } = clientSlice.actions;
 export default clientSlice.reducer;

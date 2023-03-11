@@ -18,16 +18,22 @@ import {
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import { useAppSelector } from '@app/store';
 
 export const PlanificationsFilter: React.FunctionComponent<{
   planifications: IPlanification[], 
-  filterData: (data: IPlanification[]) => void
+  filterData: (data: IPlanification[]) => void,
+  page: number,
+  handleSetPage: (page: number) => void,
+  size: number,
+  handleSetSize: (size: number) => void,
 }> = (props) => {
-    const { planifications, filterData } = props;
+    const { planifications, filterData, page, handleSetPage, size, handleSetSize } = props;
     // Set up repo filtering
     const [searchValue, setSearchValue] = React.useState('');
     const [typeSelections, setTypeSelections] = React.useState<string[]>([]);
     const [statusSelection, setStatusSelection] = React.useState('');
+    const { planificationStatus, planificationTypes } = useAppSelector(state => state.planifications)
 
   const onSearchChange = (value: string) => {
     setSearchValue(value);
@@ -44,10 +50,10 @@ export const PlanificationsFilter: React.FunctionComponent<{
     const matchesSearchValue = repo.title.search(searchValueInput) >= 0;
 
     // Search status with status selection
-    const matchesStatusValue = repo.status.toLowerCase() === statusSelection.toLowerCase();
+    const matchesStatusValue = repo.status === parseInt(statusSelection);
 
     // Search type with type selections
-    const matchesTypeValue = typeSelections.includes(repo.type);
+    const matchesTypeValue = typeSelections.includes(repo.type.toString());
 
     return (
       (searchValue === '' || matchesSearchValue) &&
@@ -142,10 +148,13 @@ export const PlanificationsFilter: React.FunctionComponent<{
     <Menu ref={statusMenuRef} id="attribute-search-status-menu" onSelect={onStatusSelect} selected={statusSelection}>
       <MenuContent>
         <MenuList>
-          <MenuItem itemId="Nouveau">Nouveau</MenuItem>
-          <MenuItem itemId="En cours">En cours</MenuItem>
-          <MenuItem itemId="Terminé">Terminé</MenuItem>
-          <MenuItem itemId="Annulé">Annulé</MenuItem>
+          {
+            planificationStatus?.map((status, index) => (
+              <MenuItem key={index} itemId={status.id}>
+                {status.name}
+              </MenuItem>
+            ))
+          }
         </MenuList>
       </MenuContent>
     </Menu>
@@ -243,15 +252,13 @@ export const PlanificationsFilter: React.FunctionComponent<{
     >
       <MenuContent>
         <MenuList>
-          <MenuItem hasCheck isSelected={typeSelections.includes('Visite Technique')} itemId="Visite Technique">
-            Construction
-          </MenuItem>
-          <MenuItem hasCheck isSelected={typeSelections.includes('Visite Commercial')} itemId="Visite Commercial">
-            Peinture
-          </MenuItem>
-          <MenuItem hasCheck isSelected={typeSelections.includes('Audit')} itemId="Audit">
-            Electricité
-          </MenuItem>
+          {
+            planificationTypes?.map((type, index) => (
+              <MenuItem key={index} itemId={type.id}>
+                {type.name}
+              </MenuItem>
+            ))
+          }
         </MenuList>
       </MenuContent>
     </Menu>
@@ -362,8 +369,10 @@ export const PlanificationsFilter: React.FunctionComponent<{
       titles={{ paginationTitle: 'Pagination' }}
       perPageComponent="button"
       itemCount={planifications.length}
-      perPage={10}
-      page={1}
+      perPage={size}
+      onPerPageSelect={(_ev, perPage) => handleSetSize(perPage)}
+      page={page}
+      onSetPage={(_ev, page) => handleSetPage(page)}
       widgetId="attribute-search-mock-pagination"
       isCompact
     />

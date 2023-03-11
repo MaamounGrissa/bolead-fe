@@ -10,9 +10,11 @@ import {
 import UserPlusIcon from '@patternfly/react-icons/dist/js/icons/user-plus-icon';
 import { CheckCircleIcon, TimesCircleIcon, ClockIcon } from '@patternfly/react-icons';
 import { RessourcesTable } from './RessourcesTable';
+import { useAppSelector } from '@app/store';
 
 const Ressources: React.FunctionComponent = () => {
   const [openCreateRessource, setOpenCreateRessource] = React.useState(false);
+  const { totalCount } = useAppSelector(state => state.ressources)
 
   return (
     <PageSection>
@@ -40,7 +42,7 @@ const Ressources: React.FunctionComponent = () => {
         </GridItem>
       </Grid>
       <div className='flex-between mobile-flex-column'>
-        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">8 Ressources</Title>
+        <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">{totalCount} Ressources</Title>
         <div className='mobile-m-2'>
           <Button variant="primary" onClick={() => setOpenCreateRessource(true)}><UserPlusIcon />&nbsp;Ressource</Button>
         </div>

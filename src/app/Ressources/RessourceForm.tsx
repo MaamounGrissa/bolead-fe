@@ -57,6 +57,10 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
             enqueueSnackbar('Ressource ajouté avec succès', {
                 variant: 'success',
             });
+            dispatch(addRessource(formData));
+            setTimeout(() => {
+                close();
+            }, 500);
             return response;
         }).catch((error) => {
             enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
@@ -70,6 +74,10 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
             enqueueSnackbar('Ressource modifié avec succès', {
                 variant: 'success',
             });
+            dispatch(updateRessource(formData));
+            setTimeout(() => {
+                close();
+            }, 500);
             return response;
         }).catch((error) => {
             enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
@@ -95,18 +103,18 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                             email: formData.email,
                             phone: formData.phone,
                             address: {
-                                street: formData.notes,
-                                streetLine2: '',
-                                city: '',
-                                postcode: '',
+                                street: 'formData.address',
+                                streetLine2: formData.notes,
+                                city: 'Paris',
+                                postcode: '75001',
                                 country: 'France',
                             }
                         }
                     }
                     addRessourceRequest(newRessource);
-                    dispatch(addRessource(formData));
                 } else {
                     const newRessource = {
+                        id : formData.id,
                         team: {
                             id: formData.type,
                         },
@@ -119,18 +127,16 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                             email: formData.email,
                             phone: formData.phone,
                             address: {
-                                street: '',
-                                streetLine2: '',
-                                city: '',
-                                postcode: '',
+                                street: 'formData.address',
+                                streetLine2: formData.notes,
+                                city: 'Paris',
+                                postcode: '75001',
                                 country: 'France',
                             }
                         }
                     }
                     editRessourceRequest(newRessource);
-                    dispatch(updateRessource(formData));
                 }
-                close()
             }, 500);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps

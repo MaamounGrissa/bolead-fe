@@ -19,18 +19,19 @@ import { UpdateProjet } from './UpdateProjet';
 import { DeleteProjet } from './DeleteProjet';
 import { ProjetsFilter } from './ProjetsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getProjetStatus, getProjetTypes, getProjets } from '@app/store/projets/projetSlice';
+import { getProjetStatus, getProjetTypes, getProjets, setProjetsTotalCount } from '@app/store/projets/projetSlice';
 import { ProjectsGrid } from './ProjectsGrid';
 import { initialProjet } from '@app/utils/constant';
 import { useSnackbar } from 'notistack';
 import { useAxios } from '@app/network';
 
 const columnNames = {
-  name: 'Référence',
-  client: 'Client',
-  type: 'Type',
-  status: 'Status',
-  notes: 'Notes',
+    id: '#',
+    name: 'Référence',
+    client: 'Client',
+    type: 'Type',
+    status: 'Status',
+    notes: 'Notes',
 };
 
 export const ProjetsTable: React.FunctionComponent<{
@@ -77,6 +78,7 @@ export const ProjetsTable: React.FunctionComponent<{
             },
         }).then(response => {
             dispatch(getProjets(response.data));
+            dispatch(setProjetsTotalCount(parseInt(response.headers['x-total-count'])));
             return;
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -149,7 +151,7 @@ export const ProjetsTable: React.FunctionComponent<{
 
     return (
         <React.Fragment>
-            <ProjetsFilter 
+            <ProjetsFilter
                 projets={projets} 
                 filterData={(data: IProjet[]) => setFiltredData(data)} 
                 page={page}
@@ -162,6 +164,7 @@ export const ProjetsTable: React.FunctionComponent<{
                     <TableComposable aria-label="Selectable table">
                     <Thead>
                     <Tr>
+                        <Th width={10}>{columnNames.id}</Th>
                         <Th width={20}>{columnNames.name}</Th>
                         <Th width={15}>{columnNames.client}</Th>
                         <Th width={15}>{columnNames.type}</Th>
@@ -170,11 +173,14 @@ export const ProjetsTable: React.FunctionComponent<{
                     </Tr>
                     </Thead>
                     <Tbody>
-                    {filtredData.length > 0 &&
-                        filtredData.map(repo => {
+                    {filtredData?.length > 0 ?
+                        filtredData?.map(repo => {
                             const actionsRow: IAction[] | null = actions(repo);
                             return (
                             <Tr key={repo.name}>
+                                <Td dataLabel={columnNames.id} modifier="truncate">
+                                {repo.id}
+                                </Td>
                                 <Td dataLabel={columnNames.name} modifier="truncate">
                                 {repo.name}
                                 </Td>
@@ -198,13 +204,12 @@ export const ProjetsTable: React.FunctionComponent<{
                                     />
                                 </Td>
                             </Tr>
-                        )})}
-                    {filtredData.length === 0 && (
-                        <Tr>
-                        <Td colSpan={8}>
-                            <Bullseye>{emptyState}</Bullseye>
-                        </Td>
-                        </Tr>
+                        )}) : (
+                            <Tr>
+                                <Td colSpan={8}>
+                                    <Bullseye>{emptyState}</Bullseye>
+                                </Td>
+                            </Tr>
                     )}
                     </Tbody>
                 </TableComposable>) : (

@@ -1,11 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { defaultAdress, mapCenter } from '@app/utils/constant';
-import { Button, TextInput } from '@patternfly/react-core';
+import { Button, Label, TextInput } from '@patternfly/react-core';
+import { CarSideIcon, ClockIcon } from '@patternfly/react-icons';
 import { Marker, GoogleMap, useJsApiLoader, DirectionsRenderer, Autocomplete } from '@react-google-maps/api';
 import React, { useState, useRef } from 'react';
 
 
-export const GoogleMapsContainer: React.FunctionComponent = () => {
+export const GoogleMapsContainer: React.FunctionComponent<{
+    formData: {
+        origin: string,
+        destination: string,
+        distance: string,
+        trajetDuration: string,
+        trajetDurationText: string,
+        travelMode: string,
+    },
+    handleSetFormData: (data: any) => void,
+}> = (props) => {
+    const { formData, handleSetFormData } = props;
     const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: googleKey,
@@ -29,6 +41,17 @@ export const GoogleMapsContainer: React.FunctionComponent = () => {
     const [originInput, setOriginInput] = useState(defaultAdress)
     const [destinationInput, setDestinationInput] = useState('')
 
+    React.useEffect(() => {
+        if (formData.destination !== '') {
+            setDestinationInput(formData.destination)
+            if (formData.origin !== '' && formData.destination !== '') {
+                setTimeout(() => {
+                    document.getElementById('calculate-route')?.click()
+                }, 1000)
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formData.destination])
 
     if (!isLoaded) {
         return <div>..loadind</div>
@@ -49,9 +72,18 @@ export const GoogleMapsContainer: React.FunctionComponent = () => {
         setOriginInput(originRef.current.value)
         setDestinationInput(destiantionRef.current.value)
         //console.log(results)
+        handleSetFormData({
+            origin: originRef.current.value,
+            destination: destiantionRef.current.value,
+            distance: results.routes[0].legs[0].distance.text,
+            trajetDuration: Math.ceil(results.routes[0].legs[0].duration.value / 60),
+            trajetDurationText: results.routes[0].legs[0].duration.text,
+            travelMode: 'DRIVING'
+        })
         setDirectionsResponse(results)
         setDistance(results.routes[0].legs[0].distance.text)
         setDuration(results.routes[0].legs[0].duration.text)
+        console.log("results", results)
     }
 
     const clearRoute = () => {
@@ -74,7 +106,7 @@ export const GoogleMapsContainer: React.FunctionComponent = () => {
         setDestinationInput(place.formatted_address)
     }
 
-    // console.log(distance, duration)
+    console.log("formData", formData);
 
     return (
         <React.Fragment>
@@ -83,20 +115,33 @@ export const GoogleMapsContainer: React.FunctionComponent = () => {
                     <div className='map-controls'>
                         <div className='map-controls_inputs'>
                             <div className='map-controls_input_container'>
+                                <Label width={120} htmlFor='origin-input'>Origine</Label>
                                 <Autocomplete options={options} onPlaceChanged={handleOnOriginPlaceChanged} >
                                     <TextInput type='text' id='origin-input' placeholder='Origin' ref={originRef} value={originInput} onChange={(newValue) => setOriginInput(newValue)} />
                                 </Autocomplete>
                             </div>
                             <div className='map-controls_input_container'>
+                                <Label width={120} htmlFor='destination-input'>Destination</Label>
                                 <Autocomplete options={options} onPlaceChanged={handleOnDestinationPlaceChanged} >
                                     <TextInput type='text' id='destination-input' placeholder='Destination' ref={destiantionRef} value={destinationInput} onChange={(newValue) => setDestinationInput(newValue)} />
                                 </Autocomplete>
                             </div>
                         </div>
-                        <div className='map-controls__button'>
-                            <Button style={{ marginRight: "5px" }} variant='primary' onClick={calculateRoute}>Calculer</Button>
-                            <Button variant='secondary' onClick={clearRoute}>Effacer</Button>
+                        <div className='map-controls-result'>
+                            <div className='map-controls__button'>
+                                <Button id='calculate-route' style={{ marginRight: "5px" }} variant='primary' onClick={calculateRoute}>Calculer</Button>
+                                <Button variant='secondary' onClick={clearRoute}>Effacer</Button>
+                            </div>
+                            <div className='map-result'>
+                                <div className='map-result-distance'>
+                                   <CarSideIcon color='#555' /> &nbsp; {distance?.length > 0 ? distance : '0 Km'}
+                                </div>
+                                <div className='map-result-duration'>
+                                   <ClockIcon color='#555' /> &nbsp; {duration?.length > 0 ? duration : '0 min'}
+                                </div>
+                            </div>
                         </div>
+                        
                     </div>
                     <div className='maps-output'>
                         <h3>Distance de trajet: {distance}</h3>

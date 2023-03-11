@@ -19,12 +19,13 @@ import { UpdateRessource } from './UpdateRessource';
 import { DeleteRessource } from './DeleteRessource';
 import { RessourcesFilter } from './RessourcesFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getRessourceStatus, getRessourceTypes, getRessources } from '@app/store/ressources/ressourceSlice';
+import { getRessourceStatus, getRessourceTypes, getRessources, setRessourcesTotalCount } from '@app/store/ressources/ressourceSlice';
 import { initialRessource } from '@app/utils/constant';
 import { useSnackbar } from 'notistack';
 import { useAxios } from '@app/network';
 
 const columnNames = {
+  id: '#',
   name: 'Nom et Prénom',
   email: 'Email',
   phone: 'Téléphone',
@@ -76,6 +77,7 @@ export const RessourcesTable: React.FunctionComponent<{
             },
         }).then(response => {
             dispatch(getRessources(response.data));
+            dispatch(setRessourcesTotalCount(parseInt(response.headers['x-total-count'] || '0')))
             return;
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -159,12 +161,13 @@ export const RessourcesTable: React.FunctionComponent<{
             <TableComposable aria-label="Selectable table">
                 <Thead>
                 <Tr>
+                    <Th width={10}>{columnNames.id}</Th>
                     <Th width={20}>{columnNames.name}</Th>
-                    <Th width={10}>{columnNames.email}</Th>
-                    <Th width={10}>{columnNames.phone}</Th>
-                    <Th width={15}>{columnNames.type}</Th>
-                    <Th width={15}>{columnNames.status}</Th>
-                    <Th width={20}>{columnNames.notes}</Th>
+                    <Th width={20}>{columnNames.email}</Th>
+                    <Th width={15}>{columnNames.phone}</Th>
+                    <Th width={10}>{columnNames.type}</Th>
+                    <Th width={10}>{columnNames.status}</Th>
+                    {/* <Th width={25}>{columnNames.notes}</Th> */}
                 </Tr>
                 </Thead>
                 <Tbody>
@@ -173,6 +176,9 @@ export const RessourcesTable: React.FunctionComponent<{
                         const actionsRow: IAction[] | null = actions(repo);
                         return (
                         <Tr key={repo.id}>
+                            <Td dataLabel={columnNames.id} modifier="truncate">
+                            {repo.id}
+                            </Td>
                             <Td dataLabel={columnNames.name} modifier="truncate">
                             {repo.firstName} {repo.lastName}
                             </Td>
@@ -188,9 +194,9 @@ export const RessourcesTable: React.FunctionComponent<{
                             <Td dataLabel={columnNames.status} modifier="truncate">
                             {renderLabel(repo.status)}
                             </Td>
-                            <Td dataLabel={columnNames.notes} modifier="truncate">
+                            {/* <Td dataLabel={columnNames.notes} modifier="truncate">
                             {repo.notes}
-                            </Td>
+                            </Td> */}
                             <Td isActionCell>
                                 <ActionsColumn
                                 items={actionsRow}
