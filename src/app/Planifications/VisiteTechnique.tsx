@@ -115,7 +115,7 @@ export const VisiteTechniqueHTML: React.FunctionComponent<{
                             </div>
                         </div>
                         <div className='apercu_body_section'>
-                            <div className='apercu_body_section_title'>Informations générales</div>
+                            <div className='apercu_body_section_title nomargin'>Informations générales</div>
                             <div className='apercu_body_section_subtitle'>Préparation du chantier</div>
                             <div className='apercu_body_section_content'>
                                 <div className='apercu_body_section_row'>

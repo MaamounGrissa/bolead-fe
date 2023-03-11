@@ -70,6 +70,7 @@ export const ProjectsGrid: React.FunctionComponent<{
                                 //isSelected={selectedItems.includes(product.id)}
                             >
                             <CardHeader>
+                            <CardTitle><span className="blueColor">{projet.name}</span></CardTitle>
                             {/* <img src={icons[product.icon]} alt={`${product.name} icon`} style={{ maxWidth: '60px' }} /> */}
                                 <CardActions>
                                     <Dropdown
@@ -98,12 +99,11 @@ export const ProjectsGrid: React.FunctionComponent<{
                                     />
                                 </CardActions>
                                 </CardHeader>
-                                <CardTitle>{projet.name}</CardTitle>
                                 <CardBody>
                                     <div className="projet-card">
-                                        <p><UserAltIcon style={{ marginRight: "10px" }} /><span className="mr-2">Client: </span>{projet.clientName}</p>
-                                        <p><MapMarkerIcon style={{ marginRight: "10px" }} /><span className="mr-2">Adresse: </span>{projet.adresse}</p>
-                                        <p><UsersIcon style={{ marginRight: "10px" }} /><span className="mr-2">Type: </span>{
+                                        <p><UserAltIcon style={{ color: "#071237", marginRight: "10px" }} /><span className="mr-2 w-50">Client: </span>{projet.clientName}</p>
+                                        <p><MapMarkerIcon style={{ color: "#071237", marginRight: "10px" }} /><span className="mr-2 w-50">Adresse: </span>{projet.adresse}</p>
+                                        <p><UsersIcon style={{ color: "#071237", marginRight: "10px" }} /><span className="mr-2 w-50">Type: </span>{
                                             projetTypes?.find(type => type.id === projet.type)?.name
                                         }</p>
                                         <div className="projet-card-status">{renderLabel(projet.status)}</div>

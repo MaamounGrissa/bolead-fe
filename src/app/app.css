@@ -8,6 +8,10 @@ html, body, #root {
   --pf-c-content--hr--BackgroundColor: lemonchiffon; /* changes a <hr> color to lemonchiffon */
 }
 
+.w-50 {
+  width: 50px;
+}
+
 .flex-between {
   display: flex;
   justify-content: space-between;
@@ -173,6 +177,17 @@ html, body, #root {
 .map-controls_input_container {
   margin-bottom: 15px;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.map-controls_input_container > div:first-of-type {
+  width: 15%;
+}
+
+.map-controls_input_container > div:last-of-type {
+  width: 83%;
 }
 
 .map-controls__button {
@@ -256,16 +271,17 @@ html, body, #root {
 
 .apercu_header_logo {
   margin-bottom: 15px;
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: #000;
+  font-size: 4rem;
+  font-weight: 900;
+  color: #071237;
+  font-family: 'Roboto', sans-serif;
 }
 
 .apercu_header_title {
   font-size: 1.5rem;
   font-weight: 700;
   color: #FFF;
-  background-color: #000;
+  background-color: #071237;
   padding: 2px 20px;
 }
 
@@ -278,18 +294,22 @@ html, body, #root {
   font-size: 1.2rem;
   font-weight: 700;
   color: #FFF;
-  background-color: #000;
+  background-color: #071237;
   margin-bottom: 20px;
   text-align: center;
   text-transform: uppercase;
 }
 
-.apercu_body_section_subtite {
+.apercu_body_section_title.nomargin {
+  margin-bottom: 0;
+}
+
+.apercu_body_section_subtitle {
   width: 100%;
   font-size: 1rem;
   font-weight: 600;
   color: #FFF;
-  background-color: #444;
+  background-color: #132d86;
   margin-bottom: 20px;
   text-align: center;
   text-transform: uppercase;
@@ -346,4 +366,8 @@ html, body, #root {
 
 .apercu_body_section_value_container input {
   margin-left: 10px;
+}
+
+.blueColor {
+  color: #071237;
 }

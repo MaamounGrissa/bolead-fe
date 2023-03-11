@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { defaultAdress, mapCenter } from '@app/utils/constant';
-import { Button, Label, TextInput } from '@patternfly/react-core';
+import { Button, TextInput } from '@patternfly/react-core';
 import { CarSideIcon, ClockIcon } from '@patternfly/react-icons';
 import { Marker, GoogleMap, useJsApiLoader, DirectionsRenderer, Autocomplete } from '@react-google-maps/api';
 import React, { useState, useRef } from 'react';
@@ -83,7 +83,6 @@ export const GoogleMapsContainer: React.FunctionComponent<{
         setDirectionsResponse(results)
         setDistance(results.routes[0].legs[0].distance.text)
         setDuration(results.routes[0].legs[0].duration.text)
-        console.log("results", results)
     }
 
     const clearRoute = () => {
@@ -102,11 +101,8 @@ export const GoogleMapsContainer: React.FunctionComponent<{
     
     const handleOnDestinationPlaceChanged = () => {
         const place = destiantionRef.current.getPlace();
-        console.log(place)
         setDestinationInput(place.formatted_address)
     }
-
-    console.log("formData", formData);
 
     return (
         <React.Fragment>
@@ -115,16 +111,20 @@ export const GoogleMapsContainer: React.FunctionComponent<{
                     <div className='map-controls'>
                         <div className='map-controls_inputs'>
                             <div className='map-controls_input_container'>
-                                <Label width={120} htmlFor='origin-input'>Origine</Label>
-                                <Autocomplete options={options} onPlaceChanged={handleOnOriginPlaceChanged} >
-                                    <TextInput type='text' id='origin-input' placeholder='Origin' ref={originRef} value={originInput} onChange={(newValue) => setOriginInput(newValue)} />
-                                </Autocomplete>
+                                <div>Origine</div>
+                                <div>
+                                    <Autocomplete options={options} onPlaceChanged={handleOnOriginPlaceChanged} >
+                                        <TextInput type='text' id='origin-input' placeholder='Origin' ref={originRef} value={originInput} onChange={(newValue) => setOriginInput(newValue)} />
+                                    </Autocomplete>
+                                </div>
                             </div>
                             <div className='map-controls_input_container'>
-                                <Label width={120} htmlFor='destination-input'>Destination</Label>
-                                <Autocomplete options={options} onPlaceChanged={handleOnDestinationPlaceChanged} >
-                                    <TextInput type='text' id='destination-input' placeholder='Destination' ref={destiantionRef} value={destinationInput} onChange={(newValue) => setDestinationInput(newValue)} />
-                                </Autocomplete>
+                                <div>Destination</div>
+                                <div>
+                                    <Autocomplete options={options} onPlaceChanged={handleOnDestinationPlaceChanged} >
+                                        <TextInput type='text' id='destination-input' placeholder='Destination' ref={destiantionRef} value={destinationInput} onChange={(newValue) => setDestinationInput(newValue)} />
+                                    </Autocomplete>
+                                </div>
                             </div>
                         </div>
                         <div className='map-controls-result'>
