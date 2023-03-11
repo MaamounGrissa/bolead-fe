@@ -238,8 +238,6 @@ html, body, #root {
   z-index: 1;
 }
 
-// PDF FILE
-
 .apercu_container {
   position: relative;
   width: 100%;
