@@ -74,7 +74,7 @@ export const ProjetsTable: React.FunctionComponent<{
             params: {
                 page: page,
                 size: size,
-                sort: 'createdAt,desc',
+                //sort: 'createdAt,desc',
             },
         }).then(response => {
             dispatch(getProjets(response.data));

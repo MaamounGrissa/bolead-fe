@@ -73,7 +73,7 @@ export const RessourcesTable: React.FunctionComponent<{
             params: {
                 page: page,
                 size: size,
-                sort: 'createdAt,desc',
+                //sort: 'createdAt,desc',
             },
         }).then(response => {
             dispatch(getRessources(response.data));

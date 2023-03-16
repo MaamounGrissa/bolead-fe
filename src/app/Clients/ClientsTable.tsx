@@ -62,7 +62,7 @@ export const ClientsTable: React.FunctionComponent<{
             params: {
                 page: page,
                 size: size,
-                sort: 'createdAt,desc',
+                //sort: 'createdAt,desc',
             },
         }).then(response => {
             dispatch(getClients(response.data));
