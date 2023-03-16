@@ -257,7 +257,7 @@ html, body, #root {
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 20px;
+  padding: 10px 20px;
   BackgroundColor: #fff;
 }
 
@@ -266,19 +266,19 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  margin-bottom: 60px;
+  margin-bottom: 25px;
 }
 
 .apercu_header_logo {
-  margin-bottom: 15px;
-  font-size: 4rem;
+  margin-bottom: 10px;
+  font-size: 3rem;
   font-weight: 900;
   color: #071237;
   font-family: 'Roboto', sans-serif;
 }
 
 .apercu_header_title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #FFF;
   background-color: #071237;
@@ -286,7 +286,7 @@ html, body, #root {
 }
 
 .apercu_body_section {
-  padding: 20px;
+  padding: 5px 20px;
 }
 
 .apercu_body_section_title {
@@ -295,7 +295,7 @@ html, body, #root {
   font-weight: 700;
   color: #FFF;
   background-color: #071237;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   text-align: center;
   text-transform: uppercase;
 }
@@ -310,7 +310,7 @@ html, body, #root {
   font-weight: 600;
   color: #FFF;
   background-color: #132d86;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   text-align: center;
   text-transform: uppercase;
 }
@@ -318,7 +318,7 @@ html, body, #root {
 .apercu_body_section_row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .apercu_body_section_col {
@@ -328,29 +328,35 @@ html, body, #root {
 .apercu_body_section_item {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .apercu_body_section_label {
   width: 40%;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #444;
 }
 
 .apercu_body_section_label.big-label {
-  width: 55%;
+  width: 70%;
 }
 
 .apercu_body_section_value {
   width: 60%;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #111;
 }
 
 .apercu_body_section_value.big-label {
-  width: 45%;
+  width: 30%;
+}
+
+.apercu_body_section_value > input[type=text] {
+  width: 140px;
+  padding: 6px 15px;
+  font-size: 0.9rem;
 }
 
 .apercu_body_section_values {
@@ -365,9 +371,107 @@ html, body, #root {
 }
 
 .apercu_body_section_value_container input {
-  margin-left: 10px;
+  margin-left: 6px;
 }
 
 .blueColor {
   color: #071237;
+}
+
+.apercu_body_section_value_container label {
+  font-size: 0.85rem;
+}
+
+.apercu_body_section_item_signature {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.apercu_body_section_item_signature .apercu_body_section_label {
+  width: 100%;
+  text-align: left;
+  font-size: 0.7rem;
+}
+.apercu_body_section_signature {
+  width: 350px;
+  height: 140px;
+  border: 1px solid #000;
+}
+.spacer {
+  height: 52px;
+}
+.apercu_body_section_facade {
+  width: 100%;
+  height: 100%;
+  margin-top: 20px;
+}
+.apercu_body_section_facade_row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.apercu_body_section_facade_coteCol {
+  width: 18%;
+}
+.apercu_body_section_facade_centerCol {
+  width: 60%;
+}
+.apercu_body_section_facade_dessin {
+  width: 100%;
+  height: 450px;
+  border: 1px solid #000;
+}
+
+.apercu_body_section_facade_dessin.triangle {
+  height: 300px;
+}
+.apercu_body_section_facade_dessin_triangle {
+  width: 0;
+  height: 0;
+  border-left: 150px solid transparent;
+  border-right: 150px solid transparent;
+  border-bottom: 300px solid #FFF;
+  margin: 0 auto;
+}
+.apercu_body_section_facade_label {
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.apercu_body_section_facade_label.align-right {
+  text-align: right;
+  margin-right: 10px;
+}
+.apercu_body_section_facade_label.align-left {
+  text-align: left;
+  margin-left: 10px;
+}
+.spacer-150 {
+  height: 150px;
+}
+.apercu_body_section_facade_label.underbox {
+  margin-top: 10px;
+  margin-left: 5%;
+}
+.table-container {
+  width: 100%;
+  margin-top: 20px;
+}
+.apercu_body_section_table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+.apercu_body_section_table th {
+  background-color: #071237;
+  color: #FFF;
+  padding: 5px 10px;
+  text-align: center;
+}
+
+.apercu_body_section_table td {
+  border: 1px solid #CCC;
+  padding: 4px 10px;
 }
