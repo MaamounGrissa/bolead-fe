@@ -42,7 +42,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     const [formData, setFormData] = React.useState<IPlanification>(initialPlanification);
 
     const fetchProjetsList = async () => {
-        await axiosInstance?.current?.get(`customers`).then((res) => {
+        await axiosInstance?.current?.get(`projects`).then((res) => {
             dispatch(getProjetsList(res.data));
         }).catch((err) => {
             console.log(err);
@@ -107,13 +107,13 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     ));
 
     const ressourcesListItems = ressourcesList?.map((ressource) => (
-        <SelectOption key={ressource.id} value={ressource.id}>
+        <SelectOption key={ressource.id} value={ressource.uuid}>
             {ressource.name}
         </SelectOption>
     )); 
 
     const projetsListItems = projetsList?.map((projet) => (
-        <SelectOption key={projet.id} value={projet.id}>
+        <SelectOption key={projet.id} value={projet.uuid}>
             {projet.reference}
         </SelectOption>
     ));
@@ -205,6 +205,19 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
         setIsStatusFilterDropdownOpen(false);
     };
 
+    const handleOriginChange = () => {
+        setFormData({
+            ...formData,
+            origin: originRef.current.value,
+        });
+    };
+    const handleDestinationChange = () => {
+        setFormData({
+            ...formData,
+            destination: destiantionRef.current.value,
+        });
+    };
+
     return (
         <React.Fragment>
             <Form id="modal-with-form-form">
@@ -259,13 +272,23 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 {isLoaded && (
                     <Grid hasGutter>
                         <GridItem span={6}>
-                            <Autocomplete options={options} >
-                                <TextInput type='text' id='origin-input' placeholder='Origin' ref={originRef} />
+                            <Autocomplete options={options} onPlaceChanged={handleOriginChange} >
+                                <TextInput 
+                                    type='text' 
+                                    id='origin-input' 
+                                    value={formData.origin} 
+                                    onChange={(newVal) => setFormData({ ...formData, origin: newVal})} 
+                                    ref={originRef} />
                             </Autocomplete>
                         </GridItem>
                         <GridItem span={6}>
-                            <Autocomplete options={options} >
-                                <TextInput type='text' id='destination-input' placeholder='Destination' ref={destiantionRef} />
+                            <Autocomplete options={options} onPlaceChanged={handleDestinationChange} >
+                                <TextInput
+                                    type='text' 
+                                    id='destination-input' 
+                                    value={formData.destination} 
+                                    onChange={(newVal) => setFormData({ ...formData, destination: newVal})} 
+                                    ref={destiantionRef} />
                             </Autocomplete>
                         </GridItem>
                     </Grid>
@@ -277,7 +300,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 >
                     <Select
                         onSelect={selectRessource}
-                        selections={formData.member.id}
+                        selections={formData.member?.uuid}
                         position={DropdownPosition.left}
                         onToggle={onRessourceToggle}
                         isOpen={isRessourceFilterDropdownOpen}
@@ -293,7 +316,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 >
                     <Select
                         onSelect={selectProjet}
-                        selections={formData.project.id}
+                        selections={formData.project?.uuid}
                         position={DropdownPosition.left}
                         onToggle={onProjetToggle}
                         isOpen={isProjetFilterDropdownOpen}
@@ -309,7 +332,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 >
                     <Select
                         onSelect={selectType}
-                        selections={formData.type.id}
+                        selections={formData.type?.id}
                         position={DropdownPosition.left}
                         onToggle={onTypeToggle}
                         isOpen={isTypeFilterDropdownOpen}
@@ -325,7 +348,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 >
                         <Select
                         onSelect={selectStatus}
-                        selections={formData.status.id}
+                        selections={formData.status?.id}
                         position={DropdownPosition.left}
                         onToggle={onStatusToggle}
                         isOpen={isStatusFilterDropdownOpen}
