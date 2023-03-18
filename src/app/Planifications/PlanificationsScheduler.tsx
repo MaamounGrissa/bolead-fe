@@ -126,12 +126,12 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                 onCurrentViewNameChange={onCurrentViewNameChange}
             />
             <DayView
-                startDayHour={8}
-                endDayHour={20}
+                startDayHour={6}
+                endDayHour={22}
             />
             <WeekView
-                startDayHour={8}
-                endDayHour={20}
+                startDayHour={6}
+                endDayHour={22}
                 timeTableCellComponent={WeekTableCell}
             />
 
