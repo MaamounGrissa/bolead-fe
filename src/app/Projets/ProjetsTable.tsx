@@ -100,17 +100,23 @@ export const ProjetsTable: React.FunctionComponent<{
     const renderLabel = (labelText: number) => {
         switch (labelText) {
         case 1:
-            return <Label color="blue">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="blue">{projetStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 2:
-            return <Label color="green">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="green">{projetStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 3:
-            return <Label color="orange">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="orange">{projetStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 4:
-            return <Label color="red">{projetStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="red">{projetStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         default:
             return <Label color="orange">Indéfinie</Label>;
         }
     };
+
+    const renderTypes = (types: number[]) => {
+        return types.map((type, key) => (
+            <Label key={key} color="purple">{projetTypes?.find(stat => stat.id === type)?.type}</Label>
+        ))
+    }
 
     const actions = (repo: IProjet): IAction[] => [
         {
@@ -165,8 +171,8 @@ export const ProjetsTable: React.FunctionComponent<{
                     <Thead>
                     <Tr>
                         <Th width={10}>{columnNames.id}</Th>
-                        <Th width={20}>{columnNames.name}</Th>
-                        <Th width={15}>{columnNames.client}</Th>
+                        <Th width={15}>{columnNames.name}</Th>
+                        <Th width={20}>{columnNames.client}</Th>
                         <Th width={15}>{columnNames.type}</Th>
                         <Th width={15}>{columnNames.status}</Th>
                         <Th width={15}>{columnNames.notes}</Th>
@@ -177,29 +183,29 @@ export const ProjetsTable: React.FunctionComponent<{
                         filtredData?.map(repo => {
                             const actionsRow: IAction[] | null = actions(repo);
                             return (
-                            <Tr key={repo.name}>
+                            <Tr key={repo.id}>
                                 <Td dataLabel={columnNames.id} modifier="truncate">
                                 {repo.id}
                                 </Td>
                                 <Td dataLabel={columnNames.name} modifier="truncate">
-                                {repo.name}
+                                {repo.reference}
                                 </Td>
                                 <Td dataLabel={columnNames.client} modifier="truncate">
-                                {repo.clientName}
+                                {`${repo.customer?.contact?.firstName} ${repo.customer?.contact?.lastName}`}
                                 </Td>
                                 <Td dataLabel={columnNames.type} modifier="truncate">
-                                    {projetTypes?.find(type => type.id === repo.type)?.name}
+                                    {renderTypes(repo.referentielProjectTypes?.map(type => type.id || 0))}
                                 </Td>
                                 <Td dataLabel={columnNames.status} modifier="truncate">
-                                {renderLabel(repo.status)}
+                                {renderLabel(repo.status.id || 0)}
                                 </Td>
                                 <Td dataLabel={columnNames.notes} modifier="truncate">
-                                {repo.notes}
+                                {repo.tags}
                                 </Td>
                                 <Td isActionCell>
                                     <ActionsColumn
                                     items={actionsRow}
-                                    isDisabled={repo.name === '4'} // Also arbitrary for the example
+                                    //isDisabled={repo.name === '4'} // Also arbitrary for the example
                                     //actionsToggle={exampleChoice === 'customToggle' ? customActionsToggle : undefined}
                                     />
                                 </Td>

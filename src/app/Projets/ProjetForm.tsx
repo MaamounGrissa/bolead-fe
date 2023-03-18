@@ -1,21 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea } from '@patternfly/react-core';
+import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea, SelectVariant } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { addProjet, updateProjet } from '@app/store/projets/projetSlice';
 import { getClientsList } from '@app/store/clients/clientSlice';
-import { AutoCompleteInput } from '@app/Components/AutoCompleteInput';
-import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 import { initialProjet } from '@app/utils/constant';
 import { useAxios } from '@app/network';
 import { useSnackbar } from 'notistack';
-import { HashLoader } from 'react-spinners';
+//import { HashLoader } from 'react-spinners';
+//import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 
 export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolean, close: () => void}> = ({projet, save, close}) => {
     const { enqueueSnackbar } = useSnackbar();
     const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
-    const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
+    /* const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: googleKey,
         libraries: ['places'],
@@ -23,15 +22,14 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
 
     const options = {
         componentRestrictions: { country: "fr" },
-    };
+    }; */
      /** @type React.MutableRefObject<HTMLInputElement> */
-     const addressRef: React.MutableRefObject<any> = React.useRef()
+    // const addressRef: React.MutableRefObject<any> = React.useRef()
+    const [isClientFilterDropdownOpen, setIsClientFilterDropdownOpen] = React.useState(false);
     const [isTypeFilterDropdownOpen, setIsTypeFilterDropdownOpen] = React.useState(false);
     const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
     const { clientsList } = useAppSelector(state => state.clients);
     const { projetStatus, projetTypes } = useAppSelector(state => state.projets);
-    //const { ressources } = useAppSelector(state => state.ressources);
-
     const [formData, setFormData] = React.useState<IProjet>(initialProjet);
 
     const clearForm = () => {
@@ -52,20 +50,19 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
     }, [dispatch]);
 
     React.useEffect(() => {
-        if (projet.id?.length > 0) {
+        if (projet.id) {
             setFormData(projet);
         } else {
             clearForm();
         }
     }, [projet]);
 
-    const addProjetRequest = async (ProjetForm: any) => {
-        await axiosInstance?.current?.post('projects', ProjetForm).then((response) => {
+    const addProjetRequest = async (formData: any) => {
+        await axiosInstance?.current?.post('projects', { ...formData, customer: { uuid: formData.customer.uuid }}).then((response) => {
             enqueueSnackbar('Projet ajouté avec succès', {
                 variant: 'success',
             });
-            console.log(response)
-            dispatch(addProjet(formData));
+            dispatch(addProjet(response.data));
             setTimeout(() => {
                 close();
             }, 500);
@@ -74,16 +71,16 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
             enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
                 variant: 'error',
             });
+            return;
         });
     };
 
-    const editProjetRequest = async (ProjetForm: any) => {
-        await axiosInstance?.current?.put('projects/' + formData.id, ProjetForm).then((response) => {
+    const editProjetRequest = async (formData: any) => {
+        await axiosInstance?.current?.put('projects/' + formData.id, formData).then((response) => {
             enqueueSnackbar('Projet modifié avec succès', {
                 variant: 'success',
             });
-            console.log(response)
-            dispatch(updateProjet(formData));
+            dispatch(updateProjet(response.data));
             setTimeout(() => {
                 close();
             }, 500);
@@ -92,104 +89,107 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
             enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
                 variant: 'error',
             });
+            return;
         });
     };
 
     React.useEffect(() => {
         if (save) {
             setTimeout(() => {
-                if (formData.id === '') {
-                    const newProjet = {
-                        reference: formData.name,
-                        tags: formData.notes,
-                        status: {
-                            id: formData.status,
-                        },
-                        referentielProjectTypes: [
-                            {
-                                id: formData.type,
-                            }
-                        ],
-                        customer: {
-                            uuid: formData.clientId,
-                        }
-                    };
-                    addProjetRequest(newProjet);
+                if (!formData.id) {
+                    addProjetRequest(formData);
                 } else {
-                    const updatedProjet = {
-                        reference: formData.name,
-                        tags: formData.notes,
-                        status: {
-                            id: formData.status,
-                        },
-                        referentielProjectTypes: [
-                            {
-                                id: formData.type,
-                            }
-                        ],
-                        customer: {
-                            uuid: formData.clientId,
-                        }
-                    };
-                    editProjetRequest(updatedProjet);
+                    editProjetRequest(formData);
                 }
             }, 500);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [save]);
 
+    const clientMenuItems = clientsList?.map((client) => (
+        <SelectOption key={client.id} value={client.uuid}>
+            {client.name}
+        </SelectOption>
+    ));
     const typeMenuItems = projetTypes?.map((type) => (
         <SelectOption key={type.id} value={type.id}>
-            {type.name}
+            {type.type}
         </SelectOption>
     ));
-
     const statusMenuItems = projetStatus?.map((status) => (
         <SelectOption key={status.id} value={status.id}>
-            {status.name}
+            {status.status}
         </SelectOption>
     ));
-
     const handleNameInputChange = (value: string) => {
         setFormData({
             ...formData,
-            name: value,
-        });
-    };
-    const handleAdresseInputChange = (value: string) => {
-        setFormData({
-            ...formData,
-            adresse: value,
+            reference: value,
         });
     };
     const handleNotesInputChange = (value: string) => {
         setFormData({
             ...formData,
-            notes: value,
+            tags: value,
         });
     };
+    // Clients selection
+    const onClientToggle = (isOpen: boolean) => {
+        setIsClientFilterDropdownOpen(isOpen);
+    };
+    const selectClient = (event: any, selection: any) => {
+        setFormData({
+            ...formData,
+            customer: {
+                ...formData.customer,
+                uuid: selection || '',
+            },
+        });
+        setIsClientFilterDropdownOpen(false);
+    };
+    const clearClientSelection = () => {
+        setFormData({
+            ...formData,
+            customer: {
+                ...formData.customer,
+                uuid: '',
+            },
+        });
+        setIsClientFilterDropdownOpen(false);
+    };
+    // Type selection
     const onTypeToggle = (isOpen: boolean) => {
         setIsTypeFilterDropdownOpen(isOpen);
     };
-    const selectType = (event: any) => {
+    const selectType = (event: any, selection: any) => {
         setFormData({
             ...formData,
-            type: event.target.innerText,
+            referentielProjectTypes: formData.referentielProjectTypes.find((type) => type.id === selection) 
+                                            ? formData.referentielProjectTypes.filter((type) => type.id !== selection) 
+                                            : [...formData.referentielProjectTypes, {id: selection}],
         });
         setIsTypeFilterDropdownOpen(false);
     };
+    const clearTypeSelection = () => {
+        setFormData({
+            ...formData,
+            referentielProjectTypes: [],
+        });
+        setIsTypeFilterDropdownOpen(false);
+    };
+    // Status selection
     const onStatusToggle = (isOpen: boolean) => {
         setIsStatusFilterDropdownOpen(isOpen);
     };
-    const selectStatus = (event: any) => {
+    const selectStatus = (event: any, selection: any) => {
         setFormData({
             ...formData,
-            status: event.target.innerText,
+            status: selection,
         });
         setIsStatusFilterDropdownOpen(false);
     };
 
-    if (!isLoaded) {
+    /* if (!isLoaded) {
         return <div className="loading-spinner">
         <HashLoader
           color="#444"
@@ -199,7 +199,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
           data-testid="loader"
         />
     </div>
-    }
+    } */
 
     return (
         <React.Fragment>
@@ -214,7 +214,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                     type="text"
                     id="modal-with-form-form-name"
                     name="modal-with-form-form-name"
-                    value={formData.name}
+                    value={formData.reference}
                     onChange={handleNameInputChange}
                     />
                 </FormGroup>
@@ -223,54 +223,49 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                     isRequired
                     fieldId="autocomplete-clients"
                 >
-                    <AutoCompleteInput
-                        elementId='autocomplete-clients'
-                        optionsData={clientsList}
-                        setSelectedId={(id: string) => setFormData({ ...formData, clientId: id })} 
-                        selectedId={formData.clientId}
-                        />
-                </FormGroup>
-                <FormGroup
-                    label="Adresse de projet"
-                    isRequired
-                    fieldId="modal-with-form-form-adresse"
-                >
-                    <Autocomplete options={options} onPlaceChanged={() => setFormData({ ...formData, adresse: addressRef.current?.value})} >
-                        <TextInput
-                            ref={addressRef}
-                            isRequired
-                            type="tel"
-                            id="modal-with-form-form-adresse"
-                            name="modal-with-form-form-adresse"
-                            value={formData.adresse}
-                            onChange={handleAdresseInputChange}
-                        />
-                    </Autocomplete>
+
+                    <Select
+                        variant={SelectVariant.typeahead}
+                        onSelect={selectClient}
+                        onClear={clearClientSelection}
+                        selections={formData.customer.uuid}
+                        position={DropdownPosition.left}
+                        onToggle={onClientToggle}
+                        isOpen={isClientFilterDropdownOpen}
+                        style={{ width: '100%' }}
+                        placeholderText="Selectionner client"
+                        menuAppendTo={() => document.body}
+                        >
+                        {clientMenuItems}
+                    </Select>
                 </FormGroup>
                 <FormGroup
                     label="Type"
                     fieldId="modal-with-form-form-type"
                 >
                     <Select
+                        variant={SelectVariant.typeaheadMulti}
                         onSelect={selectType}
-                        selections={formData.type}
+                        onClear={clearTypeSelection}
+                        selections={formData.referentielProjectTypes.map(type => type.id)}
                         position={DropdownPosition.left}
                         onToggle={onTypeToggle}
                         isOpen={isTypeFilterDropdownOpen}
                         style={{ width: '100%' }}
+                        placeholderText="Selectionner type"
                         menuAppendTo={() => document.body}
                         >
                         {typeMenuItems}
                     </Select>
                 </FormGroup>
-                { projet?.id?.length > 0 && 
+                { projet?.id && 
                     <FormGroup
                         label="Status"
                         fieldId="modal-with-form-form-status"
                     >
                             <Select
                             onSelect={selectStatus}
-                            selections={formData.status}
+                            selections={formData.status.id}
                             position={DropdownPosition.left}
                             onToggle={onStatusToggle}
                             isOpen={isStatusFilterDropdownOpen}
@@ -289,7 +284,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
                     type="text"
                     id="modal-with-form-form-notes"
                     name="modal-with-form-form-notes"
-                    value={formData.notes}
+                    value={formData.tags}
                     onChange={handleNotesInputChange}
                     />
                 </FormGroup>

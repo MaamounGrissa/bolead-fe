@@ -99,13 +99,13 @@ export const RessourcesTable: React.FunctionComponent<{
     const renderLabel = (labelText: number) => {
         switch (labelText) {
         case 1:
-            return <Label color="blue">{ressourceStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="blue">{ressourceStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 2:
-            return <Label color="green">{ressourceStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="green">{ressourceStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 3:
-            return <Label color="orange">{ressourceStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="orange">{ressourceStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 4:
-            return <Label color="red">{ressourceStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="red">{ressourceStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         default:
             return <Label color="orange">Indéfinie</Label>;
         }
@@ -180,19 +180,19 @@ export const RessourcesTable: React.FunctionComponent<{
                             {repo.id}
                             </Td>
                             <Td dataLabel={columnNames.name} modifier="truncate">
-                            {repo.firstName} {repo.lastName}
+                            {repo.contact.firstName} {repo.contact.lastName}
                             </Td>
                             <Td dataLabel={columnNames.email} modifier="truncate">
-                            {repo.email}
+                            {repo.contact.email}
                             </Td>
                             <Td dataLabel={columnNames.phone} modifier="truncate">
-                            {repo.phone}
+                            {repo.contact.phone}
                             </Td>
                             <Td dataLabel={columnNames.type} modifier="truncate">
-                            {ressourceTypes?.find(type => type.id === repo.type)?.name}
+                            {ressourceTypes?.find(type => type.id === repo.team.id)?.name}
                             </Td>
                             <Td dataLabel={columnNames.status} modifier="truncate">
-                            {renderLabel(repo.status)}
+                            {renderLabel(repo.status.id || 0)}
                             </Td>
                             {/* <Td dataLabel={columnNames.notes} modifier="truncate">
                             {repo.notes}

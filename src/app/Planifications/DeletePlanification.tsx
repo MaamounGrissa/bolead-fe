@@ -13,7 +13,7 @@ export const DeletePlanification: React.FunctionComponent<{
 
     const handleDelete = () => {
         setTimeout(() => {
-            dispatch(deletePlanification(planification.id));
+            dispatch(deletePlanification(planification.id || 0));
             close();
         }, 500);
     };

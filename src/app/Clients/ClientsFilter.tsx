@@ -45,10 +45,10 @@ export const ClientsFilter: React.FunctionComponent<{
     } catch (err) {
       searchValueInput = new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     }
-    const matchesSearchValue = repo.firstName.search(searchValueInput) >= 0 || repo.lastName.search(searchValueInput) >= 0;
+    const matchesSearchValue = repo.contact?.firstName?.search(searchValueInput) || -1 >= 0 || repo.contact?.lastName?.search(searchValueInput) || -1 >= 0;
 
     // Search status with status selection
-    const matchesStatusValue = repo.status === parseInt(statusSelection);
+    const matchesStatusValue = repo.status?.id === parseInt(statusSelection);
 
     return (
       (searchValue === '' || matchesSearchValue) &&
@@ -144,7 +144,7 @@ export const ClientsFilter: React.FunctionComponent<{
         <MenuList>
           {
             clientStatus.map((status, index) => (
-              <MenuItem key={index} itemId={status.id}>{status.name}</MenuItem>
+              <MenuItem key={index} itemId={status.id}>{status.status}</MenuItem>
             ))
           }
         </MenuList>

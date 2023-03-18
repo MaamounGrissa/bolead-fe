@@ -50,7 +50,7 @@ export const PlanificationsFilter: React.FunctionComponent<{
     const matchesSearchValue = repo.title.search(searchValueInput) >= 0;
 
     // Search status with status selection
-    const matchesStatusValue = repo.status === parseInt(statusSelection);
+    const matchesStatusValue = repo.status.id === parseInt(statusSelection);
 
     // Search type with type selections
     const matchesTypeValue = typeSelections.includes(repo.type.toString());
@@ -151,7 +151,7 @@ export const PlanificationsFilter: React.FunctionComponent<{
           {
             planificationStatus?.map((status, index) => (
               <MenuItem key={index} itemId={status.id}>
-                {status.name}
+                {status.status}
               </MenuItem>
             ))
           }
@@ -255,7 +255,7 @@ export const PlanificationsFilter: React.FunctionComponent<{
           {
             planificationTypes?.map((type, index) => (
               <MenuItem key={index} itemId={type.id}>
-                {type.name}
+                {type.type}
               </MenuItem>
             ))
           }

@@ -47,13 +47,13 @@ export const ProjetsFilter: React.FunctionComponent<{
     } catch (err) {
       searchValueInput = new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     }
-    const matchesSearchValue = repo.name.search(searchValueInput) >= 0;
+    const matchesSearchValue = repo.reference.search(searchValueInput) >= 0;
 
     // Search status with status selection
     const matchesStatusValue = repo.status === parseInt(statusSelection);
 
     // Search type with type selections
-    const matchesTypeValue = typeSelections.filter(selection => parseInt(selection) === repo.type)?.length > 0;
+    const matchesTypeValue = typeSelections.filter(selection => repo.referentielProjectTypes.find(type => type.id === parseInt(selection)))?.length > 0;
 
     return (
       (searchValue === '' || matchesSearchValue) &&
@@ -150,7 +150,7 @@ export const ProjetsFilter: React.FunctionComponent<{
         <MenuList>
           {
             projetStatus.map((status, index) => (
-              <MenuItem key={index} itemId={status.id}>{status.name}</MenuItem>
+              <MenuItem key={index} itemId={status.id}>{status.status}</MenuItem>
             ))
           }
         </MenuList>
@@ -252,7 +252,7 @@ export const ProjetsFilter: React.FunctionComponent<{
         <MenuList>
           {
             projetTypes?.map((type, index) => (
-              <MenuItem key={index} itemId={type.id}>{type.name}</MenuItem>
+              <MenuItem key={index} itemId={type.id}>{type.type}</MenuItem>
             ))
           }
         </MenuList>

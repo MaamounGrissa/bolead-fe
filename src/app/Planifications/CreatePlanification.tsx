@@ -6,11 +6,11 @@ import { CreateStep1 } from './CreateStep1';
 import { CreateStep2 } from './CreateStep2';
 import { CreateStep4 } from './CreateStep4';
 import { CreateStep3 } from './CreateStep3';
-import moment from 'moment-timezone';
 import { useSnackbar } from 'notistack';
 import { useAxios } from '@app/network';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { addPlanification } from '@app/store/planifications/planificationSlice';
+import moment from 'moment';
 
 export const CreatePlanification: React.FunctionComponent<{ 
     isOpen: boolean,
@@ -30,12 +30,12 @@ export const CreatePlanification: React.FunctionComponent<{
         if (selectedDate) {
             setFormData({
                 ...formData,
-                startDate: selectedDate,
+                startTime: selectedDate,
             });
         } else {
             setFormData({
                 ...formData,
-                startDate: new Date().toString(),
+                startTime: new Date().toString(),
             });
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,43 +51,62 @@ export const CreatePlanification: React.FunctionComponent<{
     const handleStartDateChange = (value: string) => {
         setFormData({
             ...formData,
-            startDate: value,
+            startTime: value,
+            endTime: formData.duration 
+                    ? formData.travelDuration 
+                    ? moment(value).add((formData.duration + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(value).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(value).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };
 
     const handleDurationChange = (value: string) => {
         setFormData({
             ...formData,
-            duration: value,
+            duration: parseInt(value),
+            endTime: formData.duration 
+                    ? formData.travelDuration 
+                    ? moment(value).add((formData.duration + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(value).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(value).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };
 
     const handleNotesChange = (value: string) => {
         setFormData({
             ...formData,
-            notes: value,
+            comment: value,
         });
     };
 
     const handleSelectType = (value: number) => {
         setFormData({
             ...formData,
-            type: value,
+            type: {
+                ...formData.type,
+                id: value,
+            },
         });
     };
     
     const handleSelectProjet = (value: string) => {
         setFormData({
             ...formData,
-            projet: value,
-            destination: projetsList?.find((projet) => projet.id === value)?.address || '',
+            project: {
+                ...formData.project,
+                uuid: value,
+            },
+            destination: projetsList?.find((project) => project.uuid === value)?.address?.street || '',
         });
     };
 
     const handleSelectRessource = (value: string) => {
         setFormData({
             ...formData,
-            ressource: value,
+            member: {
+                ...formData.member,
+                uuid: value,
+            },
         });
     };
 
@@ -97,11 +116,17 @@ export const CreatePlanification: React.FunctionComponent<{
             origin: data.origin,
             destination: data.destination,
             distance: data.distance,
-            trajetDuration: data.trajetDuration,
-            trajetDurationText: data.trajetDurationText,
+            travelDuration: data.travelDuration,
             travelMode: data.travelMode,
+            endTime: formData.duration 
+                    ? formData.travelDuration 
+                    ? moment(formData.startTime).add((formData.duration + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(formData.startTime).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(formData.startTime).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };
+
+    console.log(formData)
 
     const addPlanificationRequest = async (planificationForm: any) => {
         await axiosInstance?.current?.post('inspections', planificationForm).then((response) => {
@@ -119,35 +144,7 @@ export const CreatePlanification: React.FunctionComponent<{
     };
 
     const handleSave = () => {
-        const payload = {
-            title: formData.title,
-            origin: formData.origin,
-            destination: formData.destination,
-            distance: formData.distance,
-            startTime: moment(formData.startDate).format('YYYY-MM-DDTHH:mm:ss.083'),
-            endTime: moment(formData.startDate).add(formData.duration, 'minutes').add(formData.trajetDuration, 'minutes').format('YYYY-MM-DDTHH:mm:ss.083'),
-            duration: parseInt(formData.duration),
-            travelMode: formData.travelMode,
-            travelDuration: parseInt(formData.trajetDuration),
-            comment: formData.notes,
-            status: {
-                id: 1,
-            },
-            type: {
-                id: formData.type,
-            },
-            member: {
-                uuid: formData.ressource,
-            },
-            projet: {
-                uuid: formData.projet,
-            },
-            customer: {
-                uuid: '',
-            },
-        };
-
-        addPlanificationRequest(payload);
+        addPlanificationRequest(formData);
     };
 
     const steps = [

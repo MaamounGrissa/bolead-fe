@@ -7,14 +7,7 @@ import React, { useState, useRef } from 'react';
 
 
 export const GoogleMapsContainer: React.FunctionComponent<{
-    formData: {
-        origin: string,
-        destination: string,
-        distance: string,
-        trajetDuration: string,
-        trajetDurationText: string,
-        travelMode: string,
-    },
+    formData: IPlanification,
     handleSetFormData: (data: any) => void,
 }> = (props) => {
     const { formData, handleSetFormData } = props;
@@ -51,7 +44,7 @@ export const GoogleMapsContainer: React.FunctionComponent<{
             }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [formData.destination])
+    }, [formData.destination, formData.origin])
 
     if (!isLoaded) {
         return <div>..loadind</div>
@@ -76,7 +69,7 @@ export const GoogleMapsContainer: React.FunctionComponent<{
             origin: originRef.current.value,
             destination: destiantionRef.current.value,
             distance: results.routes[0].legs[0].distance.text,
-            trajetDuration: Math.ceil(results.routes[0].legs[0].duration.value / 60),
+            travelDuration: Math.ceil(results.routes[0].legs[0].duration.value / 60),
             trajetDurationText: results.routes[0].legs[0].duration.text,
             travelMode: 'DRIVING'
         })
@@ -95,7 +88,6 @@ export const GoogleMapsContainer: React.FunctionComponent<{
 
    const handleOnOriginPlaceChanged = () => {
         const place = originRef.current.getPlace();
-        console.log(place)
         setOriginInput(place.formatted_address)
     }
     

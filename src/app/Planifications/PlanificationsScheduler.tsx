@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 {/* @typescript ignore */}
 import * as React from 'react';
-import { ViewState, SchedulerDateTime} from '@devexpress/dx-react-scheduler';
+import { ViewState, SchedulerDateTime, AppointmentModel} from '@devexpress/dx-react-scheduler';
 import {
   Scheduler, DayView, WeekView, Appointments, Toolbar, DateNavigator, ViewSwitcher 
 } from '@devexpress/dx-react-scheduler-material-ui';
@@ -87,19 +87,29 @@ export const PlanificationsScheduler: React.FunctionComponent<{
         setCurrentViewName(currentViewName);
     };
 
-    const [data, setData] = React.useState<IPlanification[]>([]);
+    const [data, setData] = React.useState<AppointmentModel[]>([]);
     React.useEffect(() => {
-        setData(planifications);
+        setData(planifications.map((item) => {
+            return {
+                id: item.id,
+                title: item.title,
+                startDate: item.startTime,
+                endDate: item.endTime,
+                type: item.type?.type,
+                ressource: item.member?.contact?.firstName + ' ' + item.member?.contact?.lastName,
+                project: item.project,
+            };
+        }));
     }, [planifications]);
 
-    const [filtredData, setFiltredData] = React.useState<IPlanification[]>([]);
+    const [filtredData, setFiltredData] = React.useState<AppointmentModel[]>([]);
     React.useEffect(() => {
         if (data.length > 0) {
             setFiltredData(data);
         }
     }, [data]);
     const typeFilter = (type: string) => {
-        setFiltredData(data.filter((item) => item.type === parseInt(type)));
+        setFiltredData(data.filter((item) => item.type.id === parseInt(type)));
     };
 
     //console.log(filtredData);

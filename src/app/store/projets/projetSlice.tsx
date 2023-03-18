@@ -5,41 +5,19 @@ const initialState: ProjetState = {
     totalCount: 0,
     projet: initialProjet,
     projets: [],
-    projetStatus: [{
-        id: 0,
-        name: 'Sélectionner un status'
-    }],
-    projetTypes: [{
-        id: 0,
-        name: 'Sélectionner un type'
-    }],
-    projetsList: [{
-        id: '0',
-        name: 'Sélectionner un projet',
-        type: 0,
-        address: '',
-    }],
+    projetStatus: [],
+    projetTypes: [],
+    projetsList: [],
 };
 
 export const projetSlice = createSlice({
     name: 'projet',
     initialState,
     reducers: {
-        getProjets: (state, action: PayloadAction<IProjetAPI[]>) => {
-            state.projets = action.payload?.map((projet) => {
-                return {
-                    id: projet.id.toString() || '',
-                    name: projet.reference || '',
-                    clientName: `${projet.customer?.contact?.firstName} ${projet.customer?.contact?.lastName}` || '',
-                    clientId: projet.customer?.uuid || '',
-                    adresse: projet.customer?.contact?.address?.street || '',
-                    type: projet.referentielProjectTypes[0]?.id || 0,
-                    status: projet.status?.id|| 0,
-                    notes: projet.tags || '',
-                };
-            });
+        getProjets: (state, action: PayloadAction<IProjet[]>) => {
+            state.projets = action.payload;
         },
-        getProjet: (state, action: PayloadAction<string>) => {
+        getProjet: (state, action: PayloadAction<number>) => {
             const index = state.projets.findIndex(projet => projet.id === action.payload);
             state.projet = state.projets[index];
         },
@@ -50,23 +28,24 @@ export const projetSlice = createSlice({
             const index = state.projets.findIndex(projet => projet.id === action.payload.id);
             state.projets[index] = action.payload;
         },
-        deleteProjet: (state, action: PayloadAction<string>) => {
+        deleteProjet: (state, action: PayloadAction<number>) => {
             const index = state.projets.findIndex(projet => projet.id === action.payload);
             state.projets.splice(index, 1);
         },
-        getProjetStatus: (state, action: PayloadAction<IProjetStatusAPI[]>) => {
-            state.projetStatus = action.payload.map((status) => {
-                return {id: status.id, name: status.status};
-            });
+        getProjetStatus: (state, action: PayloadAction<IProjetStatus[]>) => {
+            state.projetStatus = action.payload;
         },
-        getProjetTypes: (state, action: PayloadAction<IProjetTypesAPI[]>) => {
-            state.projetTypes = action.payload.map((type) => {
-                return {id: type.id, name: type.type};
-            });
+        getProjetTypes: (state, action: PayloadAction<IProjetType[]>) => {
+            state.projetTypes = action.payload;
         },
-        getProjetsList: (state, action: PayloadAction<IProjetAPI[]>) => {
+        getProjetsList: (state, action: PayloadAction<IProjet[]>) => {
             state.projetsList = action.payload.map((projet) => {
-                return {id: projet.uuid, name: projet.reference, type: projet.referentielProjectTypes[0]?.id, address: projet.customer?.contact?.address?.street || ''};
+                return {
+                    id: projet.id || 0, 
+                    uuid: projet.uuid || '',
+                    reference: projet.reference,
+                    address: projet.customer?.contact?.address,
+                };
             });
         },
         setProjetsTotalCount: (state, action: PayloadAction<number>) => {

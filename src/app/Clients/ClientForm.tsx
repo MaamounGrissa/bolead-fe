@@ -8,6 +8,7 @@ import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 import { HashLoader } from 'react-spinners';
 import { initialClient } from '@app/utils/constant';
 import { useAxios } from '@app/network';
+import { stringToAdress } from '@app/utils/shared';
 
 export const ClientForm: React.FunctionComponent<{ 
     client: IClient, 
@@ -42,7 +43,7 @@ export const ClientForm: React.FunctionComponent<{
             enqueueSnackbar('Client ajouté avec succès', {
                 variant: 'success',
             });
-            dispatch(addClient(formData));
+            dispatch(addClient(response.data));
             setTimeout(() => {
                 close();
             }, 500);
@@ -51,6 +52,7 @@ export const ClientForm: React.FunctionComponent<{
             enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
                 variant: 'error',
             });
+            return
         });
     };
 
@@ -59,7 +61,7 @@ export const ClientForm: React.FunctionComponent<{
             enqueueSnackbar('Client modifié avec succès', {
                 variant: 'success',
             });
-            dispatch(updateClient(formData));
+            dispatch(updateClient(response.data));
             setTimeout(() => {
                 close();
             }, 500);
@@ -68,6 +70,7 @@ export const ClientForm: React.FunctionComponent<{
             enqueueSnackbar('Erreur lors de la modification du client. ' + error.message, {
                 variant: 'error',
             });
+            return
         });
     };
 
@@ -82,64 +85,10 @@ export const ClientForm: React.FunctionComponent<{
     React.useEffect(() => {
         if (save) {
             setTimeout(() => {
-                if (formData.id === '') {
-                    // Create Customer 
-                    /* {
-                        "status": {
-                        "id": 1
-                        },
-                        "contact": {
-                        "firstName": "Bilel",
-                        "lastName": "GRISSA",
-                        "email": "bilel.grissa@ymail.com",
-                        "phone": 675443345,
-                        "address": {
-                            "street": "136 Aveneue Emile Zola",
-                            "streetLine2": "App 234",
-                            "city": "Boulogne-Billancourt",
-                            "postcode": 92100,
-                            "country": "France"
-                        }
-                        }
-                    } */
-                    const newClient = {
-                        status: {
-                            id: 1,
-                        },
-                        contact: {
-                            firstName: formData.firstName,
-                            lastName: formData.lastName,
-                            email: formData.email,
-                            phone: formData.phone,
-                            address: {
-                                street: formData.address,
-                                city: 'Paris',
-                                postcode: 1000,
-                                country: 'France',
-                            }
-                        },
-                    }
-                    addClientRequest(newClient);
+                if (!formData.id) {
+                    addClientRequest(formData);
                 } else {
-                    const updatedClient = {
-                        uuid: formData.id,
-                        status: {
-                            id: formData.status,
-                        },
-                        contact: {
-                            firstName: formData.firstName,
-                            lastName: formData.lastName,
-                            email: formData.email,
-                            phone: parseInt(formData.phone),
-                            address: {
-                                street: formData.address,
-                                city: '',
-                                postcode: 0,
-                                country: 'France',
-                            }
-                        },
-                    }
-                    editClientRequest(updatedClient);
+                    editClientRequest(formData);
                 }
             }, 500);
         }
@@ -147,28 +96,69 @@ export const ClientForm: React.FunctionComponent<{
     }, [save]);
 
     const statusMenuItems = clientStatus?.map((status) => (
-        <SelectOption key={status.id} value={status.name} />
+        <SelectOption key={status.id} value={status.id || ''}>
+            {status.status}
+        </SelectOption>
     ));
 
+    const handleFirstNameInputChange = (value: string) => {
+        setFormData({
+            ...formData,
+            contact: {
+                ...formData.contact,
+                firstName: value,
+            },
+        });
+    };
+    const handleLastNameInputChange = (value: string) => {
+        setFormData({
+            ...formData,
+            contact: {
+                ...formData.contact,
+                lastName: value,
+            },
+        });
+    };
     const handleEmailInputChange = (value: string) => {
         setFormData({
             ...formData,
-            email: value,
+            contact: {
+                ...formData.contact,
+                email: value,
+            },
         });
     };
     const handlePhoneInputChange = (value: string) => {
         setFormData({
             ...formData,
-            phone: value,
+            contact: {
+                ...formData.contact,
+                phone: value,
+            }
+        });
+    };
+    const handleSetAddress = () => {
+        setFormData({
+            ...formData,
+            contact: {
+                ...formData.contact,
+                address: {
+                    ...formData.contact.address,
+                    ...stringToAdress(addressRef.current.value)
+                },
+            },
         });
     };
     const onStatusToggle = (isOpen: boolean) => {
         setIsStatusFilterDropdownOpen(isOpen);
     };
-    const selectStatus = (event: any) => {
+    const selectStatus = (event: any, selection: any) => {
         setFormData({
             ...formData,
-            status: event.target.innerText,
+            status: {
+                ...formData.status,
+                id: selection,
+            },
         });
         setIsStatusFilterDropdownOpen(false);
     };
@@ -200,8 +190,8 @@ export const ClientForm: React.FunctionComponent<{
                             type="text"
                             id="modal-with-form-form-firstName"
                             name="modal-with-form-form-firstName"
-                            value={formData.firstName}
-                            onChange={(value) => setFormData({...formData, firstName: value})}
+                            value={formData.contact.firstName}
+                            onChange={handleFirstNameInputChange}
                             />
                         </FormGroup>
                     </GridItem>
@@ -216,8 +206,8 @@ export const ClientForm: React.FunctionComponent<{
                             type="text"
                             id="modal-with-form-form-lastName"
                             name="modal-with-form-form-lastName"
-                            value={formData.lastName}
-                            onChange={(value) => setFormData({...formData, lastName: value})}
+                            value={formData.contact.lastName}
+                            onChange={handleLastNameInputChange}
                             />
                         </FormGroup>
                     </GridItem>
@@ -232,7 +222,7 @@ export const ClientForm: React.FunctionComponent<{
                     type="email"
                     id="modal-with-form-form-email"
                     name="modal-with-form-form-email"
-                    value={formData.email}
+                    value={formData.contact.email}
                     onChange={handleEmailInputChange}
                     />
                 </FormGroup>
@@ -246,25 +236,9 @@ export const ClientForm: React.FunctionComponent<{
                     type="tel"
                     id="modal-with-form-form-phone"
                     name="modal-with-form-form-phone"
-                    value={formData.phone}
+                    value={formData.contact.phone}
                     onChange={handlePhoneInputChange}
                     />
-                </FormGroup>
-                <FormGroup
-                    label="Status"
-                    fieldId="modal-with-form-form-status"
-                >
-                        <Select
-                        onSelect={selectStatus}
-                        selections={formData.status}
-                        position={DropdownPosition.left}
-                        onToggle={onStatusToggle}
-                        isOpen={isStatusFilterDropdownOpen}
-                        style={{ width: '100%' }}
-                        menuAppendTo={() => document.body}
-                        >
-                        {statusMenuItems}
-                    </Select>
                 </FormGroup>
                 <FormGroup
                     label="Adresse"
@@ -272,9 +246,7 @@ export const ClientForm: React.FunctionComponent<{
                 >
                     <Autocomplete 
                         options={options}
-                        onPlaceChanged={() => {
-                            setFormData({...formData, address: addressRef.current?.value})
-                        }}
+                        onPlaceChanged={() => handleSetAddress()}
                     >
                         <TextInput
                             ref={addressRef}
@@ -282,10 +254,26 @@ export const ClientForm: React.FunctionComponent<{
                             type="tel"
                             id="modal-with-form-form-address"
                             name="modal-with-form-form-address"
-                            value={formData.address}
-                            onChange={(value) => setFormData({...formData, address: value})}
+                            value={formData.contact.address.street}
+                            onChange={(value) => setFormData({...formData, contact: {...formData.contact, address: {...formData.contact.address, street: value}}})}
                         />
                     </Autocomplete>
+                </FormGroup>
+                <FormGroup
+                    label="Status"
+                    fieldId="modal-with-form-form-status"
+                >
+                        <Select
+                        onSelect={selectStatus}
+                        selections={formData.status.id || ''}
+                        position={DropdownPosition.left}
+                        onToggle={onStatusToggle}
+                        isOpen={isStatusFilterDropdownOpen}
+                        style={{ width: '100%' }}
+                        menuAppendTo={() => document.body}
+                        >
+                            {statusMenuItems}
+                    </Select>
                 </FormGroup>
             </Form>
         </React.Fragment>

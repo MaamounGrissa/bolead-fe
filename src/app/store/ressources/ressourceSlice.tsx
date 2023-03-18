@@ -6,35 +6,18 @@ const initialState: RessourceState = {
     ressource: initialRessource,
     ressources: [],
     ressourcesList: [],
-    ressourceStatus: [{
-        id: 0,
-        name: 'Sélectionner un status'
-    }],
-    ressourceTypes: [{
-        id: 0,
-        name: 'Sélectionner un type'
-    }]
+    ressourceStatus: [],
+    ressourceTypes: []
 };
 
 export const ressourceSlice = createSlice({
     name: 'ressource',
     initialState,
     reducers: {
-        getRessources: (state, action: PayloadAction<IRessourceAPI[]>) => {
-            state.ressources = action.payload?.map((ressource) => {
-                return {
-                    id: ressource.id.toString() || '',
-                    firstName: ressource.contact?.firstName || '',
-                    lastName: ressource.contact?.lastName || '',
-                    email: ressource.contact?.email || '',
-                    phone: ressource.contact?.phone || '',
-                    type: ressource.team?.id || 0,
-                    status: ressource.status?.id || 0,
-                    notes: ressource.contact?.address?.streetLine2 || '',      
-                };
-            });
+        getRessources: (state, action: PayloadAction<IRessource[]>) => {
+            state.ressources = action.payload;
         },
-        getRessource: (state, action: PayloadAction<string>) => {
+        getRessource: (state, action: PayloadAction<number>) => {
             const index = state.ressources.findIndex(ressource => ressource.id === action.payload);
             state.ressource = state.ressources[index];
         },
@@ -45,27 +28,22 @@ export const ressourceSlice = createSlice({
             const index = state.ressources.findIndex(ressource => ressource.id === action.payload.id);
             state.ressources[index] = action.payload;
         },
-        deleteRessource: (state, action: PayloadAction<string>) => {
+        deleteRessource: (state, action: PayloadAction<number>) => {
             const index = state.ressources.findIndex(ressource => ressource.id === action.payload);
             state.ressources.splice(index, 1);
         },
-        getRessourceStatus: (state, action: PayloadAction<IRessourceStatusAPI[]>) => {
-            state.ressourceStatus = action.payload.map((status) => {
-                return {id: status.id, name: status.status};
-            });
+        getRessourceStatus: (state, action: PayloadAction<IRessourceStatus[]>) => {
+            state.ressourceStatus = action.payload;
         },
         getRessourceTypes: (state, action: PayloadAction<IRessourceTeam[]>) => {
-            state.ressourceTypes = action.payload.map((type) => {
-                return {id: type.id, name: type.name};
-            });
+            state.ressourceTypes = action.payload;
         },
-        getRessourcesList: (state, action: PayloadAction<IRessourceAPI[]>) => {
+        getRessourcesList: (state, action: PayloadAction<IRessource[]>) => {
             state.ressourcesList = action.payload?.map((ressource) => {
                 return {
-                    id: ressource.uuid || '',
+                    id: ressource.id || 0,
+                    uuid: ressource.uuid || '',
                     name: `${ressource.contact?.firstName} ${ressource.contact?.lastName}` || '',
-                    type: ressource.team?.id || 0,
-                    status: ressource.status?.id || 0,        
                 };
             });
         },

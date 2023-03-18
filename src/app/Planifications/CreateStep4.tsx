@@ -4,15 +4,7 @@ import { Bullseye, FormGroup, Grid, GridItem, TextArea, TextInput } from '@patte
 import { useAppSelector } from '@app/store';
 
 export const CreateStep4: React.FunctionComponent<{ 
-    formData: {
-        title: string,
-        startDate: string,
-        duration: string,
-        trajetDuration: string,
-        notes: string,
-        ressource: string,
-        projet: string,
-    }
+    formData: IPlanification,
 }> = (props) => {
     const { formData } = props;
     const { ressourcesList } = useAppSelector((state) => state.ressources);
@@ -20,10 +12,10 @@ export const CreateStep4: React.FunctionComponent<{
     const [totalDuration, setTotalDuration] = React.useState<number>(0);
 
     React.useEffect(() => {
-        if (formData.trajetDuration && formData.duration) {
-            setTotalDuration(parseInt(formData.trajetDuration) + parseInt(formData.duration))
+        if (formData.travelDuration && formData.duration) {
+            setTotalDuration((formData.travelDuration * 2) + formData.duration)
         }
-    }, [formData.trajetDuration, formData.duration]);
+    }, [formData.travelDuration, formData.duration]);
  
     return (
         <React.Fragment>
@@ -58,7 +50,7 @@ export const CreateStep4: React.FunctionComponent<{
                                 type="datetime-local"
                                 id="modal-with-form-form-preview-datetime"
                                 name="modal-with-form-form-preview-datetime"
-                                value={formData.startDate}
+                                value={formData.startTime}
                                 readOnly
                                 />
                             </FormGroup>
@@ -92,7 +84,7 @@ export const CreateStep4: React.FunctionComponent<{
                                 type="text"
                                 id="modal-with-form-form-preview-resource"
                                 name="modal-with-form-form-preview-resource"
-                                value={ressourcesList?.find(ress => ress.id === formData.ressource)?.name}
+                                value={ressourcesList?.find(ress => ress.uuid === formData.member?.uuid)?.name}
                                 readOnly
                                 />
                             </FormGroup>
@@ -106,7 +98,7 @@ export const CreateStep4: React.FunctionComponent<{
                                 type="text"
                                 id="modal-with-form-form-preview-projet"
                                 name="modal-with-form-form-preview-projet"
-                                value={projetsList?.find(proj => proj.id === formData.projet)?.name}
+                                value={projetsList?.find(proj => proj.uuid === formData.project?.uuid)?.reference}
                                 readOnly
                                 />
                             </FormGroup>
@@ -122,7 +114,7 @@ export const CreateStep4: React.FunctionComponent<{
                                 type="text"
                                 id="modal-with-form-form-preview-notes"
                                 name="modal-with-form-form-preview-notes"
-                                value={formData.notes}
+                                value={formData.comment}
                                 readOnly
                                 />
                             </FormGroup>

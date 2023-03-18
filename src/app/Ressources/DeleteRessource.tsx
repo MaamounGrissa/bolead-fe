@@ -28,7 +28,7 @@ export const DeleteRessource: React.FunctionComponent<{
     const handleDelete = () => {
         setTimeout(() => {
             deleteRessourceRequest();
-            dispatch(deleteRessource(ressource.id));
+            dispatch(deleteRessource(ressource.id || 0));
             close();
         }, 500);
     };
@@ -50,7 +50,7 @@ export const DeleteRessource: React.FunctionComponent<{
           </Button>
         ]}
       >
-        Vous êtes sur le point de supprimer cette ressource : {ressource.id} - {ressource.firstName} {ressource.lastName}.
+        Vous êtes sur le point de supprimer cette ressource : {ressource.id} - {ressource.contact.firstName} {ressource.contact.lastName}.
       </Modal>
     </React.Fragment>
   );

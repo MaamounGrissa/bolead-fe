@@ -27,8 +27,8 @@ export const DeleteClient: React.FunctionComponent<{
 
     const handleDelete = () => {
         setTimeout(() => {
-            deleteClientRequest();
-            dispatch(deleteClient(client.id));
+            client.id && deleteClientRequest();
+            client.id && dispatch(deleteClient(client.id));
             close();
         }, 500);
     };
@@ -50,7 +50,7 @@ export const DeleteClient: React.FunctionComponent<{
           </Button>
         ]}
       >
-        Vous êtes sur le point de supprimer cet client : {client.id} - {client.firstName} {client.lastName}.
+        Vous êtes sur le point de supprimer cet client : {client.id} - {client.contact?.firstName} {client.contact?.lastName}.
       </Modal>
     </React.Fragment>
   );

@@ -5,11 +5,7 @@ import { useAppSelector } from '@app/store';
 //import { AutoCompleteInput } from '@app/Components/AutoCompleteInput';
 
 export const CreateStep2: React.FunctionComponent<{ 
-    formData: {
-        type: number,
-        projet: string,
-        ressource: string,
-    },
+    formData: IPlanification,
     handleSelectType: (value: number) => void,
     handleSelectProjet: (value: string) => void,
     handleSelectRessource: (value: string) => void,
@@ -29,7 +25,7 @@ export const CreateStep2: React.FunctionComponent<{
         if (planificationTypes?.length > 0) {
             const typeMenuItemsTemp = planificationTypes?.map((type) => (
                 <SelectOption key={type.id} value={type.id} >
-                    {type.name}
+                    {type.type}
                 </SelectOption>
             ));
             setTypeMenuItems(typeMenuItemsTemp);
@@ -40,7 +36,7 @@ export const CreateStep2: React.FunctionComponent<{
     React.useEffect(() => {
         if (ressourcesList?.length > 0) {
             const ressourcesListItemsTemp = ressourcesList?.map((ressource) => (
-                <SelectOption key={ressource.id} value={ressource.id}>
+                <SelectOption key={ressource.id} value={ressource.uuid}>
                     {ressource.name}
                 </SelectOption>
             ));
@@ -52,8 +48,8 @@ export const CreateStep2: React.FunctionComponent<{
     React.useEffect(() => {
         if (projetsList?.length > 0) {
             const projetsListItemsTemp = projetsList?.map((projet) => (
-                <SelectOption key={projet.id} value={projet.id}>
-                    {projet.name}
+                <SelectOption key={projet.id} value={projet.uuid}>
+                    {projet.reference}
                 </SelectOption>
             ));
             setProjetsListItems(projetsListItemsTemp);
@@ -100,7 +96,7 @@ export const CreateStep2: React.FunctionComponent<{
                             >
                                 <Select
                                     onSelect={selectType}
-                                    selections={formData.type}
+                                    selections={formData.type?.id}
                                     position={DropdownPosition.left}
                                     onToggle={onTypeToggle}
                                     isOpen={isTypeFilterDropdownOpen}
@@ -124,14 +120,14 @@ export const CreateStep2: React.FunctionComponent<{
                             >
                                 <Select
                                     onSelect={selectRessource}
-                                    selections={formData.ressource}
+                                    selections={formData.member?.uuid}
                                     position={DropdownPosition.left}
                                     onToggle={onRessourceToggle}
                                     isOpen={isRessourceFilterDropdownOpen}
                                     style={{ width: '100%' }}
                                     menuAppendTo={() => document.body}
                                     >
-                                    <SelectOption key={0} value={''} >
+                                    <SelectOption key={0} value={'0'} >
                                         Sélectionner une ressource
                                     </SelectOption>
                                     {ressourcesListItems}
@@ -152,14 +148,14 @@ export const CreateStep2: React.FunctionComponent<{
                             >
                                 <Select
                                     onSelect={selectProjet}
-                                    selections={formData.projet}
+                                    selections={formData.project?.uuid}
                                     position={DropdownPosition.left}
                                     onToggle={onProjetToggle}
                                     isOpen={isProjetFilterDropdownOpen}
                                     style={{ width: '100%' }}
                                     menuAppendTo={() => document.body}
                                     >
-                                    <SelectOption key={0} value={''} >
+                                    <SelectOption key={0} value={'0'} >
                                         Sélectionner un projet
                                     </SelectOption>
                                     {projetsListItems}

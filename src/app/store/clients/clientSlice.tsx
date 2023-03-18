@@ -1,45 +1,22 @@
+import { initialClient } from "@app/utils/constant";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: ClientState = {
     totalCount: 0,
-    client: {
-        id: '',
-        firstName: '',
-        lastName: '',
-        email: '',  
-        phone: '',
-        status: 1,
-        notes: '',
-        address: '',
-    },
+    client: initialClient,
     clients: [],
-    clientStatus: [
-        {id: 0, name: 'Sélectionner le statut'},
-    ],
-    clientsList: [
-        {id: '0', name: 'Sélectionner le client'}
-    ],
+    clientStatus: [],
+    clientsList: [],
 };
 
 export const clientSlice = createSlice({
     name: 'client',
     initialState,
     reducers: {
-        getClients: (state, action: PayloadAction<IClientAPI[]>) => {
-            state.clients = action.payload?.map((client) => {
-                return {
-                    id: client.id.toString() || '', 
-                    firstName: client.contact?.firstName  || '', 
-                    lastName: client.contact?.lastName || '', 
-                    email: client.contact?.email || '', 
-                    phone: client.contact?.phone || '', 
-                    status: client.status?.id || 0,
-                    address: client.contact?.address?.street || '',
-                    notes: '',
-                };
-            });
+        getClients: (state, action: PayloadAction<IClient[]>) => {
+            state.clients = action.payload;
         },
-        getClient: (state, action: PayloadAction<string>) => {
+        getClient: (state, action: PayloadAction<number>) => {
             const index = state.clients.findIndex(client => client.id === action.payload);
             state.client = state.clients[index];
         },
@@ -50,20 +27,21 @@ export const clientSlice = createSlice({
             const index = state.clients.findIndex(client => client.id === action.payload.id);
             state.clients[index] = action.payload;
         },
-        deleteClient: (state, action: PayloadAction<string>) => {
+        deleteClient: (state, action: PayloadAction<number>) => {
             const index = state.clients.findIndex(client => client.id === action.payload);
             state.clients.splice(index, 1);
         },
-        getClientStatus: (state, action: PayloadAction<IClientStatusAPI[]>) => {
+        getClientStatus: (state, action: PayloadAction<IClientStatus[]>) => {
             state.clientStatus = action.payload.map((status) => {
-                return {id: status.id, name: status.status};
+                return {id: status.id, status: status.status};
             });
         },
-        getClientsList: (state, action: PayloadAction<IClientAPI[]>) => {
+        getClientsList: (state, action: PayloadAction<IClient[]>) => {
             state.clientsList = action.payload?.map((client) => {
                 return {
-                    id: client.uuid || '',
-                    name: `${client.contact?.firstName} ${client.contact?.lastName}` || ''
+                    id: client.id || 0,
+                    uuid: client.uuid || '',
+                    name: `${client.contact?.firstName} ${client.contact?.lastName}`
                 };
             });
         },

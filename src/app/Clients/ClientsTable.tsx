@@ -83,16 +83,16 @@ export const ClientsTable: React.FunctionComponent<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, size]);
 
-    const renderLabel = (labelText: number) => {
+    const renderLabel = (labelText: number | null) => {
         switch (labelText) {
         case 1:
-            return <Label color="blue">{clientStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="blue">{clientStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 2:
-            return <Label color="green">{clientStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="green">{clientStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 3:
-            return <Label color="orange">{clientStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="orange">{clientStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 4:
-            return <Label color="red">{clientStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="red">{clientStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         default:
             return <Label color="orange">Indéfinie</Label>;
         }
@@ -162,24 +162,25 @@ export const ClientsTable: React.FunctionComponent<{
                     filtredData.map(repo => {
                         const actionsRow: IAction[] | null = actions(repo);
                         return (
-                        <Tr key={repo.firstName}>
+                        <Tr key={repo.id}>
                             <Td dataLabel={columnNames.id} modifier="truncate">
                             {repo.id}
                             </Td>
                             <Td dataLabel={columnNames.name} modifier="truncate">
-                            {repo.firstName} {repo.lastName}
+                            {repo.contact?.firstName} {repo.contact?.lastName}
                             </Td>
                             <Td dataLabel={columnNames.email} modifier="truncate">
-                            {repo.email}
+                            {repo.contact?.email}
                             </Td>
                             <Td dataLabel={columnNames.phone} modifier="truncate">
-                            {repo.phone}
+                            {repo.contact?.phone}
                             </Td>
                             <Td dataLabel={columnNames.address} modifier="truncate">
-                            {repo.address}
+                                {repo.contact?.address?.street},
+                                {repo.contact?.address?.city},
                             </Td>
                             <Td dataLabel={columnNames.status} modifier="truncate" textCenter>
-                            {renderLabel(repo.status)}
+                                {renderLabel(repo.status?.id || 0)}
                             </Td>
                             <Td isActionCell>
                                 <ActionsColumn

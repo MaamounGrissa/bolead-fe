@@ -4,14 +4,7 @@ import { Bullseye, FormGroup, Grid, GridItem, TextInput } from '@patternfly/reac
 import { GoogleMapsContainer } from './GoogleMapsContainer';
 
 export const CreateStep3: React.FunctionComponent<{ 
-    formData: {
-        origin: string,
-        destination: string,
-        distance: string,
-        trajetDuration: string,
-        trajetDurationText: string,
-        travelMode: string,
-    },
+    formData: IPlanification,
     handleSetFormData: (data: any) => void,
 }> = (props) => {
     const { formData, handleSetFormData } = props;
@@ -49,7 +42,7 @@ export const CreateStep3: React.FunctionComponent<{
                                     type="text"
                                     id="modal-with-form-form-trajetDurationText"
                                     name="modal-with-form-form-trajetDurationText"
-                                    value={formData.trajetDurationText}
+                                    value={`${formData.travelDuration} minutes`}
                                     readOnly
                                 />
                             </FormGroup>

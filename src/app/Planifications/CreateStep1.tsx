@@ -3,12 +3,7 @@ import React from 'react';
 import { Bullseye, FormGroup, Grid, GridItem, TextArea, TextInput } from '@patternfly/react-core';
 
 export const CreateStep1: React.FunctionComponent<{ 
-    formData: {
-        title: string,
-        startDate: string,
-        duration: string,
-        notes: string,
-    },
+    formData: IPlanification,
     handleTitleChange: (value: string) => void,
     handleStartDateChange: (value: string) => void,
     handleDurationChange: (value: string) => void,
@@ -49,7 +44,7 @@ export const CreateStep1: React.FunctionComponent<{
                                 type="datetime-local"
                                 id="modal-with-form-form-datetime"
                                 name="modal-with-form-form-datetime"
-                                value={formData.startDate}
+                                value={formData.startTime}
                                 onChange={handleStartDateChange}
                                 />
                             </FormGroup>
@@ -80,7 +75,7 @@ export const CreateStep1: React.FunctionComponent<{
                                 <TextArea
                                 id="modal-with-form-form-notes"
                                 name="modal-with-form-form-notes"
-                                value={formData.notes}
+                                value={formData.comment}
                                 onChange={handleNotesChange}
                                 />
                             </FormGroup>

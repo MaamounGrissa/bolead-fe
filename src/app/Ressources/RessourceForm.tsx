@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, TextArea, Grid, GridItem } from '@patternfly/react-core';
+import { Form, FormGroup, TextInput, Select, SelectOption, DropdownPosition, Grid, GridItem } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { addRessource, updateRessource } from '@app/store/ressources/ressourceSlice';
 import { initialRessource } from '@app/utils/constant';
 import { useSnackbar } from 'notistack';
 import { useAxios } from '@app/network';
+import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
+import { stringToAdress } from '@app/utils/shared';
+import { HashLoader } from 'react-spinners';
 
 export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, save: boolean, close: () => void}> = ({ressource, save, close}) => {
     const dispatch = useAppDispatch();
@@ -15,6 +18,18 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     const [isStatusFilterDropdownOpen, setIsStatusFilterDropdownOpen] = React.useState(false);
     const { ressourceStatus, ressourceTypes } = useAppSelector(state => state.ressources);
     const [formData, setFormData] = React.useState<IRessource>(initialRessource);
+    const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: googleKey,
+        libraries: ['places'],
+    })
+
+    const options = {
+        componentRestrictions: { country: "fr" },
+    };
+    
+    /** @type React.MutableRefObject<HTMLInputElement> */
+    const addressRef: React.MutableRefObject<any> = React.useRef()
 
     const clearForm = () => {
         setFormData(initialRessource);
@@ -28,29 +43,6 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
         }
     }, [ressource]);
 
-    // Ressource DTO
-
-    /* {
-        "team": {
-            "id": 1
-        },
-        "status": {
-            "id": 1
-        },
-        "contact": {
-            "firstName": "Mammoun",
-            "lastName": "grissa",
-            "email": "maamoun@grissa",
-            "phone": 648526532,
-            "address": {
-            "street": "34 Rue Auber",
-            "streetLine2": "App 34",
-            "city": "Paris",
-            "postcode": 75001,
-            "country": "France"
-            }
-        }
-    } */
 
     const addRessourceRequest = async (RessourceForm: any) => {
         await axiosInstance?.current?.post('members', RessourceForm).then((response) => {
@@ -66,6 +58,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
             enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
                 variant: 'error',
             });
+            return
         });
     };
 
@@ -83,59 +76,17 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
             enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
                 variant: 'error',
             });
+            return
         });
     };
 
     React.useEffect(() => {
         if (save) {
             setTimeout(() => {
-                if (formData.id === '') {
-                    const newRessource = {
-                        team: {
-                            id: formData.type,
-                        },
-                        status: {
-                            id: formData.status,
-                        },
-                        contact: {
-                            firstName: formData.firstName,
-                            lastName: formData.lastName,
-                            email: formData.email,
-                            phone: formData.phone,
-                            address: {
-                                street: 'formData.address',
-                                streetLine2: formData.notes,
-                                city: 'Paris',
-                                postcode: '75001',
-                                country: 'France',
-                            }
-                        }
-                    }
-                    addRessourceRequest(newRessource);
+                if (!formData.id) {
+                    addRessourceRequest(formData);
                 } else {
-                    const newRessource = {
-                        id : formData.id,
-                        team: {
-                            id: formData.type,
-                        },
-                        status: {
-                            id: formData.status,
-                        },
-                        contact: {
-                            firstName: formData.firstName,
-                            lastName: formData.lastName,
-                            email: formData.email,
-                            phone: formData.phone,
-                            address: {
-                                street: 'formData.address',
-                                streetLine2: formData.notes,
-                                city: 'Paris',
-                                postcode: '75001',
-                                country: 'France',
-                            }
-                        }
-                    }
-                    editRessourceRequest(newRessource);
+                    editRessourceRequest(formData);
                 }
             }, 500);
         }
@@ -150,48 +101,96 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
 
     const statusMenuItems = ressourceStatus?.map((status) => (
         <SelectOption key={status.id} value={status.id}>
-            {status.name}
+            {status.status}
         </SelectOption>
     ));
 
+    const handleFirstNameInputChange = (value: string) => {
+        setFormData({
+            ...formData,
+            contact: {
+                ...formData.contact,
+                firstName: value,
+            }
+        });
+    };
+    const handleLastNameInputChange = (value: string) => {
+        setFormData({
+            ...formData,
+            contact: {
+                ...formData.contact,
+                lastName: value,
+            }
+        });
+    };
     const handleEmailInputChange = (value: string) => {
         setFormData({
             ...formData,
-            email: value,
+            contact: {
+                ...formData.contact,
+                email: value,
+            }
         });
     };
     const handlePhoneInputChange = (value: string) => {
         setFormData({
             ...formData,
-            phone: value,
+            contact: {
+                ...formData.contact,
+                phone: value,
+            }
         });
     };
-    const handleNotesInputChange = (value: string) => {
+    const handleSetAddress = () => {
         setFormData({
             ...formData,
-            notes: value,
+            contact: {
+                ...formData.contact,
+                address: {
+                    ...formData.contact.address,
+                    ...stringToAdress(addressRef.current.value)
+                },
+            },
         });
     };
     const onTypeToggle = (isOpen: boolean) => {
         setIsTypeFilterDropdownOpen(isOpen);
     };
-    const selectType = (event: any) => {
+    const selectType = (selection: any) => {
         setFormData({
             ...formData,
-            type: event.target.innerText,
+            team: {
+                ...formData.team,
+                id: parseInt(selection)
+            },
         });
         setIsTypeFilterDropdownOpen(false);
     };
     const onStatusToggle = (isOpen: boolean) => {
         setIsStatusFilterDropdownOpen(isOpen);
     };
-    const selectStatus = (event: any) => {
+    const selectStatus = (selection: any) => {
         setFormData({
             ...formData,
-            status: event.target.innerText,
+            status: {
+                ...formData.status,
+                id: parseInt(selection)
+            },
         });
         setIsStatusFilterDropdownOpen(false);
     };
+
+    if (!isLoaded) {
+        return <div className="loading-spinner">
+        <HashLoader
+          color="#444"
+          loading={true}
+          size={50}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+    </div>
+    }
 
     return (
         <React.Fragment>
@@ -208,8 +207,8 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                             type="text"
                             id="modal-with-form-form-firstName"
                             name="modal-with-form-form-name"
-                            value={formData.firstName}
-                            onChange={(value) => setFormData({...formData, firstName: value})}
+                            value={formData.contact.firstName}
+                            onChange={handleFirstNameInputChange}
                             />
                         </FormGroup>
                     </GridItem>
@@ -224,8 +223,8 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                             type="text"
                             id="modal-with-form-form-lastName"
                             name="modal-with-form-form-lastName"
-                            value={formData.lastName}
-                            onChange={(value) => setFormData({...formData, lastName: value})}
+                            value={formData.contact.lastName}
+                            onChange={handleLastNameInputChange}
                             />
                         </FormGroup>
                     </GridItem>
@@ -241,7 +240,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                     type="email"
                     id="modal-with-form-form-email"
                     name="modal-with-form-form-email"
-                    value={formData.email}
+                    value={formData.contact.email}
                     onChange={handleEmailInputChange}
                     />
                 </FormGroup>
@@ -255,9 +254,28 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                     type="tel"
                     id="modal-with-form-form-phone"
                     name="modal-with-form-form-phone"
-                    value={formData.phone}
+                    value={formData.contact.phone}
                     onChange={handlePhoneInputChange}
                     />
+                </FormGroup>
+                <FormGroup
+                    label="Adresse"
+                    fieldId="modal-with-form-form-address"
+                >
+                    <Autocomplete 
+                        options={options}
+                        onPlaceChanged={() => handleSetAddress()}
+                    >
+                        <TextInput
+                            ref={addressRef}
+                            isRequired
+                            type="tel"
+                            id="modal-with-form-form-address"
+                            name="modal-with-form-form-address"
+                            value={formData.contact.address.street}
+                            onChange={(value) => setFormData({...formData, contact: {...formData.contact, address: {...formData.contact.address, street: value}}})}
+                        />
+                    </Autocomplete>
                 </FormGroup>
                 <FormGroup
                     label="Type"
@@ -265,7 +283,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                 >
                     <Select
                         onSelect={selectType}
-                        selections={formData.type}
+                        selections={formData.team.id}
                         position={DropdownPosition.left}
                         onToggle={onTypeToggle}
                         isOpen={isTypeFilterDropdownOpen}
@@ -281,7 +299,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                 >
                         <Select
                         onSelect={selectStatus}
-                        selections={formData.status}
+                        selections={formData.status.id}
                         position={DropdownPosition.left}
                         onToggle={onStatusToggle}
                         isOpen={isStatusFilterDropdownOpen}
@@ -290,18 +308,6 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                         >
                         {statusMenuItems}
                     </Select>
-                </FormGroup>
-                <FormGroup
-                    label="Notes"
-                    fieldId="modal-with-form-form-notes"
-                >
-                    <TextArea
-                    type="text"
-                    id="modal-with-form-form-notes"
-                    name="modal-with-form-form-notes"
-                    value={formData.notes}
-                    onChange={handleNotesInputChange}
-                    />
                 </FormGroup>
             </Form>
         </React.Fragment>

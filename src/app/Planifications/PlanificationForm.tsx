@@ -83,7 +83,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     React.useEffect(() => {
         if (save) {
             setTimeout(() => {
-                if (formData.id === '') {
+                if (!formData.id) {
                     dispatch(addPlanification(formData));
                 } else {
                     dispatch(updatePlanification(formData));
@@ -96,13 +96,13 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
 
     const typeMenuItems = planificationTypes?.map((type) => (
         <SelectOption key={type.id} value={type.id} >
-            {type.name}
+            {type.type}
         </SelectOption>
     ));
 
     const statusMenuItems = planificationStatus?.map((status) => (
         <SelectOption key={status.id} value={status.id} >
-            {status.name}
+            {status.status}
         </SelectOption>
     ));
 
@@ -114,7 +114,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
 
     const projetsListItems = projetsList?.map((projet) => (
         <SelectOption key={projet.id} value={projet.id}>
-            {projet.name}
+            {projet.reference}
         </SelectOption>
     ));
 
@@ -127,60 +127,80 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     const handleStartDateInputChange = (value: string) => {
         setFormData({
             ...formData,
-            startDate: value,
-            endDate: formData.duration ? moment(value).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm') : moment(value).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
+            startTime: value,
+            endTime: formData.duration 
+                    ? formData.travelDuration 
+                    ? moment(value).add((formData.duration + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(value).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(value).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };
     const handleDurationInputChange = (value: string) => {
         setFormData({
             ...formData,
-            duration: value,
-            endDate: formData.startDate ? moment(formData.startDate).add(parseInt(value), 'minutes').format('YYYY-MM-DDTHH:mm') : moment().add(parseInt(value), 'minutes').format('YYYY-MM-DDTHH:mm')
+            duration: parseInt(value),
+            endTime: formData.startTime
+                    ? formData.travelDuration
+                    ? moment(formData.startTime).add((parseInt(value) + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')                    
+                    : moment(formData.startTime).add(parseInt(value), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment().add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };
     const handleNotesInputChange = (value: string) => {
         setFormData({
             ...formData,
-            notes: value,
+            comment: value,
         });
     };
     const onRessourceToggle = (isOpen: boolean) => {
         setIsRessourceFilterDropdownOpen(isOpen);
     };
-    const selectRessource = (event: any) => {
+    const selectRessource = (event: any, selection: any) => {
         setFormData({
             ...formData,
-            ressource: event.target.innerText,
+            member: {
+                ...formData.member,
+                id: parseInt(selection),
+            },
         });
         setIsTypeFilterDropdownOpen(false);
     };
     const onProjetToggle = (isOpen: boolean) => {
         setIsProjetFilterDropdownOpen(isOpen);
     };
-    const selectProjet = (event: any) => {
+    const selectProjet = (event: any, selection: any) => {
         setFormData({
             ...formData,
-            projet: event.target.innerText,
+            project: {
+                ...formData.project,
+                id: parseInt(selection),
+            },
         });
         setIsTypeFilterDropdownOpen(false);
     };
     const onTypeToggle = (isOpen: boolean) => {
         setIsTypeFilterDropdownOpen(isOpen);
     };
-    const selectType = (event: any) => {
+    const selectType = (event: any, selection: any) => {
         setFormData({
             ...formData,
-            type: event.target.innerText,
+            type: {
+                ...formData.type,
+                id: parseInt(selection),
+            },
         });
         setIsTypeFilterDropdownOpen(false);
     };
     const onStatusToggle = (isOpen: boolean) => {
         setIsStatusFilterDropdownOpen(isOpen);
     };
-    const selectStatus = (event: any) => {
+    const selectStatus = (event: any, selection: any) => {
         setFormData({
             ...formData,
-            status: event.target.innerText,
+            status: {
+                ...formData.status,
+                id: parseInt(selection),
+            },
         });
         setIsStatusFilterDropdownOpen(false);
     };
@@ -214,7 +234,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                             type="datetime-local"
                             id="modal-with-form-form-datetime"
                             name="modal-with-form-form-datetime"
-                            value={formData.startDate}
+                            value={formData.startTime}
                             onChange={handleStartDateInputChange}
                             />
                         </FormGroup>
@@ -257,7 +277,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 >
                     <Select
                         onSelect={selectRessource}
-                        selections={formData.ressource}
+                        selections={formData.member.id}
                         position={DropdownPosition.left}
                         onToggle={onRessourceToggle}
                         isOpen={isRessourceFilterDropdownOpen}
@@ -273,7 +293,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 >
                     <Select
                         onSelect={selectProjet}
-                        selections={formData.projet}
+                        selections={formData.project.id}
                         position={DropdownPosition.left}
                         onToggle={onProjetToggle}
                         isOpen={isProjetFilterDropdownOpen}
@@ -289,7 +309,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 >
                     <Select
                         onSelect={selectType}
-                        selections={formData.type}
+                        selections={formData.type.id}
                         position={DropdownPosition.left}
                         onToggle={onTypeToggle}
                         isOpen={isTypeFilterDropdownOpen}
@@ -305,7 +325,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                 >
                         <Select
                         onSelect={selectStatus}
-                        selections={formData.status}
+                        selections={formData.status.id}
                         position={DropdownPosition.left}
                         onToggle={onStatusToggle}
                         isOpen={isStatusFilterDropdownOpen}
@@ -323,7 +343,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
                     type="text"
                     id="modal-with-form-form-notes"
                     name="modal-with-form-form-notes"
-                    value={formData.notes}
+                    value={formData.comment}
                     onChange={handleNotesInputChange}
                     />
                 </FormGroup>

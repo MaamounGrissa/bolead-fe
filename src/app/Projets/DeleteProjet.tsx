@@ -28,7 +28,7 @@ export const DeleteProjet: React.FunctionComponent<{
   const handleDelete = () => {
       setTimeout(() => {
           deleteProjetRequest();
-          dispatch(deleteProjet(projet.id));
+          dispatch(deleteProjet(projet.id || 0));
           close();
       }, 500);
   };
@@ -50,7 +50,7 @@ export const DeleteProjet: React.FunctionComponent<{
           </Button>
         ]}
       >
-        Vous êtes sur le point de supprimer cet projet : {projet.id} - {projet.name}.
+        Vous êtes sur le point de supprimer cet projet : {projet.id} - {projet.reference}.
       </Modal>
     </React.Fragment>
   );
