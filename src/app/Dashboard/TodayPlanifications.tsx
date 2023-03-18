@@ -47,13 +47,13 @@ export const TodayPlanifications: React.FunctionComponent = () => {
     const renderLabel = (labelText: number) => {
         switch (labelText) {
         case 1:
-            return <Label color="blue">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="blue">{planificationStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 2:
-            return <Label color="green">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="green">{planificationStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 3:
-            return <Label color="orange">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="orange">{planificationStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 4:
-            return <Label color="red">{planificationStatus?.find(stat => stat.id === labelText)?.name}</Label>;
+            return <Label color="red">{planificationStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         default:
             return <Label color="orange">Indéfinie</Label>;
         }
@@ -83,28 +83,28 @@ export const TodayPlanifications: React.FunctionComponent = () => {
                     </Thead>
                     <Tbody>
                     {planifications?.length > 0 &&
-                        planifications?.filter(plan => moment(plan.startDate).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD"))
+                        planifications?.filter(plan => moment(plan.startTime).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD"))
                         .map(repo => {
                             return (
                             <Tr key={repo.id}>
                                 <Td dataLabel={columnNames.projet} modifier="truncate">
-                                {repo.projet}
+                                {repo.project?.reference}
                                 </Td>
                                 <Td dataLabel={columnNames.ressource} modifier="truncate">
-                                {repo.ressource}
+                                {repo.member?.contact?.firstName} {repo.member?.contact?.lastName}
                                 </Td>
                                 <Td dataLabel={columnNames.type} modifier="truncate">
-                                {repo.type}
+                                {repo.type?.type}
                                 </Td>
                                 <Td dataLabel={columnNames.status} modifier="truncate">
-                                {renderLabel(repo.status)}
+                                {renderLabel(repo.status?.id)}
                                 </Td>
                                 <Td dataLabel={columnNames.notes} modifier="truncate">
-                                {repo.notes}
+                                {repo.comment}
                                 </Td>
                             </Tr>
                         )})}
-                        {planifications?.filter(plan => moment(plan.startDate).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD")).length === 0 && (
+                        {planifications?.filter(plan => moment(plan.startTime).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD")).length === 0 && (
                             <Tr>
                             <Td colSpan={8}>
                                 <Bullseye>{emptyState}</Bullseye>
