@@ -41,8 +41,7 @@ export const clientSlice = createSlice({
                 return {
                     id: client.id || 0,
                     uuid: client.uuid || '',
-                    name: `${client.contact?.firstName} ${client.contact?.lastName}`
-                };
+                    name: `${client.contact?.firstName} ${client.contact?.lastName}`,                };
             });
         },
         setClientsTotalCount: (state, action: PayloadAction<number>) => {

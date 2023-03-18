@@ -1,6 +1,6 @@
 import { useAxios } from '@app/network';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getRessourceTypes, getRessources } from '@app/store/ressources/ressourceSlice';
+import { getRessources } from '@app/store/ressources/ressourceSlice';
 import { Bullseye, EmptyState, EmptyStateBody, EmptyStateIcon, Label, Title } from '@patternfly/react-core';
 import { CalendarAltIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
@@ -17,17 +17,8 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
     const { enqueueSnackbar } = useSnackbar();
     const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
-    const { ressourcesList, ressourceTypes } = useAppSelector(state => state.ressources)
+    const { ressources } = useAppSelector(state => state.ressources)
     
-    const fetchRessourceTypes = async () => {
-        await axiosInstance?.current?.get(`teams`).then(response => {
-            dispatch(getRessourceTypes(response.data));
-            return;
-        }).catch(error => {
-            enqueueSnackbar(error.message, { variant: 'error' });
-        });
-    };
-
     const fetchRessourcesList = async () => {
         await axiosInstance?.current?.get(`members`).then(response => {
             dispatch(getRessources(response.data));
@@ -38,7 +29,6 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
     };
 
     React.useEffect(() => {
-        fetchRessourceTypes();
         fetchRessourcesList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
@@ -78,23 +68,23 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
                     </Tr>
                     </Thead>
                     <Tbody>
-                    {ressourcesList?.length > 0 &&
-                        ressourcesList?.filter((ress, i) => i < 5)
+                    {ressources?.length > 0 &&
+                        ressources?.filter((ress, i) => i < 5)
                         .map((repo, index) => {
                             return (
                             <Tr key={repo.id}>
                                 <Td dataLabel={columnNames.ressource} modifier="truncate">
-                                {repo.name}
+                                {repo.contact?.firstName}
                                 </Td>
                                 <Td dataLabel={columnNames.type} modifier="truncate">
-                                {ressourceTypes?.find(type => type.id === repo.type)?.name || '-'}
+                                {repo.team.name || '-'}
                                 </Td>
                                 <Td dataLabel={columnNames.occupation} modifier="truncate">
                                 {renderLabel(index === 0 ? '52' : index === 1 ? '43' : index === 2 ? '38' : index === 3 ? '33' : '20')}
                                 </Td>
                             </Tr>
                         )})}
-                        {ressourcesList?.length === 0 && (
+                        {ressources?.length === 0 && (
                             <Tr>
                             <Td colSpan={8}>
                                 <Bullseye>{emptyState}</Bullseye>
