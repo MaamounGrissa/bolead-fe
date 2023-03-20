@@ -96,11 +96,11 @@ html, body, #root {
 }
 
 .card-icon-img {
-  width: 80px;
-  height: 80px;
+  width: 3.5rem;
+  height: 3.5rem;
   position: absolute;
-  bottom: 0;
-  right: 15px;
+  bottom: -20px;
+  right: -10px;
   opacity: 0.6;
 }
 
@@ -474,4 +474,19 @@ html, body, #root {
 .apercu_body_section_table td {
   border: 1px solid #CCC;
   padding: 4px 10px;
+}
+
+.appointment-content {
+  width: 100%;
+  padding: 10px 0 20px;
+}
+
+.appointment-delete-action {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

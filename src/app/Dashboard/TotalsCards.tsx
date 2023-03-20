@@ -36,6 +36,7 @@ const TotalsCards: React.FunctionComponent = () => {
                 &nbsp;&nbsp;&nbsp;{/*dashboardStatistics?.totalProjectStatusByType?.reduce((acc, item) => acc + item.isCompleted, 0) || 0*/}0&nbsp;&nbsp;&nbsp;&nbsp; Terminés
             </div>
             <div className='card-icon-img'>
+              {/* <StoreAltIcon size='xl' color="blue" /> */}
               <img src={projetImage} alt="Projets" width="100%"/>
             </div>
           </div>
@@ -66,6 +67,7 @@ const TotalsCards: React.FunctionComponent = () => {
                 &nbsp;&nbsp;&nbsp;{dashboardStatistics?.totalCustomersByStatus?.find((item) => item.status === 'Archiver')?.value || 0}&nbsp;&nbsp;&nbsp;&nbsp; Archivés
             </div>
             <div className='card-icon-img'>
+              {/* <UsersIcon size='xl' color="blue" /> */}
               <img 
                 src={clientImage}
                 alt="Clients"
@@ -99,6 +101,7 @@ const TotalsCards: React.FunctionComponent = () => {
                 &nbsp;&nbsp;&nbsp;
             </div>
             <div className='card-icon-img'>
+              {/* <UsersCogIcon size='xl' color="blue" /> */}
               <img src={ressourceImage} alt="Ressources" width="100%"/>
             </div>
           </div>

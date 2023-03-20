@@ -1,10 +1,9 @@
 import { useAxios } from '@app/network';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getPlanificationStatus, getPlanifications } from '@app/store/planifications/planificationSlice';
+import { getPlanificationStatus } from '@app/store/planifications/planificationSlice';
 import { Bullseye, EmptyState, EmptyStateBody, EmptyStateIcon, Label, Title } from '@patternfly/react-core';
 import { CalendarAltIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import moment from 'moment';
 import { useSnackbar } from 'notistack';
 import React from 'react';
 
@@ -20,7 +19,8 @@ export const TodayPlanifications: React.FunctionComponent = () => {
     const dispatch = useAppDispatch();
     const { enqueueSnackbar } = useSnackbar();
     const axiosInstance = useAxios();
-    const { planifications, planificationStatus } = useAppSelector(state => state.planifications);
+    const { planificationStatus } = useAppSelector(state => state.planifications);
+    const { dashboardStatistics } = useAppSelector(state => state.statistics);
 
     const fetchPlanificationStatus = async () => {
         await axiosInstance?.current?.get(`referentiel-inspection-statuses`).then(response => {
@@ -30,17 +30,8 @@ export const TodayPlanifications: React.FunctionComponent = () => {
         });
     };
 
-    const fetchPlanifications = async () => {
-        await axiosInstance?.current?.get(`inspections`).then(response => {
-            dispatch(getPlanifications(response.data));
-        }).catch(error => {
-            enqueueSnackbar(error.message, { variant: 'error' });
-        });
-    };
-
     React.useEffect(() => {
         fetchPlanificationStatus();
-        fetchPlanifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -82,9 +73,8 @@ export const TodayPlanifications: React.FunctionComponent = () => {
                     </Tr>
                     </Thead>
                     <Tbody>
-                    {planifications?.length > 0 &&
-                        planifications?.filter(plan => moment(plan.startTime).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD"))
-                        .map(repo => {
+                    {dashboardStatistics?.inspectionsOfCurrentDay?.length > 0 ? (
+                        dashboardStatistics?.inspectionsOfCurrentDay?.map(repo => {
                             return (
                             <Tr key={repo.id}>
                                 <Td dataLabel={columnNames.projet} modifier="truncate">
@@ -103,14 +93,14 @@ export const TodayPlanifications: React.FunctionComponent = () => {
                                 {repo.comment}
                                 </Td>
                             </Tr>
-                        )})}
-                        {planifications?.filter(plan => moment(plan.startTime).format("YYYY-MM-DD") === moment().format("YYYY-MM-DD")).length === 0 && (
-                            <Tr>
+                        )})
+                    ) :  (
+                         <Tr>
                             <Td colSpan={8}>
                                 <Bullseye>{emptyState}</Bullseye>
                             </Td>
-                            </Tr>
-                        )}
+                        </Tr>
+                    )}
                     </Tbody>
                 </TableComposable>
             </React.Fragment>

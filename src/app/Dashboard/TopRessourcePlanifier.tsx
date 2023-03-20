@@ -18,6 +18,7 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
     const axiosInstance = useAxios();
     const dispatch = useAppDispatch();
     const { ressources } = useAppSelector(state => state.ressources)
+    const { dashboardStatistics } = useAppSelector(state => state.statistics);
     
     const fetchRessourcesList = async () => {
         await axiosInstance?.current?.get(`members`).then(response => {
@@ -33,17 +34,17 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch]);
 
-    const renderLabel = (labelText: string) => {
-        if (parseInt(labelText) < 30) {
-            return <Label color="green">{labelText} Heures</Label>;
-        } else if (parseInt(labelText) < 40 && parseInt(labelText) > 30) {
-            return <Label color="orange">{labelText} Heures</Label>;
-        } else if (parseInt(labelText) > 40) {
-            return <Label color="red">{labelText} Heures</Label>;
+    const renderLabel = (hours: number) => {
+        if (hours < 30) {
+            return <Label color="green">{hours} Heures</Label>;
+        } else if (hours < 40 && hours > 30) {
+            return <Label color="orange">{hours} Heures</Label>;
+        } else if (hours > 40) {
+            return <Label color="red">{hours} Heures</Label>;
         } else {
             return <Label color="grey"
                             style={{ marginRight: "5px", marginLeft: "5px"}}
-                    >{labelText} Heures</Label>;
+                    >{hours} Heures</Label>;
         }
     };
 
@@ -63,24 +64,24 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
                     <Thead>
                     <Tr>
                         <Th width={15}>{columnNames.ressource}</Th>
-                        <Th width={20}>{columnNames.type}</Th>
+                        {/* <Th width={20}>{columnNames.type}</Th> */}
                         <Th width={15}>{columnNames.occupation}</Th>
                     </Tr>
                     </Thead>
                     <Tbody>
-                    {ressources?.length > 0 &&
-                        ressources?.filter((ress, i) => i < 5)
-                        .map((repo, index) => {
+                    {dashboardStatistics?.tenHighestPlannedWorkers?.length > 0 &&
+                        dashboardStatistics?.tenHighestPlannedWorkers?.filter((ress, i) => i < 5)
+                        .map((repo) => {
                             return (
                             <Tr key={repo.id}>
                                 <Td dataLabel={columnNames.ressource} modifier="truncate">
-                                {repo.contact?.firstName}
+                                {repo.firstName} {repo.lastName}
                                 </Td>
-                                <Td dataLabel={columnNames.type} modifier="truncate">
+                                {/* <Td dataLabel={columnNames.type} modifier="truncate">
                                 {repo.team.name || '-'}
-                                </Td>
+                                </Td> */}
                                 <Td dataLabel={columnNames.occupation} modifier="truncate">
-                                {renderLabel(index === 0 ? '52' : index === 1 ? '43' : index === 2 ? '38' : index === 3 ? '33' : '20')}
+                                {renderLabel(repo.total)}
                                 </Td>
                             </Tr>
                         )})}

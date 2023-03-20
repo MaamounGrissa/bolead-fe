@@ -9,7 +9,7 @@ import { TodayPlanifications } from './TodayPlanifications';
 import { TopRessourcePlanifier } from './TopRessourcePlanifier';
 import { useAxios } from '@app/network';
 import { useSnackbar } from 'notistack';
-import { useAppDispatch } from '@app/store';
+import { useAppDispatch, useAppSelector } from '@app/store';
 import { getDashboardStatistics } from '@app/store/statistics/statisticSlice';
 
 const Dashboard: React.FunctionComponent = () => {
@@ -17,6 +17,7 @@ const Dashboard: React.FunctionComponent = () => {
   const { enqueueSnackbar } = useSnackbar();
   const axiosInstance = useAxios();
   const dispatch = useAppDispatch();
+  const { dashboardStatistics } = useAppSelector(state => state.statistics)
 
   const fetchDashboardStatistics = async () => {
     await axiosInstance?.current?.get(`dashboard`)
@@ -79,10 +80,25 @@ const Dashboard: React.FunctionComponent = () => {
                 <TopRessourcePlanifier />
               </CardBody>
             </Card>
+            <Card style={{ textAlign: "center", marginTop: "20px" }}>
+              <CardTitle style={{ textAlign: "center" }}>Prochain rendez-vous</CardTitle>
+              <CardBody>
+                <div className='flex-row'>
+                  <CalendarAltIcon size='lg' color="grey" />
+                  <div className='planification-content'>
+                    <p>{moment(dashboardStatistics.nextPlannedInspection?.startTime).format("DD/MM/YYYY HH:mm")}</p>
+                    <p>Ressource : {`${dashboardStatistics.nextPlannedInspection?.member?.contact?.firstName} ${dashboardStatistics.nextPlannedInspection?.member?.contact?.lastName}`}</p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
           </GridItem>
       </Grid>
       <div className='spacer-box'></div>
       <Grid hasGutter>
+          <GridItem span={12} sm={6} >
+              &nbsp;
+          </GridItem>
           <GridItem span={12} sm={6} >
             <Card style={{ textAlign: "center", paddingBottom: "33px" }}>
                 <CardTitle style={{ textAlign: "center" }}>Calendrier</CardTitle>
@@ -90,20 +106,6 @@ const Dashboard: React.FunctionComponent = () => {
                   <PlanificationsCalendar />
                 </CardBody>
               </Card>
-          </GridItem>
-          <GridItem span={12} sm={3} >
-            <Card style={{ textAlign: "center" }}>
-              <CardTitle style={{ textAlign: "center" }}>Prochain rendez-vous</CardTitle>
-              <CardBody>
-                <div className='flex-row'>
-                  <CalendarAltIcon size='lg' color="grey" />
-                  <div className='planification-content'>
-                    <p>{moment().format("DD/MM/YYYY HH:mm")}</p>
-                    <p>Maamoun Grissa</p>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
           </GridItem>
       </Grid>
     </PageSection>

@@ -27,6 +27,8 @@ import { useAxios } from '@app/network';
 import { useSnackbar } from 'notistack';
 import { getRessourcesList } from '@app/store/ressources/ressourceSlice';
 import { getProjetsList } from '@app/store/projets/projetSlice';
+import { VisiteTechniqueHTML } from './VisiteTechnique';
+import { FilePdfIcon } from '@patternfly/react-icons';
 
 const columnNames = {
     id: '#',
@@ -35,7 +37,7 @@ const columnNames = {
     projet: 'Projet',
     type: 'Type',
     status: 'Status',
-    notes: 'Notes',
+    pdf: 'Fiche Technique',
 };
 
 export const PlanificationsTable: React.FunctionComponent<{
@@ -55,7 +57,8 @@ export const PlanificationsTable: React.FunctionComponent<{
     const [selectedDate, setSelectedDate] = React.useState<string>(moment().format('YYYY-MM-DD'));
     const [openUpdatePlanification, setOpenUpdatePlanification] = React.useState(false);
     const [openDeletePlanification, setOpenDeletePlanification] = React.useState(false);
-    const [selectedPlanification, setSelectedPlanification] = React.useState<IPlanification>(initialPlanification);
+    const [openPdfFile, setOpenPdfFile] = React.useState(false);
+    const [selectedPlanificationId, setSelectedPlanificationId] = React.useState<any>(null);
 
     const fetchPlanificationStatus = async () => {
         await axiosInstance?.current?.get(`referentiel-inspection-statuses`).then(response => {
@@ -106,6 +109,15 @@ export const PlanificationsTable: React.FunctionComponent<{
         });
     };
 
+    const fetchPlanificationFile = async () => {
+        await axiosInstance?.current?.get(`inspection-files/${planifications?.find(plan => plan.id === selectedPlanificationId)?.uuid}`).then(response => {
+            dispatch(getProjetsList(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
     React.useEffect(() => {
         fetchPlanificationStatus();
         fetchPlanificationTypes();
@@ -118,6 +130,13 @@ export const PlanificationsTable: React.FunctionComponent<{
         fetchPlanifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, size]);
+
+    React.useEffect(() => {
+        if (openPdfFile) {
+            fetchPlanificationFile();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openPdfFile]);
 
 
     const renderLabel = (labelText: number) => {
@@ -145,14 +164,14 @@ export const PlanificationsTable: React.FunctionComponent<{
         {
             title: <span key="action1"><UserEditIcon />&nbsp;Modifier</span>,
             onClick: () => {
-                setSelectedPlanification(repo);
+                setSelectedPlanificationId(repo.id);
                 setOpenUpdatePlanification(true);
             }
         },
         {
             title: <span  key="action2"><TrashAltIcon />&nbsp;Supprimer</span>,
             onClick: () => {
-                setSelectedPlanification(repo);
+                setSelectedPlanificationId(repo.id);
                 setOpenDeletePlanification(true);
             }
         },
@@ -195,12 +214,12 @@ export const PlanificationsTable: React.FunctionComponent<{
                             <Thead>
                             <Tr>
                                 <Th width={10}>{columnNames.id}</Th>
-                                <Th width={20}>{columnNames.startDate}</Th>
+                                <Th width={15}>{columnNames.startDate}</Th>
                                 <Th width={15}>{columnNames.ressource}</Th>
                                 <Th width={15}>{columnNames.projet}</Th>
                                 <Th width={20}>{columnNames.type}</Th>
                                 <Th width={15}>{columnNames.status}</Th>
-                                <Th width={20}>{columnNames.notes}</Th>
+                                <Th width={10}>{columnNames.pdf}</Th>
                             </Tr>
                             </Thead>
                             <Tbody>
@@ -227,8 +246,19 @@ export const PlanificationsTable: React.FunctionComponent<{
                                         <Td dataLabel={columnNames.status} modifier="truncate">
                                         {renderLabel(repo.status.id)}
                                         </Td>
-                                        <Td dataLabel={columnNames.notes} modifier="truncate">
-                                        {repo.comment}
+                                        <Td dataLabel={columnNames.pdf} modifier="truncate">
+                                            {
+                                                repo.status.id === 4 &&
+                                                    <FilePdfIcon size='md' color='Tomato'
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                        }}
+                                                        onClick={() => {
+                                                            setSelectedPlanificationId(repo.id); 
+                                                            setOpenPdfFile(true)
+                                                        }} 
+                                                    />
+                                            }
                                         </Td>
                                         <Td isActionCell>
                                             <ActionsColumn
@@ -252,14 +282,16 @@ export const PlanificationsTable: React.FunctionComponent<{
                     ) : (
                     <PlanificationsScheduler
                         setOpenCreatePlanification={(data) => {setSelectedDate(data); setOpenCreatePlanification()}} 
-                        setOpenUpdatePlanification={(data) => {setSelectedPlanification(data); setOpenUpdatePlanification(true)}}
-                        setOpenDeletePlanification={(data) => {setSelectedPlanification(data); setOpenDeletePlanification(true)}}
+                        setOpenUpdatePlanification={(planificationId) => {setSelectedPlanificationId(planificationId); setOpenUpdatePlanification(true)}}
+                        setOpenDeletePlanification={(planificationId) => {setSelectedPlanificationId(planificationId); setOpenDeletePlanification(true)}}
+                        setOpenPdfFile={(planificationId) => { setSelectedPlanificationId(planificationId); setOpenPdfFile(true)}}
                     />
                 )
             }
             {openCreatePlanification && <CreatePlanification isOpen={openCreatePlanification} close={closeModal} selectedDate={selectedDate} />}
-            {openUpdatePlanification && <UpdatePlanification isOpen={openUpdatePlanification} close={() => setOpenUpdatePlanification(false)} planification={selectedPlanification} />}
-            {openDeletePlanification && <DeletePlanification isOpen={openDeletePlanification} close={() => setOpenDeletePlanification(false)} planification={selectedPlanification} />}
+            {openUpdatePlanification && <UpdatePlanification isOpen={openUpdatePlanification} close={() => setOpenUpdatePlanification(false)} planification={planifications?.find(plan => plan.id === selectedPlanificationId) ||initialPlanification} />}
+            {openDeletePlanification && <DeletePlanification isOpen={openDeletePlanification} close={() => setOpenDeletePlanification(false)} planification={planifications?.find(plan => plan.id === selectedPlanificationId) ||initialPlanification} />}
+            {openPdfFile && <VisiteTechniqueHTML isOpen={openPdfFile} close={() => setOpenPdfFile(false)} pdfObject={planifications?.find(plan => plan.id === selectedPlanificationId) ||initialPlanification} />}
         </React.Fragment>
     );
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { initialPlanification } from "@app/utils/constant";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -7,6 +8,7 @@ const initialState: PlanificationState = {
     planifications: [],
     planificationStatus: [],
     planificationTypes: [],
+    vtPdfFile: null,
 };
 
 export const planificationSlice = createSlice({
@@ -39,6 +41,9 @@ export const planificationSlice = createSlice({
         },
         setPlanificationsTotalCount: (state, action: PayloadAction<number>) => {
             state.totalCount = action.payload;
+        },
+        getPlanificationFile: (state, action: PayloadAction<any>) => {
+            state.vtPdfFile = action.payload;
         },
     }
 });

@@ -130,7 +130,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
             startTime: value,
             endTime: formData.duration 
                     ? formData.travelDuration 
-                    ? moment(value).add((formData.duration + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    ? moment(value).add((parseInt(`${formData.duration}`) + parseInt(`${formData.travelDuration}`) * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
                     : moment(value).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm')
                     : moment(value).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
@@ -141,7 +141,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
             duration: parseInt(value),
             endTime: formData.startTime
                     ? formData.travelDuration
-                    ? moment(formData.startTime).add((parseInt(value) + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')                    
+                    ? moment(formData.startTime).add((parseInt(value) + parseInt(`${formData.travelDuration}`) * 2), 'minutes').format('YYYY-MM-DDTHH:mm')                    
                     : moment(formData.startTime).add(parseInt(value), 'minutes').format('YYYY-MM-DDTHH:mm')
                     : moment().add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });

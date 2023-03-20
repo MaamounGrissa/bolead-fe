@@ -143,11 +143,11 @@ interface IPlanification {
     comment: string
     startTime: string
     endTime: string
-    duration: number
+    duration: number | string
     origin: string
     destination: string
     travelMode: string
-    travelDuration: number
+    travelDuration: number | string
     distance: string
     type: IPlanificationType
     member: IRessource
@@ -161,6 +161,7 @@ interface PlanificationState {
     planificationStatus: IPlanificationStatus[]
     planificationTypes: IPlanificationType[]
     totalCount: number
+    vtPdfFile: any
 }
 
 // Dashboard Statistics

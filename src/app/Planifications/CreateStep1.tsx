@@ -51,7 +51,7 @@ export const CreateStep1: React.FunctionComponent<{
                         </GridItem>
                         <GridItem span={4}>
                             <FormGroup
-                                label="Duration"
+                                label="Duration (Min)"
                                 isRequired
                                 fieldId="modal-with-form-form-duration"
                             >

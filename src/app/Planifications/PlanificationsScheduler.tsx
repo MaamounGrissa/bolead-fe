@@ -8,7 +8,7 @@ import {
 import moment from 'moment';
 import { LocationSelector, MyStyledFlexibleSpace } from './schedulerOptions';
 import { useAppSelector } from '@app/store';
-import { TrashAltIcon } from '@patternfly/react-icons';
+import { FilePdfIcon, TrashAltIcon } from '@patternfly/react-icons';
 
 /* const resources = [{
   fieldName: 'type',
@@ -21,10 +21,11 @@ import { TrashAltIcon } from '@patternfly/react-icons';
 
 export const PlanificationsScheduler: React.FunctionComponent<{
     setOpenCreatePlanification: (data: string) => void,
-    setOpenUpdatePlanification: (data: IPlanification) => void,
-    setOpenDeletePlanification: (data: IPlanification) => void,
+    setOpenUpdatePlanification: (planificationId: number) => void,
+    setOpenDeletePlanification: (planificationId: number) => void,
+    setOpenPdfFile: (planificationId: number) => void,
 }> = (props) => {
-    const { setOpenCreatePlanification, setOpenUpdatePlanification, setOpenDeletePlanification } = props;
+    const { setOpenPdfFile, setOpenCreatePlanification, setOpenUpdatePlanification, setOpenDeletePlanification } = props;
     const { planifications } = useAppSelector(state => state.planifications);
     
     const FlexibleSpace = () => {
@@ -37,23 +38,58 @@ export const PlanificationsScheduler: React.FunctionComponent<{
             </MyStyledFlexibleSpace>
     )};
 
-    const AppointmentContent = (props: any) => {
+    const AppointmentComponent = (props: any) => {
+        const { data, style, children, restProps } = props;
         return (
-            <Appointments.AppointmentContent {...props}>
-                <div className="appointment-content" onClick={() => setOpenUpdatePlanification(props.data.id)}>
+            <Appointments.Appointment
+                style={{ 
+                    ...style,
+                    height: `${data?.duration ? data.duration * 1.6 : 96}px`,
+                    background: data?.type === 'Visite technique' ? '#578c79' : '#7E57C2',
+                
+                }}
+                {...restProps}
+            >
+                {children}
+            </Appointments.Appointment>
+        );
+    };
+
+    const AppointmentContentComponent = (props: any) => {
+        return (
+            <Appointments.AppointmentContent 
+             {...props}>
+                <div className="appointment-content" 
+                    onClick={() => setOpenUpdatePlanification(props.data.id)}>
                     <div className="appointment-content-title">
                         {props.data?.title}
                     </div>
                     <div className="appointment-content-date">
-                        {props.data?.startDate} - {props.data?.endDate}
+                        {moment(props.data?.startDate).format("HH:mm")} - {moment(props.data?.endDate).format("HH:mm")}
                     </div>
                     <div className="appointment-content-type">
-                        {props.data?.type} - {props.data.ressource}
+                        {props.data?.type}
+                    </div>
+                    <div className="appointment-content-ressource">
+                        {props.data.ressource}
                     </div>
                     <div className='appointment-delete-action'>
-                        <TrashAltIcon color='red' size='lg' onClick={() => {
-                            setOpenDeletePlanification(props.data.id);
-                        }} />
+                        {props.data?.status === 1 &&
+                            <FilePdfIcon color='Tomato' size='md'
+                                style={{ cursor: 'pointer', marginRight: '5px' }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenPdfFile(props.data.id);
+                                }}
+                            />
+                        }
+                        <TrashAltIcon color='DarkRed' size='md'
+                            style={{ cursor: 'pointer' }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenDeletePlanification(props.data.id);
+                            }}
+                        />
                     </div>
                 </div>
             </Appointments.AppointmentContent>
@@ -98,6 +134,8 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                 type: item.type?.type,
                 ressource: item.member?.contact?.firstName + ' ' + item.member?.contact?.lastName,
                 project: item.project,
+                duration: parseInt(`${item.duration}`) + (parseInt(`${item.travelDuration}`) * 2),
+                status: item.status?.id,
             };
         }));
     }, [planifications]);
@@ -109,7 +147,8 @@ export const PlanificationsScheduler: React.FunctionComponent<{
         }
     }, [data]);
     const typeFilter = (type: string) => {
-        setFiltredData(data.filter((item) => item.type.id === parseInt(type)));
+        console.log(type)
+        setFiltredData(data.filter((item) => item.type.type === type));
     };
 
     //console.log(filtredData);
@@ -135,7 +174,9 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                 timeTableCellComponent={WeekTableCell}
             />
 
-            <Appointments appointmentContentComponent={AppointmentContent}
+            <Appointments
+                appointmentContentComponent={AppointmentContentComponent}
+                appointmentComponent={AppointmentComponent}
             />
             <Toolbar flexibleSpaceComponent={FlexibleSpace} />
             <DateNavigator />

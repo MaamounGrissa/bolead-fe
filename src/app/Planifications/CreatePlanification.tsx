@@ -54,8 +54,8 @@ export const CreatePlanification: React.FunctionComponent<{
             startTime: value,
             endTime: formData.duration 
                     ? formData.travelDuration 
-                    ? moment(value).add((formData.duration + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
-                    : moment(value).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm')
+                    ? moment(value).add((parseInt(`${formData.duration}`) + parseInt(`${formData.travelDuration}`) * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(value).add(parseInt(`${formData.duration}`), 'minutes').format('YYYY-MM-DDTHH:mm')
                     : moment(value).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };
@@ -66,8 +66,8 @@ export const CreatePlanification: React.FunctionComponent<{
             duration: parseInt(value),
             endTime: formData.duration 
                     ? formData.travelDuration 
-                    ? moment(value).add((formData.duration + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
-                    : moment(value).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm')
+                    ? moment(value).add((parseInt(`${formData.duration}`) + parseInt(`${formData.travelDuration}`) * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(value).add(parseInt(`${formData.duration}`), 'minutes').format('YYYY-MM-DDTHH:mm')
                     : moment(value).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };
@@ -120,8 +120,8 @@ export const CreatePlanification: React.FunctionComponent<{
             travelMode: data.travelMode,
             endTime: formData.duration 
                     ? formData.travelDuration 
-                    ? moment(formData.startTime).add((formData.duration + formData.travelDuration * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
-                    : moment(formData.startTime).add(formData.duration, 'minutes').format('YYYY-MM-DDTHH:mm')
+                    ? moment(formData.startTime).add((parseInt(`${formData.duration}`) + parseInt(`${formData.travelDuration}`) * 2), 'minutes').format('YYYY-MM-DDTHH:mm')
+                    : moment(formData.startTime).add(parseInt(`${formData.duration}`), 'minutes').format('YYYY-MM-DDTHH:mm')
                     : moment(formData.startTime).add(20, 'minutes').format('YYYY-MM-DDTHH:mm')
         });
     };

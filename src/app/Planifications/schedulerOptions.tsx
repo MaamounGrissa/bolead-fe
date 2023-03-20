@@ -8,8 +8,8 @@ import { styled, alpha } from '@mui/material/styles';
 import { Button, ButtonGroup, TextField } from '@mui/material';
 
 const TYPES = [
-    "Visite Technique",
-    "Visite Commercial",
+    "Visite technique",
+    "Visite commercial",
 ]
 
 const isRestTime = date => (

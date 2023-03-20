@@ -7,10 +7,12 @@ import React from 'react';
 
 export const VisiteTechniqueHTML: React.FunctionComponent<{ 
     isOpen: boolean,
-    close: () => void
+    close: () => void,
+    pdfObject: any,
 }> = (props) => {
-   const { isOpen, close } = props;
+   const { isOpen, close, pdfObject } = props;
 
+   console.log(pdfObject)
    const printRef = React.useRef(null);
 
    const handleDownload = async (e: any) => {

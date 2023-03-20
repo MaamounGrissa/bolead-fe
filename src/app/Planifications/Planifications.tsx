@@ -7,9 +7,8 @@ import {
   GridItem,
   Card,
   CardTitle} from '@patternfly/react-core';
-import { CalendarDayIcon, FilePdfIcon, OutlinedCalendarAltIcon, OutlinedCalendarPlusIcon, SuitcaseIcon, TableIcon, ToolsIcon } from '@patternfly/react-icons';
+import { CalendarDayIcon, OutlinedCalendarAltIcon, OutlinedCalendarPlusIcon, SuitcaseIcon, TableIcon, ToolsIcon } from '@patternfly/react-icons';
 import { PlanificationsTable } from './PlanificationsTable';
-import { VisiteTechniqueHTML } from './VisiteTechnique';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { useSnackbar } from 'notistack';
 import { useAxios } from '@app/network';
@@ -43,9 +42,6 @@ const Planifications: React.FunctionComponent = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-  const [showPdf, setShowPdf] = React.useState(false);
-
   return (
     <PageSection>
       <Grid hasGutter>
@@ -69,7 +65,11 @@ const Planifications: React.FunctionComponent = () => {
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
               <CalendarDayIcon size='lg' color="orange" className='mr-2' />
-               Prochain rendez-vous le {moment(dashboardStatistics?.nextPlannedInspection?.startTime).format("DD/MM/YYYY à HH:mm")}
+               {
+                dashboardStatistics.nextPlannedInspection?.id
+                  ?  `Prochain RDV le ${moment(dashboardStatistics?.nextPlannedInspection?.startTime).format("DD/MM/YYYY à HH:mm")}`
+                  : 'Aucun rendez-vous prévu'
+              }
             </CardTitle>
           </Card>
         </GridItem>
@@ -77,7 +77,6 @@ const Planifications: React.FunctionComponent = () => {
       <div className='flex-between mobile-flex-column'>
         <Title headingLevel="h1" size="xl"  className="pf-u-mb-xl">{totalCount} Planifications</Title>
         <div className='mobile-m-2'>
-          <Button variant="primary" onClick={() => setShowPdf(true)}><FilePdfIcon />&nbsp;PDF</Button>
           <Button style={{ margin: '0 5px'}} variant="primary" onClick={() => setOpenCreatePlanification(true)}><OutlinedCalendarPlusIcon />&nbsp;Rendez-vous</Button>
           <Button style={{ margin: '0 5px'}} variant={view === 'GRID' ? 'primary' : 'secondary'} onClick={() => setView('GRID')} ><OutlinedCalendarAltIcon color='white'/></Button>
           <Button variant={view === 'TABLE' ? 'primary' : 'secondary'} onClick={() => setView('TABLE')} ><TableIcon color='white'/></Button>
@@ -86,7 +85,6 @@ const Planifications: React.FunctionComponent = () => {
       <div>
         <PlanificationsTable view={view} openCreatePlanification={openCreatePlanification} setOpenCreatePlanification={() => setOpenCreatePlanification(true)} closeModal={() => setOpenCreatePlanification(false)} />
       </div>
-      <VisiteTechniqueHTML isOpen={showPdf} close={() => setShowPdf(false)} />
     </PageSection>
   )
 }
