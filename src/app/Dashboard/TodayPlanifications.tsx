@@ -131,7 +131,7 @@ export const TodayPlanifications: React.FunctionComponent = () => {
                                 </Td>
                                 <Td dataLabel={columnNames.pdf} modifier="truncate" textCenter>
                                     {
-                                        repo.status?.id === 1 && (
+                                        repo.status?.id === 4 && (
                                             <FilePdfIcon 
                                                 size='md'
                                                 color='Tomato'
