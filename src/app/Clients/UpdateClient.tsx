@@ -16,12 +16,15 @@ export const UpdateClient: React.FunctionComponent<{
         <Modal
             variant={ModalVariant.small}
             title="Créer client"
-            description="Mêtre à jour les informations ci-dessout pour modifier un client."
+            description="Mêtre à jour les informations ci-dessous pour modifier un client."
             isOpen={isOpen}
             onClose={close}
             actions={[
             <Button key="edit" variant="primary" onClick={() => {
                 setSave(true);
+                setTimeout(() => {
+                    setSave(false);
+                }, 800);
             }}>
                 Enregistrer
             </Button>,

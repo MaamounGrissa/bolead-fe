@@ -26,12 +26,20 @@ export const ClientsFilter: React.FunctionComponent<{
   handleSetPage: (page: number) => void,
   size: number,
   handleSetSize: (size: number) => void,
+  resetFilter: boolean,
 }> = (props) => {
-    const { clients, filterData, page, handleSetPage, size, handleSetSize } = props;
+    const { resetFilter, clients, filterData, page, handleSetPage, size, handleSetSize } = props;
     // Set up repo filtering
     const [searchValue, setSearchValue] = React.useState('');
     const [statusSelection, setStatusSelection] = React.useState('');
-    const { clientStatus } = useAppSelector(state => state.clients)
+    const { clientStatus, totalCount } = useAppSelector(state => state.clients)
+
+    React.useEffect(() => {
+      if (resetFilter) {
+          setSearchValue('');
+          setStatusSelection('');
+      }
+  }, [resetFilter]);
 
   const onSearchChange = (value: string) => {
     setSearchValue(value);
@@ -45,10 +53,10 @@ export const ClientsFilter: React.FunctionComponent<{
     } catch (err) {
       searchValueInput = new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     }
-    const matchesSearchValue = repo.contact?.firstName?.search(searchValueInput) || -1 >= 0 || repo.contact?.lastName?.search(searchValueInput) || -1 >= 0;
+    const matchesSearchValue = repo.contact?.firstName?.search(searchValueInput) >= 0 || repo.contact?.lastName?.search(searchValueInput) >= 0;
 
     // Search status with status selection
-    const matchesStatusValue = repo.status?.id === parseInt(statusSelection);
+    const matchesStatusValue = repo.status?.id === clientStatus?.find((status) => status.status === statusSelection)?.id;
 
     return (
       (searchValue === '' || matchesSearchValue) &&
@@ -119,7 +127,9 @@ export const ClientsFilter: React.FunctionComponent<{
       return;
     }
 
-    setStatusSelection(itemId.toString());
+    const itemStr = clientStatus?.find(status => status.id === itemId)?.status || '';
+
+    setStatusSelection(itemStr);
     setIsStatusMenuOpen(!isStatusMenuOpen);
   }
 
@@ -256,7 +266,7 @@ export const ClientsFilter: React.FunctionComponent<{
     <Pagination
       titles={{ paginationTitle: 'Pagination' }}
       perPageComponent="button"
-      itemCount={clients.length}
+      itemCount={totalCount}
       perPage={size}
       onPerPageSelect={(_ev, perPage) => handleSetSize(perPage)}
       page={page}

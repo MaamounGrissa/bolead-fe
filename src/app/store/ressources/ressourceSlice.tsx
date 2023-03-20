@@ -23,6 +23,7 @@ export const ressourceSlice = createSlice({
         },
         addRessource: (state, action: PayloadAction<IRessource>) => {
             state.ressources.push(action.payload);
+            state.totalCount++;
         },
         updateRessource: (state, action: PayloadAction<IRessource>) => {
             const index = state.ressources.findIndex(ressource => ressource.id === action.payload.id);
@@ -31,6 +32,7 @@ export const ressourceSlice = createSlice({
         deleteRessource: (state, action: PayloadAction<number>) => {
             const index = state.ressources.findIndex(ressource => ressource.id === action.payload);
             state.ressources.splice(index, 1);
+            state.totalCount--;
         },
         getRessourceStatus: (state, action: PayloadAction<IRessourceStatus[]>) => {
             state.ressourceStatus = action.payload;

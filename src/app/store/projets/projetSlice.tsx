@@ -23,6 +23,7 @@ export const projetSlice = createSlice({
         },
         addProjet: (state, action: PayloadAction<IProjet>) => {
             state.projets.push(action.payload);
+            state.totalCount++;
         },
         updateProjet: (state, action: PayloadAction<IProjet>) => {
             const index = state.projets.findIndex(projet => projet.id === action.payload.id);
@@ -31,6 +32,7 @@ export const projetSlice = createSlice({
         deleteProjet: (state, action: PayloadAction<number>) => {
             const index = state.projets.findIndex(projet => projet.id === action.payload);
             state.projets.splice(index, 1);
+            state.totalCount--;
         },
         getProjetStatus: (state, action: PayloadAction<IProjetStatus[]>) => {
             state.projetStatus = action.payload;

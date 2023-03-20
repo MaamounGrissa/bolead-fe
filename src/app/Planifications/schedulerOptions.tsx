@@ -10,7 +10,6 @@ import { Button, ButtonGroup, TextField } from '@mui/material';
 const TYPES = [
     "Visite Technique",
     "Visite Commercial",
-    "Audit",
 ]
 
 const isRestTime = date => (
@@ -126,7 +125,10 @@ export const StyledButtonGroup = styled(ButtonGroup)(({
     [`& .${classes.button}`]: {
       paddingLeft: spacing(1),
       paddingRight: spacing(1),
+      marginRight: spacing(1),
       fontSize: '0.6rem',
+      border: `1px solid ${palette.grey[400]}!important`,
+      borderRadius: '5px !important',
       width: spacing(16),
       '@media (max-width: 800px)': {
         width: spacing(2),
@@ -134,7 +136,7 @@ export const StyledButtonGroup = styled(ButtonGroup)(({
       },
     },
     [`& .${classes.selectedButton}`]: {
-      background: palette.primary[400],
+      background: palette.primary[500],
       color: palette.primary[50],
       '&:hover': {
         backgroundColor: palette.primary[500],

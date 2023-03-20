@@ -44,12 +44,13 @@ export const ProjetsTable: React.FunctionComponent<{
     const dispatch = useAppDispatch();
     const { projets, projetStatus, projetTypes } = useAppSelector(state => state.projets)
     const [filtredData, setFiltredData] = React.useState<IProjet[]>([]);
-    const [page, setPage] = React.useState(0);
-    const [size, setSize] = React.useState(100);
+    const [page, setPage] = React.useState(1);
+    const [size, setSize] = React.useState(20);
     const {view, openCreateProjet, setOpenCreateProjet} = props;
     const [openUpdateProjet, setOpenUpdateProjet] = React.useState(false);
     const [openDeleteProjet, setOpenDeleteProjet] = React.useState(false);
     const [selectedProjet, setSelectedProjet] = React.useState<IProjet>(initialProjet);
+    const [resetFilter, setResetFilter] = React.useState(false);
 
     const fetchProjetStatus = async () => {
         await axiosInstance?.current?.get(`referentiel-project-statuses`).then(response => {
@@ -72,7 +73,7 @@ export const ProjetsTable: React.FunctionComponent<{
     const fetchProjetList = async () => {
         await axiosInstance?.current?.get(`projects`, {
             params: {
-                page: page,
+                page: page - 1,
                 size: size,
                 //sort: 'createdAt,desc',
             },
@@ -114,7 +115,7 @@ export const ProjetsTable: React.FunctionComponent<{
 
     const renderTypes = (types: number[]) => {
         return types.map((type, key) => (
-            <Label key={key} color="purple">{projetTypes?.find(stat => stat.id === type)?.type}</Label>
+            <Label key={key} color="purple" className='mr-2' >{projetTypes?.find(stat => stat.id === type)?.type}</Label>
         ))
     }
 
@@ -146,7 +147,10 @@ export const ProjetsTable: React.FunctionComponent<{
             <Button
             variant="link"
             onClick={() => {
-                console.log('Clear all filters')
+                setResetFilter(true);
+                setTimeout(() => {
+                    setResetFilter(false);
+                }, 800);
             }}
             >
             Effacer tous les filtres
@@ -164,6 +168,7 @@ export const ProjetsTable: React.FunctionComponent<{
                 handleSetPage={(page: number) => setPage(page)}
                 size={size}
                 handleSetSize={(size: number) => setSize(size)}
+                resetFilter={resetFilter}
             />
             {
                 view === 'TABLE' ? (
@@ -172,8 +177,8 @@ export const ProjetsTable: React.FunctionComponent<{
                     <Tr>
                         <Th width={10}>{columnNames.id}</Th>
                         <Th width={15}>{columnNames.name}</Th>
-                        <Th width={20}>{columnNames.client}</Th>
-                        <Th width={15}>{columnNames.type}</Th>
+                        <Th width={15}>{columnNames.client}</Th>
+                        <Th width={20}>{columnNames.type}</Th>
                         <Th width={15}>{columnNames.status}</Th>
                         <Th width={15}>{columnNames.notes}</Th>
                     </Tr>
@@ -223,6 +228,12 @@ export const ProjetsTable: React.FunctionComponent<{
                         filtredData={filtredData} 
                         setOpenUpdateProjet={(data) => {setSelectedProjet(data); setOpenUpdateProjet(true)}}
                         setOpenDeleteProjet={(data) => {setSelectedProjet(data); setOpenDeleteProjet(true)}}
+                        setResetFilter={() => {
+                            setResetFilter(true);
+                            setTimeout(() => {
+                                setResetFilter(false);
+                            }, 800);
+                        }}
                     />
                 )
             }

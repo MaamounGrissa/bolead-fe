@@ -22,6 +22,7 @@ export const clientSlice = createSlice({
         },
         addClient: (state, action: PayloadAction<IClient>) => {
             state.clients.push(action.payload);
+            state.totalCount++;
         },
         updateClient: (state, action: PayloadAction<IClient>) => {
             const index = state.clients.findIndex(client => client.id === action.payload.id);
@@ -30,6 +31,7 @@ export const clientSlice = createSlice({
         deleteClient: (state, action: PayloadAction<number>) => {
             const index = state.clients.findIndex(client => client.id === action.payload);
             state.clients.splice(index, 1);
+            state.totalCount--;
         },
         getClientStatus: (state, action: PayloadAction<IClientStatus[]>) => {
             state.clientStatus = action.payload.map((status) => {

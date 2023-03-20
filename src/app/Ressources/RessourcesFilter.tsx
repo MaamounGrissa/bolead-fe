@@ -27,13 +27,22 @@ export const RessourcesFilter: React.FunctionComponent<{
   handleSetPage: (page: number) => void,
   size: number,
   handleSetSize: (size: number) => void,
+  resetFilter: boolean,
 }> = (props) => {
-    const { ressources, filterData, page, handleSetPage, size, handleSetSize } = props;
+    const { resetFilter, ressources, filterData, page, handleSetPage, size, handleSetSize } = props;
     // Set up repo filtering
     const [searchValue, setSearchValue] = React.useState('');
     const [typeSelections, setTypeSelections] = React.useState<string[]>([]);
     const [statusSelection, setStatusSelection] = React.useState('');
-    const { ressourceStatus, ressourceTypes } = useAppSelector(state => state.ressources);
+    const { ressourceStatus, ressourceTypes, totalCount } = useAppSelector(state => state.ressources);
+
+    React.useEffect(() => {
+        if (resetFilter) {
+            setSearchValue('');
+            setStatusSelection('');
+            setTypeSelections([]);
+        }
+    }, [resetFilter]);
 
   const onSearchChange = (value: string) => {
     setSearchValue(value);
@@ -50,10 +59,10 @@ export const RessourcesFilter: React.FunctionComponent<{
     const matchesSearchValue = repo.contact.firstName.search(searchValueInput) >= 0 || repo.contact.lastName.search(searchValueInput) >= 0;
 
     // Search status with status selection
-    const matchesStatusValue = repo.status.id === parseInt(statusSelection);
+    const matchesStatusValue = repo.status.id === ressourceStatus?.find(stat => stat.status === statusSelection)?.id;
 
     // Search type with type selections
-    const matchesTypeValue = typeSelections.filter(selection => parseInt(selection) === repo.team.id)?.length > 0;
+    const matchesTypeValue = typeSelections.filter(selection => ressourceTypes?.find(typ => typ.name === selection)?.id === repo.team.id)?.length > 0;
 
     return (
       (searchValue === '' || matchesSearchValue) &&
@@ -125,7 +134,9 @@ export const RessourcesFilter: React.FunctionComponent<{
       return;
     }
 
-    setStatusSelection(itemId.toString());
+    const itemStr = ressourceStatus?.find(status => status.id === itemId)?.status || '';
+
+    setStatusSelection(itemStr);
     setIsStatusMenuOpen(!isStatusMenuOpen);
   }
 
@@ -216,7 +227,7 @@ export const RessourcesFilter: React.FunctionComponent<{
       return;
     }
 
-    const itemStr = itemId.toString();
+    const itemStr = ressourceTypes?.find(type => type.id === itemId)?.name || '';
 
     setTypeSelections(
       typeSelections.includes(itemStr)
@@ -364,7 +375,7 @@ export const RessourcesFilter: React.FunctionComponent<{
     <Pagination
       titles={{ paginationTitle: 'Attribute search pagination' }}
       perPageComponent="button"
-      itemCount={ressources.length}
+      itemCount={totalCount}
       perPage={size}
       onPerPageSelect={(_ev, perPage) => handleSetSize(perPage)}
       page={page}

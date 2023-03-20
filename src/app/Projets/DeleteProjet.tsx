@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Modal, ModalVariant, Button } from '@patternfly/react-core';
 import { useAppDispatch } from '@app/store';
@@ -20,8 +21,17 @@ export const DeleteProjet: React.FunctionComponent<{
         enqueueSnackbar('Projet supprimé avec succès', { variant: 'success' });
         return response;
       }).catch(error => {
-        enqueueSnackbar('Erreur lors de la suppression du projet', { variant: 'error' });
-        return error;
+        if (error.response?.data?.fieldErrors?.length > 0) {
+          error.response?.data?.fieldErrors.map((err: any) => {
+              enqueueSnackbar(err.message, {
+                  variant: 'error',
+              });
+          });
+        } else {
+            enqueueSnackbar('Erreur lors de modification!', {
+                variant: 'error',
+            });
+        }
       });
   };
 

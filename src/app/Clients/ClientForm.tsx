@@ -49,10 +49,17 @@ export const ClientForm: React.FunctionComponent<{
             }, 500);
             return response;
         }).catch((error) => {
-            enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
-                variant: 'error',
-            });
-            return
+            if (error.response?.data?.fieldErrors?.length > 0) {
+                error.response?.data?.fieldErrors.map((err: any) => {
+                    enqueueSnackbar(err.message, {
+                        variant: 'error',
+                    });
+                });
+              } else {
+                  enqueueSnackbar('Erreur lors d\'ajouter le client!', {
+                      variant: 'error',
+                  });
+              }
         });
     };
 
@@ -67,10 +74,17 @@ export const ClientForm: React.FunctionComponent<{
             }, 500);
             return response;
         }).catch((error) => {
-            enqueueSnackbar('Erreur lors de la modification du client. ' + error.message, {
-                variant: 'error',
-            });
-            return
+            if (error.response?.data?.fieldErrors?.length > 0) {
+                error.response?.data?.fieldErrors.map((err: any) => {
+                    enqueueSnackbar(err.message, {
+                        variant: 'error',
+                    });
+                });
+              } else {
+                  enqueueSnackbar('Erreur lors de modification!', {
+                      variant: 'error',
+                  });
+              }
         });
     };
 
@@ -82,15 +96,54 @@ export const ClientForm: React.FunctionComponent<{
         }
     }, [client]);
 
+    const validation = () => {
+        let valid = true;
+        if (formData.contact.firstName === '') {
+            enqueueSnackbar('Le prénom est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        if (formData.contact.lastName === '') {
+            enqueueSnackbar('Le nom est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        if (formData.contact.email === '') {
+            enqueueSnackbar('L\'email est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        if (formData.contact.phone === '') {
+            enqueueSnackbar('Le téléphone est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        if (formData.contact.address.street === '') {
+            enqueueSnackbar('L\'adresse est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        return valid;
+    };
+
+        
+
     React.useEffect(() => {
         if (save) {
-            setTimeout(() => {
-                if (!formData.id) {
-                    addClientRequest(formData);
-                } else {
-                    editClientRequest(formData);
-                }
-            }, 500);
+            if (validation()) {
+                setTimeout(() => {
+                    if (!formData.id) {
+                        addClientRequest(formData);
+                    } else {
+                        editClientRequest(formData);
+                    }
+                }, 500);
+            }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [save]);
@@ -242,6 +295,7 @@ export const ClientForm: React.FunctionComponent<{
                 </FormGroup>
                 <FormGroup
                     label="Adresse"
+                    isRequired
                     fieldId="modal-with-form-form-address"
                 >
                     <Autocomplete 
@@ -251,7 +305,7 @@ export const ClientForm: React.FunctionComponent<{
                         <TextInput
                             ref={addressRef}
                             isRequired
-                            type="tel"
+                            type="text"
                             id="modal-with-form-form-address"
                             name="modal-with-form-form-address"
                             value={formData.contact.address.street}
@@ -264,14 +318,14 @@ export const ClientForm: React.FunctionComponent<{
                     fieldId="modal-with-form-form-status"
                 >
                         <Select
-                        onSelect={selectStatus}
-                        selections={formData.status.id || ''}
-                        position={DropdownPosition.left}
-                        onToggle={onStatusToggle}
-                        isOpen={isStatusFilterDropdownOpen}
-                        style={{ width: '100%' }}
-                        menuAppendTo={() => document.body}
-                        >
+                            onSelect={selectStatus}
+                            selections={formData.status.id || ''}
+                            position={DropdownPosition.left}
+                            onToggle={onStatusToggle}
+                            isOpen={isStatusFilterDropdownOpen}
+                            style={{ width: '100%' }}
+                            menuAppendTo={() => document.body}
+                            >
                             {statusMenuItems}
                     </Select>
                 </FormGroup>

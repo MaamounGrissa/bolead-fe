@@ -27,13 +27,22 @@ export const ProjetsFilter: React.FunctionComponent<{
   handleSetPage: (page: number) => void,
   size: number,
   handleSetSize: (size: number) => void,
+  resetFilter: boolean,
 }> = (props) => {
-    const { projets, filterData, page, handleSetPage, size, handleSetSize } = props;
+    const { resetFilter, projets, filterData, page, handleSetPage, size, handleSetSize } = props;
     // Set up repo filtering
     const [searchValue, setSearchValue] = React.useState('');
     const [typeSelections, setTypeSelections] = React.useState<string[]>([]);
     const [statusSelection, setStatusSelection] = React.useState('');
     const { projetStatus, projetTypes } = useAppSelector(state => state.projets)
+
+    React.useEffect(() => {
+        if (resetFilter) {
+            setSearchValue('');
+            setTypeSelections([]);
+            setStatusSelection('');
+        }
+    }, [resetFilter]);
 
   const onSearchChange = (value: string) => {
     setSearchValue(value);
@@ -50,10 +59,12 @@ export const ProjetsFilter: React.FunctionComponent<{
     const matchesSearchValue = repo.reference.search(searchValueInput) >= 0;
 
     // Search status with status selection
-    const matchesStatusValue = repo.status === parseInt(statusSelection);
+    const matchesStatusValue = repo.status.id === projetStatus?.find(stat => stat.status === statusSelection)?.id;
 
     // Search type with type selections
-    const matchesTypeValue = typeSelections.filter(selection => repo.referentielProjectTypes.find(type => type.id === parseInt(selection)))?.length > 0;
+    const matchesTypeValue = repo.referentielProjectTypes?.filter(type => typeSelections?.filter(selec => selec === type.type)?.length > 0)?.length > 0;
+    
+    //typeSelections.filter(selection => repo.referentielProjectTypes.find(type => type.id === parseInt(selection)))?.length > 0;
 
     return (
       (searchValue === '' || matchesSearchValue) &&
@@ -125,7 +136,9 @@ export const ProjetsFilter: React.FunctionComponent<{
       return;
     }
 
-    setStatusSelection(itemId.toString());
+    const itemStr = projetStatus?.find(status => status.id === itemId)?.status || '';
+
+    setStatusSelection(itemStr);
     setIsStatusMenuOpen(!isStatusMenuOpen);
   }
 
@@ -216,7 +229,7 @@ export const ProjetsFilter: React.FunctionComponent<{
       return;
     }
 
-    const itemStr = itemId.toString();
+    const itemStr = projetTypes?.find(type => type.id === itemId)?.type || '';
 
     setTypeSelections(
       typeSelections.includes(itemStr)

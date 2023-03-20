@@ -163,6 +163,62 @@ interface PlanificationState {
     totalCount: number
 }
 
+// Dashboard Statistics
+
+interface totalTeamMembersByStatus {
+    value: number;
+    status: string;
+}
+
+interface totalCustomersByStatus {
+    value: number;
+    status: string;
+}
+
+interface totalProjectsByType {
+    value: number;
+    type: string;
+}
+
+interface totalProjectStatusByType {
+    type: string;
+    active: number;
+    total: number;
+    nouveau: number;
+}
+
+interface percentageByInspectionsType {
+    type: string;
+    total: number;
+    percentage: number;
+}
+
+interface tenHighestPlannedWorkers {
+    id: number;
+    duration: number;
+    firstName: string;
+    lastName: string;
+    total: number;
+    travel: number;
+}
+
+interface DashboardStatistics {
+    totalTeamMembersByStatus: totalTeamMembersByStatus[];
+    totalCustomersByStatus: totalCustomersByStatus[];
+    totalProjectsByType: totalProjectsByType[];
+    totalProjectStatusByType: totalProjectStatusByType[];
+    percentageByInspectionsType: percentageByInspectionsType[];
+    tenHighestPlannedWorkers: tenHighestPlannedWorkers[];
+    nextPlannedInspection: IPlanification;
+    inspectionsOfCurrentDay: IPlanification[];
+}
+
+// Statistics
+
+interface StatisticsState {
+    dashboardStatistics: DashboardStatistics;
+}
+
 // Auth Types
 
 interface KeycloakUser {

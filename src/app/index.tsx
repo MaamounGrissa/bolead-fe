@@ -10,16 +10,17 @@ import MyApp from './MyApp';
 
 const App: React.FunctionComponent = () => {
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const eventLogger = (event: unknown, error: unknown) => {
-    console.log('onKeycloakEvent', event, error)
+    //console.log('onKeycloakEvent', event, error)
   }
   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const tokenLogger = (tokens: unknown) => {
-    console.log('onKeycloakTokens', tokens)
+    //console.log('onKeycloakTokens', tokens)
   }
 
   return (
-  <React.StrictMode>
     <ReactKeycloakProvider
       authClient={keycloak}
       onEvent={eventLogger}
@@ -34,7 +35,6 @@ const App: React.FunctionComponent = () => {
         </SnackbarProvider>
       </Provider>
     </ReactKeycloakProvider>
-  </React.StrictMode>
 )};
 
 export default App;

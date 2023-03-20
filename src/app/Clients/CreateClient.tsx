@@ -17,12 +17,15 @@ export const CreateClient: React.FunctionComponent<{
         <Modal
             variant={ModalVariant.small}
             title="Créer client"
-            description="Entrer les informations ci-dessout pour créer un client."
+            description="Entrer les informations ci-dessous pour créer un client."
             isOpen={isOpen}
             onClose={close}
             actions={[
             <Button key="create" variant="primary" onClick={() => {
                 setSave(true);
+                setTimeout(() => {
+                    setSave(false);
+                }, 800);
             }}>
                 Enregistrer
             </Button>,

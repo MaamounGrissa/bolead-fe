@@ -7,9 +7,31 @@ import { CalendarAltIcon } from '@patternfly/react-icons';
 import moment from 'moment';
 import { TodayPlanifications } from './TodayPlanifications';
 import { TopRessourcePlanifier } from './TopRessourcePlanifier';
+import { useAxios } from '@app/network';
+import { useSnackbar } from 'notistack';
+import { useAppDispatch } from '@app/store';
+import { getDashboardStatistics } from '@app/store/statistics/statisticSlice';
 
 const Dashboard: React.FunctionComponent = () => {
   const [topRessourcePlanifierView, setTopRessourcePlanifierView] = React.useState('Semaine');
+  const { enqueueSnackbar } = useSnackbar();
+  const axiosInstance = useAxios();
+  const dispatch = useAppDispatch();
+
+  const fetchDashboardStatistics = async () => {
+    await axiosInstance?.current?.get(`dashboard`)
+    .then(response => {
+        dispatch(getDashboardStatistics(response.data));
+    }).catch(error => {
+        enqueueSnackbar(error.message, { variant: 'error' });
+    });
+  };
+
+  React.useEffect(() => {
+      fetchDashboardStatistics();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <PageSection>
       <TotalsCards />

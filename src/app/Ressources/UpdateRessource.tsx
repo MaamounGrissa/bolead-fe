@@ -16,12 +16,15 @@ export const UpdateRessource: React.FunctionComponent<{
         <Modal
             variant={ModalVariant.small}
             title="Modifier ressource"
-            description="Mêtre à jour les informations ci-dessout pour modifier une ressource."
+            description="Mêtre à jour les informations ci-dessous pour modifier une ressource."
             isOpen={isOpen}
             onClose={close}
             actions={[
             <Button key="edit" variant="primary" onClick={() => {
                 setSave(true);
+                setTimeout(() => {
+                    setSave(false);
+                }, 800);
             }}>
                 Enregistrer
             </Button>,

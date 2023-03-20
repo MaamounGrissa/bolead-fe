@@ -17,12 +17,15 @@ export const CreateRessource: React.FunctionComponent<{
         <Modal
             variant={ModalVariant.small}
             title="Créer ressource"
-            description="Entrer les informations ci-dessout pour créer un ressource."
+            description="Entrer les informations ci-dessous pour créer une ressource."
             isOpen={isOpen}
             onClose={close}
             actions={[
             <Button key="create" variant="primary" onClick={() => {
                 setSave(true);
+                setTimeout(() => {
+                    setSave(false);
+                }, 800);
             }}>
                 Enregistrer
             </Button>,

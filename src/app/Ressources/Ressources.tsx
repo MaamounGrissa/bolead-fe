@@ -8,13 +8,37 @@ import {
   Card,
   CardTitle} from '@patternfly/react-core';
 import UserPlusIcon from '@patternfly/react-icons/dist/js/icons/user-plus-icon';
-import { CheckCircleIcon, TimesCircleIcon, ClockIcon } from '@patternfly/react-icons';
+import { UserCogIcon, UserTieIcon, UserSecretIcon } from '@patternfly/react-icons';
 import { RessourcesTable } from './RessourcesTable';
-import { useAppSelector } from '@app/store';
+import { useAppDispatch, useAppSelector } from '@app/store';
+import { getDashboardStatistics } from '@app/store/statistics/statisticSlice';
+import { useSnackbar } from 'notistack';
+import { useAxios } from '@app/network';
 
 const Ressources: React.FunctionComponent = () => {
   const [openCreateRessource, setOpenCreateRessource] = React.useState(false);
   const { totalCount } = useAppSelector(state => state.ressources)
+  const { dashboardStatistics } = useAppSelector(state => state.statistics)
+
+  const { enqueueSnackbar } = useSnackbar();
+  const axiosInstance = useAxios();
+  const dispatch = useAppDispatch();
+
+  const fetchDashboardStatistics = async () => {
+    await axiosInstance?.current?.get(`dashboard`)
+    .then(response => {
+        dispatch(getDashboardStatistics(response.data));
+    }).catch(error => {
+        enqueueSnackbar(error.message, { variant: 'error' });
+    });
+  };
+
+  React.useEffect(() => {
+    if (dashboardStatistics?.totalCustomersByStatus?.length === 0) {
+      fetchDashboardStatistics();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <PageSection>
@@ -22,21 +46,24 @@ const Ressources: React.FunctionComponent = () => {
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
-              <CheckCircleIcon size='lg' color="green" className='mr-2' /> 5 Visites Validées
+              <UserCogIcon size='lg' color="green" className='mr-2' /> 
+                {dashboardStatistics?.totalTeamMembersByStatus?.find(item => item.status === 'Technicien')?.value || 0}&nbsp;&nbsp;&nbsp;&nbsp; Techniciens
             </CardTitle>
           </Card>
         </GridItem>
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
-            <ClockIcon size='lg' color="orange" className='mr-2' /> 10 Visites en cours
+            <UserTieIcon size='lg' color="orange" className='mr-2' />
+              {dashboardStatistics?.totalTeamMembersByStatus?.find(item => item.status === 'Commercial')?.value || 0}&nbsp;&nbsp;&nbsp;&nbsp; Commercials
             </CardTitle>
           </Card>
         </GridItem>
         <GridItem span={12} sm={4} >
           <Card style={{ textAlign: "center" }}>
             <CardTitle style={{ textAlign: "center", display: "flex", alignItems: "center" }}>
-              <TimesCircleIcon size='lg' color="red" className='mr-2' /> 15 Visites Annuler
+              <UserSecretIcon size='lg' color="blue" className='mr-2' />
+                {dashboardStatistics?.totalTeamMembersByStatus?.find(item => item.status === 'Gestionnaire')?.value || 0}&nbsp;&nbsp;&nbsp;&nbsp; Gestionnaires
             </CardTitle>
           </Card>
         </GridItem>

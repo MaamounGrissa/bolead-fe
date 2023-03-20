@@ -126,7 +126,6 @@ export const CreatePlanification: React.FunctionComponent<{
         });
     };
 
-    console.log(formData)
 
     const addPlanificationRequest = async (planificationForm: any) => {
         await axiosInstance?.current?.post('inspections', planificationForm).then((response) => {
@@ -135,11 +134,21 @@ export const CreatePlanification: React.FunctionComponent<{
             });
             console.log(response)
             dispatch(addPlanification(response.data));
-            return response;
+            setTimeout(() => {
+                close();
+            }, 1000);
         }).catch((error) => {
-            enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
-                variant: 'error',
-            });
+            if (error.response?.data?.fieldErrors?.length > 0) {
+                error.response?.data?.fieldErrors.map((err: any) => {
+                    enqueueSnackbar(err.message, {
+                        variant: 'error',
+                    });
+                });
+            } else {
+                enqueueSnackbar('Erreur lors de modification!', {
+                    variant: 'error',
+                });
+            }
         });
     };
 
@@ -147,19 +156,47 @@ export const CreatePlanification: React.FunctionComponent<{
         addPlanificationRequest(formData);
     };
 
+    const step1Validation = () => {
+        let valid = true;
+        if (formData.title === '' || formData.startTime === '' || formData.duration === 0) {
+            valid = false;
+        }
+        return valid;
+    };
+
+    const step2Validation = () => {
+        let valid = true;   
+        if (formData.type.id === 0 || formData.project.uuid === '' || formData.member.uuid === '') {
+            valid = false;
+        }
+        return valid;
+    };
+
+    const step3Validation = () => {
+        let valid = true;
+        if (formData.origin === '' || formData.destination === '' || formData.travelDuration === 0 || formData.travelMode === '') {
+            valid = false;
+        }
+        return valid;
+    };
+
     const steps = [
         { 
+            id: 1,
             name: 'Rendez-vous',
+            enableNext: step1Validation(),
             component: <CreateStep1 
                             formData={formData} 
                             handleTitleChange={handleTitleChange}
                             handleStartDateChange={handleStartDateChange}
                             handleDurationChange={handleDurationChange}
                             handleNotesChange={handleNotesChange}
-                        />
+                        />,
         },
         { 
+            id: 2,
             name: 'Participants',
+            enableNext: step2Validation(),
             component: <CreateStep2
                             formData={formData}
                             handleSelectType={handleSelectType}
@@ -168,10 +205,13 @@ export const CreatePlanification: React.FunctionComponent<{
                         />
         },
         { 
+            id: 3,
             name: 'Trajet',
+            enableNext: step3Validation(),
             component: <CreateStep3 formData={formData} handleSetFormData={handleSetTrajet} />
         },
         {
+            id: 4,
             name: 'Aperçu',
             component: <CreateStep4 formData={formData} />,
             nextButtonText: 'Planifier'
@@ -191,6 +231,7 @@ export const CreatePlanification: React.FunctionComponent<{
                 backButtonText='Précédent'
                 cancelButtonText='Annuler'
                 onSave={handleSave}
+                //onNext={(newStep: any) => handleNext(newStep)}
             />
         </React.Fragment>
     );

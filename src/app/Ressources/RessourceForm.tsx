@@ -10,6 +10,8 @@ import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 import { stringToAdress } from '@app/utils/shared';
 import { HashLoader } from 'react-spinners';
 
+const libraries: any = ['places'];
+
 export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, save: boolean, close: () => void}> = ({ressource, save, close}) => {
     const dispatch = useAppDispatch();
     const { enqueueSnackbar } = useSnackbar();
@@ -21,7 +23,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     const googleKey: string = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: googleKey,
-        libraries: ['places'],
+        libraries: libraries,
     })
 
     const options = {
@@ -49,16 +51,23 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
             enqueueSnackbar('Ressource ajouté avec succès', {
                 variant: 'success',
             });
-            dispatch(addRessource(formData));
+            dispatch(addRessource(response.data));
             setTimeout(() => {
                 close();
             }, 500);
             return response;
         }).catch((error) => {
-            enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
-                variant: 'error',
-            });
-            return
+            if (error.response?.data?.fieldErrors?.length > 0) {
+                error.response?.data?.fieldErrors.map((err: any) => {
+                    enqueueSnackbar(err.message, {
+                        variant: 'error',
+                    });
+                });
+            } else {
+                enqueueSnackbar('Erreur lors de modification!', {
+                    variant: 'error',
+                });
+            }
         });
     };
 
@@ -73,22 +82,72 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
             }, 500);
             return response;
         }).catch((error) => {
-            enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
+            if (error.response?.data?.fieldErrors?.length > 0) {
+                error.response?.data?.fieldErrors.map((err: any) => {
+                    enqueueSnackbar(err.message, {
+                        variant: 'error',
+                    });
+                });
+            } else {
+                enqueueSnackbar('Erreur lors de modification!', {
+                    variant: 'error',
+                });
+            }
+        });
+    };
+
+    const validation = () => {
+        let valid = true;
+        if (formData.contact.firstName === '') {
+            enqueueSnackbar('Le prénom est obligatoire', {
                 variant: 'error',
             });
-            return
-        });
+            valid = false;
+        }
+        if (formData.contact.lastName === '') {
+            enqueueSnackbar('Le nom est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        if (formData.contact.email === '') {
+            enqueueSnackbar('L\'email est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        if (formData.contact.phone === '') {
+            enqueueSnackbar('Le téléphone est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        if (formData.team.id === 0) {
+            enqueueSnackbar('Le type est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        if (formData.status.id === 0) {
+            enqueueSnackbar('Le statut est obligatoire', {
+                variant: 'error',
+            });
+            valid = false;
+        }
+        return valid;
     };
 
     React.useEffect(() => {
         if (save) {
-            setTimeout(() => {
-                if (!formData.id) {
-                    addRessourceRequest(formData);
-                } else {
-                    editRessourceRequest(formData);
-                }
-            }, 500);
+            if (validation()) {
+                setTimeout(() => {
+                    if (!formData.id) {
+                        addRessourceRequest(formData);
+                    } else {
+                        editRessourceRequest(formData);
+                    }
+                }, 500);
+            }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [save]);
@@ -156,7 +215,8 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     const onTypeToggle = (isOpen: boolean) => {
         setIsTypeFilterDropdownOpen(isOpen);
     };
-    const selectType = (selection: any) => {
+    const selectType = (event: any, selection: any) => {
+        event.preventDefault();
         setFormData({
             ...formData,
             team: {
@@ -169,7 +229,8 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     const onStatusToggle = (isOpen: boolean) => {
         setIsStatusFilterDropdownOpen(isOpen);
     };
-    const selectStatus = (selection: any) => {
+    const selectStatus = (event: any, selection: any) => {
+        event.preventDefault();
         setFormData({
             ...formData,
             status: {
@@ -260,6 +321,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                 </FormGroup>
                 <FormGroup
                     label="Adresse"
+                    isRequired
                     fieldId="modal-with-form-form-address"
                 >
                     <Autocomplete 
@@ -269,7 +331,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                         <TextInput
                             ref={addressRef}
                             isRequired
-                            type="tel"
+                            type="text"
                             id="modal-with-form-form-address"
                             name="modal-with-form-form-address"
                             value={formData.contact.address.street}
@@ -297,7 +359,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
                     label="Status"
                     fieldId="modal-with-form-form-status"
                 >
-                        <Select
+                    <Select
                         onSelect={selectStatus}
                         selections={formData.status.id}
                         position={DropdownPosition.left}

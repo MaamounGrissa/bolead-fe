@@ -42,12 +42,13 @@ export const ClientsTable: React.FunctionComponent<{
     const dispatch = useAppDispatch();
     const { clients, clientStatus } = useAppSelector(state => state.clients)
     const [filtredData, setFiltredData] = React.useState<IClient[]>([]);
-    const [page, setPage] = React.useState(0);
-    const [size, setSize] = React.useState(100);
+    const [page, setPage] = React.useState(1);
+    const [size, setSize] = React.useState(20);
     const {openCreateClient, setOpenCreateClient} = props;
     const [openUpdateClient, setOpenUpdateClient] = React.useState(false);
     const [openDeleteClient, setOpenDeleteClient] = React.useState(false);
     const [selectedClient, setSelectedClient] = React.useState<IClient>(initialClient);
+    const [resetFilter, setResetFilter] = React.useState(false);
 
     const fetchClientStatus = async () => {
         await axiosInstance?.current?.get(`referentiel-customer-statuses`).then(response => {
@@ -60,7 +61,7 @@ export const ClientsTable: React.FunctionComponent<{
     const fetchClientList = async () => {
         await axiosInstance?.current?.get(`customers`, {
             params: {
-                page: page,
+                page: page - 1,
                 size: size,
                 //sort: 'createdAt,desc',
             },
@@ -126,7 +127,11 @@ export const ClientsTable: React.FunctionComponent<{
             <Button
             variant="link"
             onClick={() => {
-                console.log('Clear all filters')
+                setResetFilter(true);
+                setTimeout(() => {
+                    setResetFilter(false);
+                }
+                , 800);
             }}
             >
             Effacer tous les filtres
@@ -144,7 +149,7 @@ export const ClientsTable: React.FunctionComponent<{
                 handleSetPage={(page: number) => setPage(page)}
                 size={size}
                 handleSetSize={(size: number) => setSize(size)}
-
+                resetFilter={resetFilter}
             />
             <TableComposable aria-label="Selectable table">
                 <Thead>

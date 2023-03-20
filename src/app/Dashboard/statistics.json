@@ -1,0 +1,302 @@
+{
+    "totalTeamMembersByStatus": [
+        {
+            "value": 3,
+            "status": "Technicien"
+        },
+        {
+            "value": 0,
+            "status": "Gestionnaire"
+        },
+        {
+            "value": 0,
+            "status": "Commercial"
+        }
+    ],
+    "totalCustomersByStatus": [
+        {
+            "value": 4,
+            "status": "Prospet"
+        },
+        {
+            "value": 0,
+            "status": "Expiré"
+        },
+        {
+            "value": 0,
+            "status": "Archiver"
+        },
+        {
+            "value": 0,
+            "status": "Active"
+        }
+    ],
+    "totalProjectsByType": [
+        {
+            "value": 0,
+            "type": "ISO Plancher"
+        },
+        {
+            "value": 0,
+            "type": "PAC"
+        },
+        {
+            "value": 0,
+            "type": "Chaudière gaz"
+        },
+        {
+            "value": 5,
+            "type": "ITE"
+        },
+        {
+            "value": 0,
+            "type": "ISO Compbles"
+        },
+        {
+            "value": 1,
+            "type": "ITI"
+        }
+    ],
+    "totalProjectStatusByType": [
+        {
+            "type": "ITI",
+            "active": 0,
+            "total": 1,
+            "nouveau": 1
+        },
+        {
+            "type": "PAC",
+            "active": 0,
+            "total": 0,
+            "nouveau": 0
+        },
+        {
+            "type": "ISO Plancher",
+            "active": 0,
+            "total": 0,
+            "nouveau": 0
+        },
+        {
+            "type": "Chaudière gaz",
+            "active": 0,
+            "total": 0,
+            "nouveau": 0
+        },
+        {
+            "type": "ISO Compbles",
+            "active": 0,
+            "total": 0,
+            "nouveau": 0
+        },
+        {
+            "type": "ITE",
+            "active": 0,
+            "total": 5,
+            "nouveau": 5
+        }
+    ],
+    "inspectionsOfCurrentDay": [
+        {
+            "id": 4653,
+            "uuid": "dbc2d7a0-f398-4e16-a37d-bbe9e491eebf",
+            "comment": "test",
+            "startTime": "2023-03-18T20:40:00",
+            "endTime": "2023-03-18T21:40:00",
+            "distance": "20,3 km",
+            "title": "Today tesdt",
+            "origin": "15 Rue du Buisson aux Fraises batiment b3, 91300 Massy, France",
+            "destination": "Rue de Rivoli, Paris, France",
+            "duration": "60",
+            "travelMode": "DRIVING",
+            "travelDuration": "39",
+            "status": {
+                "id": 1,
+                "status": "Planifier"
+            },
+            "type": {
+                "id": 2,
+                "type": "Visite technique"
+            },
+            "member": {
+                "id": 4551,
+                "uuid": "cb0e53df-5c4c-4744-bd03-5a809228c132",
+                "contact": {
+                    "id": 4452,
+                    "firstName": "MAMMOUN",
+                    "lastName": "GRIS",
+                    "email": "bilel.ggfriddssa@gmail.com",
+                    "phone": "0658741952",
+                    "address": {
+                        "id": 4502,
+                        "street": "12 RUE ROUGET LISLE",
+                        "streetLine2": "",
+                        "city": "ISSY",
+                        "postcode": 92120,
+                        "country": "France"
+                    }
+                },
+                "team": {
+                    "id": 1,
+                    "name": "Technicien"
+                },
+                "status": {
+                    "id": 1,
+                    "status": "Active"
+                }
+            },
+            "project": {
+                "id": 4604,
+                "uuid": "b663953f-8a4f-4d31-99c4-940c0d08eecf",
+                "reference": "ite project",
+                "tags": "",
+                "status": {
+                    "id": 1,
+                    "status": "Nouveau"
+                },
+                "referentielProjectTypes": [
+                    {
+                        "id": 1,
+                        "type": "ITE"
+                    },
+                    {
+                        "id": 3,
+                        "type": "ITI"
+                    }
+                ],
+                "customer": {
+                    "id": 4405,
+                    "uuid": "9b2a38fd-3a93-4f99-ab22-8056c0c9ebb8",
+                    "status": {
+                        "id": 1,
+                        "status": "Prospet"
+                    },
+                    "contact": {
+                        "id": 4459,
+                        "firstName": "Client",
+                        "lastName": "Test",
+                        "email": "client.test@email.com",
+                        "phone": "0068909407",
+                        "address": {
+                            "id": 4507,
+                            "street": "Rue de Rivoli, Paris, France",
+                            "streetLine2": "",
+                            "city": " Paris",
+                            "postcode": 70123,
+                            "country": " France"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "percentageByInspectionsType": [
+        {
+            "type": "Visite commercial",
+            "total": 0,
+            "percentage": 0.0
+        },
+        {
+            "type": "Visite technique",
+            "total": 3,
+            "percentage": 100.0
+        }
+    ],
+    "tenHighestPlannedWorkers": [
+        {
+            "id": 4551,
+            "duration": 1,
+            "firstName": null,
+            "lastName": null,
+            "total": 2,
+            "travel": 1
+        }
+    ],
+    "nextPlannedInspection": {
+        "id": 4654,
+        "uuid": "9661c4c1-8666-4da3-b157-29f6d6fe80cc",
+        "comment": "test",
+        "startTime": "2023-03-19T10:00:00",
+        "endTime": "2023-03-19T10:30:00",
+        "distance": "30,6 km",
+        "title": "Test planication",
+        "origin": "15 Rue du Buisson aux Fraises batiment b3, 91300 Massy, France",
+        "destination": "Rueil-Malmaison, France",
+        "duration": "30",
+        "travelMode": "DRIVING",
+        "travelDuration": "36",
+        "status": {
+            "id": 1,
+            "status": "Planifier"
+        },
+        "type": {
+            "id": 2,
+            "type": "Visite technique"
+        },
+        "member": {
+            "id": 4551,
+            "uuid": "cb0e53df-5c4c-4744-bd03-5a809228c132",
+            "contact": {
+                "id": 4452,
+                "firstName": "MAMMOUN",
+                "lastName": "GRIS",
+                "email": "bilel.ggfriddssa@gmail.com",
+                "phone": "0658741952",
+                "address": {
+                    "id": 4502,
+                    "street": "12 RUE ROUGET LISLE",
+                    "streetLine2": "",
+                    "city": "ISSY",
+                    "postcode": 92120,
+                    "country": "France"
+                }
+            },
+            "team": {
+                "id": 1,
+                "name": "Technicien"
+            },
+            "status": {
+                "id": 1,
+                "status": "Active"
+            }
+        },
+        "project": {
+            "id": 4601,
+            "uuid": "3af76111-dc2b-49fe-b4dc-a71f859e53b0",
+            "reference": "tesme",
+            "tags": "test",
+            "status": {
+                "id": 1,
+                "status": "Nouveau"
+            },
+            "referentielProjectTypes": [
+                {
+                    "id": 1,
+                    "type": "ITE"
+                }
+            ],
+            "customer": {
+                "id": 4404,
+                "uuid": "2b628a10-8097-40c2-9942-75155aeb213e",
+                "status": {
+                    "id": 1,
+                    "status": "Prospet"
+                },
+                "contact": {
+                    "id": 4457,
+                    "firstName": "Maamoun",
+                    "lastName": "Grissa",
+                    "email": "grissa.maamoun@gmail.com",
+                    "phone": "0068909408",
+                    "address": {
+                        "id": 4505,
+                        "street": "Rueil-Malmaison, France",
+                        "streetLine2": "",
+                        "city": " France",
+                        "postcode": 70123,
+                        "country": "France"
+                    }
+                }
+            }
+        }
+    }
+}

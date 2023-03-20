@@ -43,12 +43,13 @@ export const RessourcesTable: React.FunctionComponent<{
     const dispatch = useAppDispatch();
     const { ressources, ressourceStatus, ressourceTypes } = useAppSelector(state => state.ressources)
     const [filtredData, setFiltredData] = React.useState<IRessource[]>([]);
-    const [page, setPage] = React.useState(0);
-    const [size, setSize] = React.useState(100);
+    const [page, setPage] = React.useState(1);
+    const [size, setSize] = React.useState(20);
     const {openCreateRessource, setOpenCreateRessource} = props;
     const [openUpdateRessource, setOpenUpdateRessource] = React.useState(false);
     const [openDeleteRessource, setOpenDeleteRessource] = React.useState(false);
     const [selectedRessource, setSelectedRessource] = React.useState<IRessource>(initialRessource);
+    const [resetFilter, setResetFilter] = React.useState(false);
 
     const fetchRessourceStatus = async () => {
         await axiosInstance?.current?.get(`referentiel-member-statuses`).then(response => {
@@ -71,7 +72,7 @@ export const RessourcesTable: React.FunctionComponent<{
     const fetchRessourcesList = async () => {
         await axiosInstance?.current?.get(`members`, {
             params: {
-                page: page,
+                page: page - 1,
                 size: size,
                 //sort: 'createdAt,desc',
             },
@@ -101,13 +102,9 @@ export const RessourcesTable: React.FunctionComponent<{
         case 1:
             return <Label color="blue">{ressourceStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 2:
-            return <Label color="green">{ressourceStatus?.find(stat => stat.id === labelText)?.status}</Label>;
-        case 3:
             return <Label color="orange">{ressourceStatus?.find(stat => stat.id === labelText)?.status}</Label>;
-        case 4:
-            return <Label color="red">{ressourceStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         default:
-            return <Label color="orange">Indéfinie</Label>;
+            return <Label color="red">Indéfinie</Label>;
         }
     };
 
@@ -139,7 +136,11 @@ export const RessourcesTable: React.FunctionComponent<{
             <Button
             variant="link"
             onClick={() => {
-                console.log('Clear all filters')
+                setResetFilter(true);
+                setTimeout(() => {
+                    setResetFilter(false);
+                }
+                , 800);
             }}
             >
             Effacer tous les filtres
@@ -157,6 +158,7 @@ export const RessourcesTable: React.FunctionComponent<{
                 handleSetPage={(page: number) => setPage(page)}
                 size={size}
                 handleSetSize={(size: number) => setSize(size)}
+                resetFilter={resetFilter}
             />
             <TableComposable aria-label="Selectable table">
                 <Thead>

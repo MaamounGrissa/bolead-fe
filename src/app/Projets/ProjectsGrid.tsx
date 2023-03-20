@@ -8,8 +8,9 @@ export const ProjectsGrid: React.FunctionComponent<{
     filtredData: IProjet[],
     setOpenUpdateProjet: (data: IProjet) => void,
     setOpenDeleteProjet: (data: IProjet) => void,
+    setResetFilter: () => void
 }> = (props) => {
-    const {filtredData, setOpenUpdateProjet, setOpenDeleteProjet} = props;
+    const {filtredData, setOpenUpdateProjet, setOpenDeleteProjet, setResetFilter} = props;
     const [isCardKebabDropdownOpen, setIsCardKebabDropdownOpen] = React.useState(false);
     const [selectedKey, setSelectedKey] = React.useState(null);
     const {projetStatus, projetTypes} = useAppSelector(state => state.projets)
@@ -50,9 +51,7 @@ export const ProjectsGrid: React.FunctionComponent<{
         <EmptyStatePrimary>
             <Button
             variant="link"
-            onClick={() => {
-                console.log('Clear all filters')
-            }}
+            onClick={setResetFilter}
             >
             Effacer tous les filtres
             </Button>

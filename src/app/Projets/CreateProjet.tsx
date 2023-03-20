@@ -23,6 +23,9 @@ export const CreateProjet: React.FunctionComponent<{
             actions={[
             <Button key="create" variant="primary" onClick={() => {
                 setSave(true);
+                setTimeout(() => {
+                    setSave(false);
+                }, 800);
             }}>
                 Enregistrer
             </Button>,

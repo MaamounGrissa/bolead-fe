@@ -22,6 +22,9 @@ export const UpdateProjet: React.FunctionComponent<{
             actions={[
             <Button key="edit" variant="primary" onClick={() => {
                 setSave(true);
+                setTimeout(() => {
+                    setSave(false);
+                }, 800);
             }}>
                 Enregistrer
             </Button>,

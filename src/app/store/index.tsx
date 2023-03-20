@@ -4,6 +4,7 @@ import ressourceSlice from "./ressources/ressourceSlice";
 import clientSlice from "./clients/clientSlice";
 import projetSlice from "./projets/projetSlice";
 import planificationSlice from "./planifications/planificationSlice";
+import statisticsSlice from "./statistics/statisticSlice";
 
 export const store = configureStore({
     reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
         clients: clientSlice,
         projets: projetSlice,
         planifications: planificationSlice,
+        statistics: statisticsSlice,
     }
 })
 

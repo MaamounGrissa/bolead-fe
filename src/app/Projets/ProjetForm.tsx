@@ -66,12 +66,18 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
             setTimeout(() => {
                 close();
             }, 500);
-            return response;
         }).catch((error) => {
-            enqueueSnackbar('Erreur lors de l\'ajout du client. ' + error.message, {
-                variant: 'error',
-            });
-            return;
+            if (error.response?.data?.fieldErrors?.length > 0) {
+                error.response?.data?.fieldErrors.map((err: any) => {
+                    enqueueSnackbar(err.message, {
+                        variant: 'error',
+                    });
+                });
+            } else {
+                enqueueSnackbar('Erreur lors de modification!', {
+                    variant: 'error',
+                });
+            }
         });
     };
 
@@ -84,24 +90,43 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
             setTimeout(() => {
                 close();
             }, 500);
-            return response;
         }).catch((error) => {
-            enqueueSnackbar('Erreur lors de la modification du projet. ' + error.message, {
+            if (error.response?.data?.fieldErrors?.length > 0) {
+                error.response?.data?.fieldErrors.map((err: any) => {
+                    enqueueSnackbar(err.message, {
+                        variant: 'error',
+                    });
+                });
+            } else {
+                enqueueSnackbar('Erreur lors de modification!', {
+                    variant: 'error',
+                });
+            }
+        });
+    };
+
+    const validation = () => {
+        let valid = true;
+        if (formData.reference === '') {
+            enqueueSnackbar('Nom de projet est obligatoire', {
                 variant: 'error',
             });
-            return;
-        });
+            valid = false;
+        }
+        return valid;
     };
 
     React.useEffect(() => {
         if (save) {
-            setTimeout(() => {
-                if (!formData.id) {
-                    addProjetRequest(formData);
-                } else {
-                    editProjetRequest(formData);
-                }
-            }, 500);
+            if (validation()) {
+                setTimeout(() => {
+                    if (!formData.id) {
+                        addProjetRequest(formData);
+                    } else {
+                        editProjetRequest(formData);
+                    }
+                }, 500);
+            }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [save]);
