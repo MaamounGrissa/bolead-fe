@@ -23,7 +23,7 @@ export const TodayPlanifications: React.FunctionComponent = () => {
     const { dashboardStatistics } = useAppSelector(state => state.statistics);
 
     const fetchPlanificationStatus = async () => {
-        await axiosInstance?.current?.get(`referentiel-inspection-statuses`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/referentiel-inspection-statuses`).then(response => {
             dispatch(getPlanificationStatus(response.data));
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });

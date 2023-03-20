@@ -27,7 +27,7 @@ const Planifications: React.FunctionComponent = () => {
   const dispatch = useAppDispatch();
 
   const fetchDashboardStatistics = async () => {
-    await axiosInstance?.current?.get(`dashboard`)
+    await axiosInstance?.current?.get(`inspections/api/dashboard`)
     .then(response => {
         dispatch(getDashboardStatistics(response.data));
     }).catch(error => {
@@ -67,8 +67,8 @@ const Planifications: React.FunctionComponent = () => {
               <CalendarDayIcon size='lg' color="orange" className='mr-2' />
                {
                 dashboardStatistics.nextPlannedInspection?.id
-                  ?  `Prochain RDV le ${moment(dashboardStatistics?.nextPlannedInspection?.startTime).format("DD/MM/YYYY à HH:mm")}`
-                  : 'Aucun rendez-vous prévu'
+                  ?  <span className='font-s-14'>Prochain RDV le {moment(dashboardStatistics?.nextPlannedInspection?.startTime).format("DD/MM/YYYY à HH:mm")}</span>
+                  : <span className='font-s-14'>Aucun rendez-vous prévu</span>
               }
             </CardTitle>
           </Card>

@@ -53,7 +53,7 @@ export const ProjetsTable: React.FunctionComponent<{
     const [resetFilter, setResetFilter] = React.useState(false);
 
     const fetchProjetStatus = async () => {
-        await axiosInstance?.current?.get(`referentiel-project-statuses`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/referentiel-project-statuses`).then(response => {
             dispatch(getProjetStatus(response.data));
             return;
         }).catch(error => {
@@ -62,7 +62,7 @@ export const ProjetsTable: React.FunctionComponent<{
     };
 
     const fetchProjetTypes = async () => {
-        await axiosInstance?.current?.get(`referentiel-project-types`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/referentiel-project-types`).then(response => {
             dispatch(getProjetTypes(response.data));
             return;
         }).catch(error => {
@@ -71,7 +71,7 @@ export const ProjetsTable: React.FunctionComponent<{
     };
 
     const fetchProjetList = async () => {
-        await axiosInstance?.current?.get(`projects`, {
+        await axiosInstance?.current?.get(`inspections/api/projects`, {
             params: {
                 page: page - 1,
                 size: size,

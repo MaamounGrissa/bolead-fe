@@ -17,7 +17,7 @@ export const DeleteClient: React.FunctionComponent<{
     const { isOpen, close, client } = props;
 
     const deleteClientRequest = async () => {
-        await axiosInstance?.current?.delete(`customers/${client.id}`).then(response => {
+        await axiosInstance?.current?.delete(`inspections/api/customers/${client.id}`).then(response => {
           enqueueSnackbar('Client supprimé avec succès', { variant: 'success' });
           return response;
         }).catch(error => {

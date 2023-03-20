@@ -77,8 +77,16 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
         {routes.map(
           (route, idx) => route.label && (!route.routes ? renderNavItem(route, idx) : renderNavGroup(route, idx))
         )}
-        <NavItem key="logout" id="logout">
-          <NavLink exact to="/login">
+        <NavItem key="logout" id="logout" 
+              onClick={() => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                setTimeout(() => {
+                  window.location.href = '/login';
+                }, 500);
+              }}
+            >
+          <NavLink exact to="#">
             Logout
           </NavLink>
         </NavItem>

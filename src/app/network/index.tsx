@@ -9,7 +9,7 @@ export const useAxios = () => {
   const { keycloak, initialized } = useKeycloak();
   const kcToken = keycloak?.token ?? '';
 
-  const myBaseUrl = process.env.REACT_APP_BASE_URL || 'http://gateway.bolead.creo.tn/services/inspections/api/';
+  const myBaseUrl = process.env.REACT_APP_BASE_URL || 'https://gateway.bolead.creo.tn/services/';
 
   useEffect(() => {
     axiosInstance.current = axios.create({

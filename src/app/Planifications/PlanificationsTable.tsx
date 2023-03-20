@@ -37,7 +37,7 @@ const columnNames = {
     projet: 'Projet',
     type: 'Type',
     status: 'Status',
-    pdf: 'Fiche Technique',
+    pdf: 'F.Technique',
 };
 
 export const PlanificationsTable: React.FunctionComponent<{
@@ -50,7 +50,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     const axiosInstance = useAxios();
     const { enqueueSnackbar } = useSnackbar();
     const { planifications, planificationStatus, planificationTypes } = useAppSelector(state => state.planifications)
-    const [page, setPage] = React.useState(0);
+    const [page, setPage] = React.useState(1);
     const [size, setSize] = React.useState(100);
     const [filtredData, setFiltredData] = React.useState<IPlanification[]>([]);
     const {view, openCreatePlanification, setOpenCreatePlanification, closeModal} = props;
@@ -61,7 +61,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     const [selectedPlanificationId, setSelectedPlanificationId] = React.useState<any>(null);
 
     const fetchPlanificationStatus = async () => {
-        await axiosInstance?.current?.get(`referentiel-inspection-statuses`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/referentiel-inspection-statuses`).then(response => {
             dispatch(getPlanificationStatus(response.data));
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -69,7 +69,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchPlanificationTypes = async () => {
-        await axiosInstance?.current?.get(`referentiel-inspection-types`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/referentiel-inspection-types`).then(response => {
             dispatch(getPlanificationTypes(response.data));
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -77,7 +77,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchRessourcesList = async () => {
-        await axiosInstance?.current?.get(`members`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/members`).then(response => {
             dispatch(getRessourcesList(response.data));
             return;
         }).catch(error => {
@@ -86,7 +86,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchProjetList = async () => {
-        await axiosInstance?.current?.get(`projects`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/projects`).then(response => {
             dispatch(getProjetsList(response.data));
             return;
         }).catch(error => {
@@ -96,7 +96,7 @@ export const PlanificationsTable: React.FunctionComponent<{
 
 
     const fetchPlanifications = async () => {
-        await axiosInstance?.current?.get(`inspections`, {
+        await axiosInstance?.current?.get(`inspections/api/inspections`, {
             params: {
                 startDate: selectedDate,
                 endDate: moment(selectedDate).add(7, 'days').format('YYYY-MM-DD'),
@@ -110,7 +110,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchPlanificationFile = async () => {
-        await axiosInstance?.current?.get(`inspection-files/${planifications?.find(plan => plan.id === selectedPlanificationId)?.uuid}`).then(response => {
+        await axiosInstance?.current?.get(`documents/api/inspection-documents/${planifications?.find(plan => plan.id === selectedPlanificationId)?.uuid}`).then(response => {
             dispatch(getProjetsList(response.data));
             return;
         }).catch(error => {

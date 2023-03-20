@@ -37,7 +37,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
     };
 
     const fetchClientList = async () => {
-        await axiosInstance?.current?.get(`customers`).then((res) => {
+        await axiosInstance?.current?.get(`inspections/api/customers`).then((res) => {
             dispatch(getClientsList(res.data));
         }).catch((err) => {
             console.log(err);
@@ -58,7 +58,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
     }, [projet]);
 
     const addProjetRequest = async (formData: any) => {
-        await axiosInstance?.current?.post('projects', { ...formData, customer: { uuid: formData.customer.uuid }}).then((response) => {
+        await axiosInstance?.current?.post('inspections/api/projects', { ...formData, customer: { uuid: formData.customer.uuid }}).then((response) => {
             enqueueSnackbar('Projet ajouté avec succès', {
                 variant: 'success',
             });
@@ -82,7 +82,7 @@ export const ProjetForm: React.FunctionComponent<{ projet: IProjet, save: boolea
     };
 
     const editProjetRequest = async (formData: any) => {
-        await axiosInstance?.current?.put('projects/' + formData.id, formData).then((response) => {
+        await axiosInstance?.current?.put('inspections/api/projects/' + formData.id, formData).then((response) => {
             enqueueSnackbar('Projet modifié avec succès', {
                 variant: 'success',
             });

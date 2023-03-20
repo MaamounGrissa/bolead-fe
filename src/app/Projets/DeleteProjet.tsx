@@ -17,7 +17,7 @@ export const DeleteProjet: React.FunctionComponent<{
   const { isOpen, close, projet } = props;
 
   const deleteProjetRequest = async () => {
-      await axiosInstance?.current?.delete(`projects/${projet.id}`).then(response => {
+      await axiosInstance?.current?.delete(`inspections/api/projects/${projet.id}`).then(response => {
         enqueueSnackbar('Projet supprimé avec succès', { variant: 'success' });
         return response;
       }).catch(error => {

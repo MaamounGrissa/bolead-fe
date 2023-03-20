@@ -52,7 +52,7 @@ export const RessourcesTable: React.FunctionComponent<{
     const [resetFilter, setResetFilter] = React.useState(false);
 
     const fetchRessourceStatus = async () => {
-        await axiosInstance?.current?.get(`referentiel-member-statuses`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/referentiel-member-statuses`).then(response => {
             dispatch(getRessourceStatus(response.data));
             return;
         }).catch(error => {
@@ -61,7 +61,7 @@ export const RessourcesTable: React.FunctionComponent<{
     };
 
     const fetchRessourceTypes = async () => {
-        await axiosInstance?.current?.get(`teams`).then(response => {
+        await axiosInstance?.current?.get(`inspections/api/teams`).then(response => {
             dispatch(getRessourceTypes(response.data));
             return;
         }).catch(error => {
@@ -70,7 +70,7 @@ export const RessourcesTable: React.FunctionComponent<{
     };
 
     const fetchRessourcesList = async () => {
-        await axiosInstance?.current?.get(`members`, {
+        await axiosInstance?.current?.get(`inspections/api/members`, {
             params: {
                 page: page - 1,
                 size: size,

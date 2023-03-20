@@ -20,7 +20,7 @@ const Dashboard: React.FunctionComponent = () => {
   const { dashboardStatistics } = useAppSelector(state => state.statistics)
 
   const fetchDashboardStatistics = async () => {
-    await axiosInstance?.current?.get(`dashboard`)
+    await axiosInstance?.current?.get(`inspections/api/dashboard`)
     .then(response => {
         dispatch(getDashboardStatistics(response.data));
     }).catch(error => {
@@ -81,13 +81,21 @@ const Dashboard: React.FunctionComponent = () => {
               </CardBody>
             </Card>
             <Card style={{ textAlign: "center", marginTop: "20px" }}>
-              <CardTitle style={{ textAlign: "center" }}>Prochain rendez-vous</CardTitle>
+              <CardTitle style={{ textAlign: "left" }}>Prochain rendez-vous</CardTitle>
               <CardBody>
                 <div className='flex-row'>
                   <CalendarAltIcon size='lg' color="grey" />
                   <div className='planification-content'>
-                    <p>{moment(dashboardStatistics.nextPlannedInspection?.startTime).format("DD/MM/YYYY HH:mm")}</p>
-                    <p>Ressource : {`${dashboardStatistics.nextPlannedInspection?.member?.contact?.firstName} ${dashboardStatistics.nextPlannedInspection?.member?.contact?.lastName}`}</p>
+                    {
+                      dashboardStatistics?.nextPlannedInspection?.id ? (
+                        <>
+                          <p>{moment(dashboardStatistics.nextPlannedInspection?.startTime).format("DD/MM/YYYY HH:mm")}</p>
+                          <p>Ressource : {`${dashboardStatistics.nextPlannedInspection?.member?.contact?.firstName} ${dashboardStatistics.nextPlannedInspection?.member?.contact?.lastName}`}</p>
+                        </>
+                      ) : (
+                        <p>Aucun rendez-vous</p>
+                      )
+                    }
                   </div>
                 </div>
               </CardBody>

@@ -8,7 +8,7 @@ import {
 import moment from 'moment';
 import { LocationSelector, MyStyledFlexibleSpace } from './schedulerOptions';
 import { useAppSelector } from '@app/store';
-import { FilePdfIcon, TrashAltIcon } from '@patternfly/react-icons';
+import { CloseIcon, FilePdfIcon } from '@patternfly/react-icons';
 
 /* const resources = [{
   fieldName: 'type',
@@ -74,8 +74,8 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                         {props.data.ressource}
                     </div>
                     <div className='appointment-delete-action'>
-                        {props.data?.status === 1 &&
-                            <FilePdfIcon color='Tomato' size='md'
+                        {props.data?.status === 4 &&
+                            <FilePdfIcon color='Azure' size='md'
                                 style={{ cursor: 'pointer', marginRight: '5px' }}
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -83,7 +83,7 @@ export const PlanificationsScheduler: React.FunctionComponent<{
                                 }}
                             />
                         }
-                        <TrashAltIcon color='DarkRed' size='md'
+                        <CloseIcon color='DarkRed' size='md'
                             style={{ cursor: 'pointer' }}
                             onClick={(e) => {
                                 e.stopPropagation();
