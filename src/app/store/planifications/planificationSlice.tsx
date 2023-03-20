@@ -48,5 +48,5 @@ export const planificationSlice = createSlice({
     }
 });
 
-export const { getPlanifications, getPlanification, addPlanification, updatePlanification, deletePlanification, getPlanificationStatus, getPlanificationTypes, setPlanificationsTotalCount } = planificationSlice.actions;
+export const { getPlanifications, getPlanification, addPlanification, updatePlanification, deletePlanification, getPlanificationStatus, getPlanificationTypes, setPlanificationsTotalCount, getPlanificationFile } = planificationSlice.actions;
 export default planificationSlice.reducer;

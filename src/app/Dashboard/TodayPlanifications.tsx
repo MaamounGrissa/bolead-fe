@@ -1,18 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { VisiteTechniqueHTML } from '@app/Planifications/VisiteTechnique';
 import { useAxios } from '@app/network';
 import { useAppDispatch, useAppSelector } from '@app/store';
-import { getPlanificationStatus } from '@app/store/planifications/planificationSlice';
+import { getPlanificationFile, getPlanificationStatus } from '@app/store/planifications/planificationSlice';
 import { Bullseye, EmptyState, EmptyStateBody, EmptyStateIcon, Label, Title } from '@patternfly/react-core';
-import { CalendarAltIcon } from '@patternfly/react-icons';
+import { CalendarAltIcon, FilePdfIcon } from '@patternfly/react-icons';
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useSnackbar } from 'notistack';
 import React from 'react';
+import moment from 'moment';
 
 const columnNames = {
+    id: '#',
+    time: 'Heure',
     projet: 'Projet',
     ressource: 'Ressource',
     type: 'Type',
     status: 'Status',
-    notes: 'Notes',
+    pdf: 'F.Technique',
 };
 
 export const TodayPlanifications: React.FunctionComponent = () => {
@@ -21,6 +26,10 @@ export const TodayPlanifications: React.FunctionComponent = () => {
     const axiosInstance = useAxios();
     const { planificationStatus } = useAppSelector(state => state.planifications);
     const { dashboardStatistics } = useAppSelector(state => state.statistics);
+    const [openPdfFile, setOpenPdfFile] = React.useState<boolean>(false);
+    const [pdfFileObject, setPdfFileObject] = React.useState<any>(null);
+    const [selectedPlanificationId, setSelectedPlanificationId] = React.useState<string>('');
+    const { vtPdfFile } = useAppSelector(state => state.planifications);
 
     const fetchPlanificationStatus = async () => {
         await axiosInstance?.current?.get(`inspections/api/referentiel-inspection-statuses`).then(response => {
@@ -30,10 +39,33 @@ export const TodayPlanifications: React.FunctionComponent = () => {
         });
     };
 
+    const fetchPlanificationFile = async () => {
+        await axiosInstance?.current?.get(`documents/api/inspection-documents/${selectedPlanificationId}`).then(response => {
+            dispatch(getPlanificationFile(response.data));
+            return;
+        }).catch(error => {
+            enqueueSnackbar(error.message, { variant: 'error' });
+        });
+    };
+
     React.useEffect(() => {
         fetchPlanificationStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    React.useEffect(() => {
+        if (openPdfFile) {
+            fetchPlanificationFile();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openPdfFile]);
+
+    React.useEffect(() => {
+        if (vtPdfFile) {
+            setPdfFileObject(vtPdfFile);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [vtPdfFile]);
 
     const renderLabel = (labelText: number) => {
         switch (labelText) {
@@ -65,11 +97,13 @@ export const TodayPlanifications: React.FunctionComponent = () => {
                 <TableComposable variant='compact' aria-label="today-table">
                     <Thead>
                     <Tr>
+                        <Th width={10}>{columnNames.id}</Th>
+                        <Th width={10}>{columnNames.time}</Th>
                         <Th width={15}>{columnNames.projet}</Th>
                         <Th width={15}>{columnNames.ressource}</Th>
-                        <Th width={20}>{columnNames.type}</Th>
-                        <Th width={15}>{columnNames.status}</Th>
-                        <Th width={20}>{columnNames.notes}</Th>
+                        <Th width={15} textCenter>{columnNames.status}</Th>
+                        <Th width={20} textCenter>{columnNames.type}</Th>
+                        <Th width={10} textCenter>{columnNames.pdf}</Th>
                     </Tr>
                     </Thead>
                     <Tbody>
@@ -77,20 +111,37 @@ export const TodayPlanifications: React.FunctionComponent = () => {
                         dashboardStatistics?.inspectionsOfCurrentDay?.map(repo => {
                             return (
                             <Tr key={repo.id}>
+                                <Td dataLabel={columnNames.id} modifier="truncate">
+                                    {repo.id}
+                                </Td>
+                                <Td dataLabel={columnNames.time} modifier="truncate">
+                                    {moment(repo.startTime).format('HH:mm')}
+                                </Td>
                                 <Td dataLabel={columnNames.projet} modifier="truncate">
-                                {repo.project?.reference}
+                                    {repo.project?.reference}
                                 </Td>
                                 <Td dataLabel={columnNames.ressource} modifier="truncate">
-                                {repo.member?.contact?.firstName} {repo.member?.contact?.lastName}
+                                    {repo.member?.contact?.firstName} {repo.member?.contact?.lastName}
                                 </Td>
-                                <Td dataLabel={columnNames.type} modifier="truncate">
-                                {repo.type?.type}
+                                <Td dataLabel={columnNames.status} modifier="truncate" textCenter>
+                                    {renderLabel(repo.status?.id)}
                                 </Td>
-                                <Td dataLabel={columnNames.status} modifier="truncate">
-                                {renderLabel(repo.status?.id)}
+                                <Td dataLabel={columnNames.type} modifier="truncate" textCenter>
+                                    {repo.type?.type}
                                 </Td>
-                                <Td dataLabel={columnNames.notes} modifier="truncate">
-                                {repo.comment}
+                                <Td dataLabel={columnNames.pdf} modifier="truncate" textCenter>
+                                    {
+                                        repo.status?.id === 1 && (
+                                            <FilePdfIcon 
+                                                size='md'
+                                                color='Tomato'
+                                                onClick={() => {setSelectedPlanificationId(repo.uuid || ''); setOpenPdfFile(true);}}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                }}
+                                            />
+                                        )
+                                    }
                                 </Td>
                             </Tr>
                         )})
@@ -102,6 +153,7 @@ export const TodayPlanifications: React.FunctionComponent = () => {
                         </Tr>
                     )}
                     </Tbody>
+                    { openPdfFile && <VisiteTechniqueHTML isOpen={openPdfFile} close={() => setOpenPdfFile(false)} pdfObject={pdfFileObject} />}
                 </TableComposable>
             </React.Fragment>
     );
