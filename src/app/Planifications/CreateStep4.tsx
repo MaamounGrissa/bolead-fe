@@ -13,7 +13,7 @@ export const CreateStep4: React.FunctionComponent<{
 
     React.useEffect(() => {
         if (formData.travelDuration && formData.duration) {
-            setTotalDuration((formData.travelDuration * 2) + formData.duration)
+            setTotalDuration((parseInt(`${formData.travelDuration}`) * 2) + parseInt(`${formData.duration}`))
         }
     }, [formData.travelDuration, formData.duration]);
  
