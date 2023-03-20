@@ -146,12 +146,10 @@ export const PlanificationsScheduler: React.FunctionComponent<{
             setFiltredData(data);
         }
     }, [data]);
-    const typeFilter = (type: string) => {
-        console.log(type)
-        setFiltredData(data.filter((item) => item.type.type === type));
-    };
 
-    //console.log(filtredData);
+    const typeFilter = (type: string) => {
+        setFiltredData(data?.filter((item) => item.type === type));
+    };
 
     return (
         <Scheduler
