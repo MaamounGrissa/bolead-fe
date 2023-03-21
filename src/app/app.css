@@ -494,3 +494,10 @@ html, body, #root {
 .font-s-14 {
   font-size: 13px;
 }
+
+.bolead-header-content {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 2px 15px;
+}
