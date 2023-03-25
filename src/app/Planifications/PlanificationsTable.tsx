@@ -110,7 +110,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchPlanificationFile = async () => {
-        await axiosInstance?.current?.get(`documents/api/inspection-documents/${planifications?.find(plan => plan.id === selectedPlanificationId)?.uuid}`).then(response => {
+        await axiosInstance?.current?.get(`documents/api/inspection-documents/${planifications?.find(plan => plan.id === selectedPlanificationId)?.uuid}/inspection`).then(response => {
             dispatch(getProjetsList(response.data));
             return;
         }).catch(error => {
