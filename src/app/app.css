@@ -474,6 +474,8 @@ html, body, #root {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.75rem;
+  margin-top: 25px;
+  margin-bottom: 40px;
 }
 .apercu_body_section_table th {
   background-color: #071237;
@@ -512,4 +514,13 @@ html, body, #root {
   justify-content: flex-end;
   align-items: center;
   padding: 2px 15px;
+}
+
+.apercu_body_section_emptyitem {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  height: 200px;
 }

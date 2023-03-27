@@ -5,6 +5,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import React from 'react';
 import moment from 'moment';
+import { CircularProgress } from '@mui/material';
 
 export const VisiteTechniqueHTML: React.FunctionComponent<{ 
     isOpen: boolean,
@@ -13,22 +14,28 @@ export const VisiteTechniqueHTML: React.FunctionComponent<{
 }> = (props) => {
    const { isOpen, close, pdfObject } = props;
    const printRef = React.useRef(null);
+   const [loading, setLoading] = React.useState(false);
 
    const handleDownload = async (e: any) => {
         // Download the file
         e.preventDefault();
-        const element: any = printRef.current;
-        const canvas = await html2canvas(element);
-        const data = canvas.toDataURL('image/png');
-
+        setLoading(true);
         const pdf = new jsPDF();
-        const imgProperties = pdf.getImageProperties(data);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight =
-        (imgProperties.height * pdfWidth) / imgProperties.width;
-
-        pdf.addImage(data, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        const elements: any = document.getElementsByClassName('pdf-page-container');
+        for (let i = 0; i < elements.length; i++) {
+            const element = elements[i];
+            const canvas = await html2canvas(element);
+            const data = canvas.toDataURL('image/png');
+            const imgProperties = pdf.getImageProperties(data);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+            pdf.addImage(data, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            if (i < elements.length - 1) {
+                pdf.addPage();
+            }
+        }
         pdf.save(`bolead-visite-technique.pdf`);
+        setLoading(false)
    };
 
    const convertToImageUrl = (imageUuid: any) => {
@@ -47,7 +54,7 @@ export const VisiteTechniqueHTML: React.FunctionComponent<{
             <Button key="create" variant="primary" onClick={(e) => {
                 handleDownload(e);
             }}>
-                Télécharger
+                Télécharger {loading && <CircularProgress size={15} />}
             </Button>,
             <Button key="cancel" variant="link" onClick={close}>
                 Fermer
@@ -55,7 +62,7 @@ export const VisiteTechniqueHTML: React.FunctionComponent<{
             ]}
         >
             <div ref={printRef} className='apercu_container'>
-                <div className='apercu'>
+                <div id="page1" className='apercu pdf-page-container'>
                     <div className='apercu_header'>
                         <h1 className='apercu_header_logo'>Bolead</h1>
                         <h2 className='apercu_header_title'>Fiche Visite Technique - LTE</h2>
@@ -345,48 +352,52 @@ export const VisiteTechniqueHTML: React.FunctionComponent<{
                                 </div>
                             </div>
                         </div>
-                        {/* PAGE 2 */}
-                        {
-                            pdfObject?.snapshots?.map((item: any, index: number) => (
-                                <div key={index} className='apercu_body_section'>
-                                    <div className='apercu_body_section_title'>PRISE DE COTE FACADE SANS PIGNON #{index + 1}</div>
-                                    <div className='apercu_body_section_content'>
-                                        <div className='apercu_body_section_item'>
-                                            <div className='apercu_body_section_label big-label'>Dessiner les ouvertures, descentes et points singuliers avec les mesures: </div>
-                                            <div className='apercu_body_section_value big-label'><label>Orientation
-                                                <input type="text" value={item.orientation} />
-                                            </label></div>
-                                        </div>
-                                        <div className='apercu_body_section_facade'>
-                                            <div className='apercu_body_section_facade_row'>
-                                                <div className='apercu_body_section_facade_coteCol'>
-                                                    <div className='apercu_body_section_facade_content'>
-                                                        <div className='apercu_body_section_facade_item'>
-                                                            <div className='apercu_body_section_facade_label align-right'>&nbsp;</div>
-                                                            <div className='apercu_body_section_facade_label align-right'>Largeur débord toiture</div>
-                                                            <div className='apercu_body_section_facade_label align-right'><b>{item.width}&nbsp;m</b></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className='apercu_body_section_facade_centerCol'>
-                                                    <div className='apercu_body_section_facade_dessin'>
-                                                        <img src={convertToImageUrl(item.inspectionFile?.uuid)} alt='snapshot' />
-                                                    </div>
-                                                    <div className='apercu_body_section_facade_label underbox'>Longueur: <b>{item.length}&nbsp;</b></div>
-                                                </div>
-                                                <div className='apercu_body_section_facade_coteCol'>
-                                                    <div className='apercu_body_section_facade_content'>
-                                                        <div className='spacer-150'>&nbsp;</div>
-                                                        <div className='apercu_body_section_facade_item'>
-                                                            <div className='apercu_body_section_facade_label align-left'>Hauteur sous gouttière</div>
-                                                            <div className='apercu_body_section_facade_label align-left'><em>(partie à isoler uniquement)</em></div>
-                                                            <div className='apercu_body_section_facade_label align-left'><b>{item.height}&nbsp;m</b></div>
-                                                        </div>
-                                                    </div>
+                    </div>                  
+                </div>
+                {/* PAGE 2 */}
+                {
+                    pdfObject?.snapshots?.map((item: any, index: number) => (
+                        <div id={`page${2 + index}`} key={index} className='apercu_body_section pdf-page-container'>
+                            <div className='apercu_body_section_title'>PRISE DE COTE FACADE SANS PIGNON #{index + 1}</div>
+                            <div className='apercu_body_section_content'>
+                                <div className='apercu_body_section_item'>
+                                    <div className='apercu_body_section_label big-label'>Dessiner les ouvertures, descentes et points singuliers avec les mesures: </div>
+                                    <div className='apercu_body_section_value big-label'><label>Orientation :&nbsp;&nbsp;
+                                        <input type="text" value={item.orientation} />
+                                    </label></div>
+                                </div>
+                                <div className='apercu_body_section_facade'>
+                                    <div className='apercu_body_section_facade_row'>
+                                        <div className='apercu_body_section_facade_coteCol'>
+                                            <div className='apercu_body_section_facade_content'>
+                                                <div className='apercu_body_section_facade_item'>
+                                                    <div className='apercu_body_section_facade_label align-right'>&nbsp;</div>
+                                                    <div className='apercu_body_section_facade_label align-right'>Largeur débord toiture</div>
+                                                    <div className='apercu_body_section_facade_label align-right'><b>{item.width}&nbsp;m</b></div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className='table-container'>
+                                        <div className='apercu_body_section_facade_centerCol'>
+                                            <div className='apercu_body_section_facade_dessin'>
+                                                <img src={convertToImageUrl(item.inspectionFile?.uuid)} alt='snapshot' />
+                                            </div>
+                                            <div className='apercu_body_section_facade_label underbox'>Longueur: <b>{item.length}&nbsp;</b></div>
+                                        </div>
+                                        <div className='apercu_body_section_facade_coteCol'>
+                                            <div className='apercu_body_section_facade_content'>
+                                                <div className='spacer-150'>&nbsp;</div>
+                                                <div className='apercu_body_section_facade_item'>
+                                                    <div className='apercu_body_section_facade_label align-left'>Hauteur sous gouttière</div>
+                                                    <div className='apercu_body_section_facade_label align-left'><em>(partie à isoler uniquement)</em></div>
+                                                    <div className='apercu_body_section_facade_label align-left'><b>{item.height}&nbsp;m</b></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='table-container'>
+                                    {
+                                        item.singularPoints?.length ? (
                                             <table className='apercu_body_section_table'>
                                                 <thead>
                                                     <tr>
@@ -401,7 +412,7 @@ export const VisiteTechniqueHTML: React.FunctionComponent<{
                                                     </tr>
                                                 </thead>
                                                 {
-                                                    item?.singularPoints?.map((point: any, pointIndex: number) => (
+                                                    item.singularPoints?.map((point: any, pointIndex: number) => (
                                                         <tbody key={pointIndex}>
                                                             <tr>
                                                                 <td><b>{point?.key}</b></td>
@@ -417,13 +428,17 @@ export const VisiteTechniqueHTML: React.FunctionComponent<{
                                                     ))
                                                 }
                                             </table>
-                                        </div>
-                                    </div>
+                                        ) : (
+                                            <div className='apercu_body_section_emptyitem'>
+                                                <div className='apercu_body_section_label'>Aucun point singulier</div>
+                                            </div>
+                                        )
+                                    }
                                 </div>
-                            ))
-                        }
-                    </div>                  
-                </div>
+                            </div>
+                        </div>
+                    ))
+                }
             </div>
         </Modal>
         </React.Fragment>
