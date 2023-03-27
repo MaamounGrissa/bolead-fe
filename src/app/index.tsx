@@ -12,22 +12,36 @@ const App: React.FunctionComponent = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const eventLogger = (event: unknown, error: unknown) => {
-    //console.log('onKeycloakEvent', event, error)
+    console.log('onKeycloakEvent', event, error)
   }
   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const tokenLogger = (tokens: unknown) => {
-    //console.log('onKeycloakTokens', tokens)
+    console.log('onKeycloakTokens', tokens)
   }
+
+  /* const initOptions = {
+    onLoad: 'check-sso',
+    promiseType: 'native',
+    redirect_uri: window.location.href,
+    checkLoginIframe: true,
+    // enableBearerInterceptor: true,
+    // bearerExcludedUrls: ['/assets'],
+    flow: 'standard',
+    silentCheckSsoFallback: false
+  };
+ */
+
+const initOptions = {
+  onLoad: 'login-required',
+}
 
   return (
     <ReactKeycloakProvider
       authClient={keycloak}
       onEvent={eventLogger}
       onTokens={tokenLogger}
-      initOptions={{
-        onLoad: 'login-required',
-      }}
+      initOptions={initOptions}
     >
       <Provider store={store}>
         <SnackbarProvider maxSnack={3}>

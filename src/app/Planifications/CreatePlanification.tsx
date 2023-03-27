@@ -128,7 +128,7 @@ export const CreatePlanification: React.FunctionComponent<{
 
 
     const addPlanificationRequest = async (planificationForm: any) => {
-        await axiosInstance?.current?.post('inspections/api/inspections', planificationForm).then((response) => {
+        await axiosInstance?.current?.post('services/inspections/api/inspections', planificationForm).then((response) => {
             enqueueSnackbar('Rendez-vous planifiée avec succès', {
                 variant: 'success',
             });

@@ -21,7 +21,7 @@ export const TopRessourcePlanifier: React.FunctionComponent = () => {
     const { dashboardStatistics } = useAppSelector(state => state.statistics);
     
     const fetchRessourcesList = async () => {
-        await axiosInstance?.current?.get(`inspections/api/members`).then(response => {
+        await axiosInstance?.current?.get(`services/inspections/api/members`).then(response => {
             dispatch(getRessources(response.data));
             return;
         }).catch(error => {

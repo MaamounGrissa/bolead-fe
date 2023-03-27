@@ -47,7 +47,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
 
 
     const addRessourceRequest = async (RessourceForm: any) => {
-        await axiosInstance?.current?.post('inspections/api/members', RessourceForm).then((response) => {
+        await axiosInstance?.current?.post('services/inspections/api/members', RessourceForm).then((response) => {
             enqueueSnackbar('Ressource ajouté avec succès', {
                 variant: 'success',
             });
@@ -72,7 +72,7 @@ export const RessourceForm: React.FunctionComponent<{ ressource: IRessource, sav
     };
 
     const editRessourceRequest = async (RessourceForm: any) => {
-        await axiosInstance?.current?.put('inspections/api/members/' + formData.id, RessourceForm).then((response) => {
+        await axiosInstance?.current?.put('services/inspections/api/members/' + formData.id, RessourceForm).then((response) => {
             enqueueSnackbar('Ressource modifié avec succès', {
                 variant: 'success',
             });

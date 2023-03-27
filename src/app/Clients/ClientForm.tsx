@@ -39,7 +39,7 @@ export const ClientForm: React.FunctionComponent<{
     };
 
     const addClientRequest = async (clientForm: any) => {
-        await axiosInstance?.current?.post('inspections/api/customers', clientForm).then((response) => {
+        await axiosInstance?.current?.post('services/inspections/api/customers', clientForm).then((response) => {
             enqueueSnackbar('Client ajouté avec succès', {
                 variant: 'success',
             });
@@ -64,7 +64,7 @@ export const ClientForm: React.FunctionComponent<{
     };
 
     const editClientRequest = async (clientForm: any) => {
-        await axiosInstance?.current?.put('inspections/api/customers/' + formData.id, clientForm).then((response) => {
+        await axiosInstance?.current?.put('services/inspections/api/customers/' + formData.id, clientForm).then((response) => {
             enqueueSnackbar('Client modifié avec succès', {
                 variant: 'success',
             });

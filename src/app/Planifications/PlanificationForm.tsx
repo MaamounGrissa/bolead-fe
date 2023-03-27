@@ -42,7 +42,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     const [formData, setFormData] = React.useState<IPlanification>(initialPlanification);
 
     const fetchProjetsList = async () => {
-        await axiosInstance?.current?.get(`inspections/api/projects`).then((res) => {
+        await axiosInstance?.current?.get(`services/inspections/api/projects`).then((res) => {
             dispatch(getProjetsList(res.data));
         }).catch((err) => {
             console.log(err);
@@ -50,7 +50,7 @@ export const PlanificationForm: React.FunctionComponent<{ planification: IPlanif
     };
 
     const fetchRessourcesList = async () => {
-        await axiosInstance?.current?.get(`inspections/api/members`).then((res) => {
+        await axiosInstance?.current?.get(`services/inspections/api/members`).then((res) => {
             dispatch(getRessourcesList(res.data));
         }).catch((error) => {
             enqueueSnackbar(error.message, { variant: 'error' });

@@ -32,7 +32,7 @@ export const TodayPlanifications: React.FunctionComponent = () => {
     const { vtPdfFile } = useAppSelector(state => state.planifications);
 
     const fetchPlanificationStatus = async () => {
-        await axiosInstance?.current?.get(`inspections/api/referentiel-inspection-statuses`).then(response => {
+        await axiosInstance?.current?.get(`services/inspections/api/referentiel-inspection-statuses`).then(response => {
             dispatch(getPlanificationStatus(response.data));
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -40,7 +40,7 @@ export const TodayPlanifications: React.FunctionComponent = () => {
     };
 
     const fetchPlanificationFile = async () => {
-        await axiosInstance?.current?.get(`documents/api/inspection-documents/${selectedPlanificationId}`).then(response => {
+        await axiosInstance?.current?.get(`services/documents/api/inspection-documents/${selectedPlanificationId}/inspection`).then(response => {
             dispatch(getPlanificationFile(response.data));
             return;
         }).catch(error => {
@@ -76,7 +76,7 @@ export const TodayPlanifications: React.FunctionComponent = () => {
         case 3:
             return <Label color="orange">{planificationStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         case 4:
-            return <Label color="red">{planificationStatus?.find(stat => stat.id === labelText)?.status}</Label>;
+            return <Label color="green">{planificationStatus?.find(stat => stat.id === labelText)?.status}</Label>;
         default:
             return <Label color="orange">Indéfinie</Label>;
         }

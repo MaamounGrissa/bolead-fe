@@ -20,7 +20,7 @@ import { DeletePlanification } from './DeletePlanification';
 import { PlanificationsFilter } from './PlanificationsFilter';
 import { useAppDispatch, useAppSelector } from '@app/store';
 import { PlanificationsScheduler } from './PlanificationsScheduler';
-import { getPlanificationStatus, getPlanificationTypes, getPlanifications, setPlanificationsTotalCount } from '@app/store/planifications/planificationSlice';
+import { getPlanificationFile, getPlanificationStatus, getPlanificationTypes, getPlanifications, setPlanificationsTotalCount } from '@app/store/planifications/planificationSlice';
 import moment from 'moment';
 import { initialPlanification } from '@app/utils/constant';
 import { useAxios } from '@app/network';
@@ -49,7 +49,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     const dispatch = useAppDispatch();
     const axiosInstance = useAxios();
     const { enqueueSnackbar } = useSnackbar();
-    const { planifications, planificationStatus, planificationTypes } = useAppSelector(state => state.planifications)
+    const { planifications, planificationStatus, planificationTypes, vtPdfFile } = useAppSelector(state => state.planifications)
     const [page, setPage] = React.useState(1);
     const [size, setSize] = React.useState(100);
     const [filtredData, setFiltredData] = React.useState<IPlanification[]>([]);
@@ -61,7 +61,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     const [selectedPlanificationId, setSelectedPlanificationId] = React.useState<any>(null);
 
     const fetchPlanificationStatus = async () => {
-        await axiosInstance?.current?.get(`inspections/api/referentiel-inspection-statuses`).then(response => {
+        await axiosInstance?.current?.get(`services/inspections/api/referentiel-inspection-statuses`).then(response => {
             dispatch(getPlanificationStatus(response.data));
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -69,7 +69,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchPlanificationTypes = async () => {
-        await axiosInstance?.current?.get(`inspections/api/referentiel-inspection-types`).then(response => {
+        await axiosInstance?.current?.get(`services/inspections/api/referentiel-inspection-types`).then(response => {
             dispatch(getPlanificationTypes(response.data));
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -77,7 +77,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchRessourcesList = async () => {
-        await axiosInstance?.current?.get(`inspections/api/members`).then(response => {
+        await axiosInstance?.current?.get(`services/inspections/api/members`).then(response => {
             dispatch(getRessourcesList(response.data));
             return;
         }).catch(error => {
@@ -86,7 +86,7 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchProjetList = async () => {
-        await axiosInstance?.current?.get(`inspections/api/projects`).then(response => {
+        await axiosInstance?.current?.get(`services/inspections/api/projects`).then(response => {
             dispatch(getProjetsList(response.data));
             return;
         }).catch(error => {
@@ -96,7 +96,7 @@ export const PlanificationsTable: React.FunctionComponent<{
 
 
     const fetchPlanifications = async () => {
-        await axiosInstance?.current?.get(`inspections/api/inspections`, {
+        await axiosInstance?.current?.get(`services/inspections/api/inspections`, {
             params: {
                 startDate: selectedDate,
                 endDate: moment(selectedDate).add(7, 'days').format('YYYY-MM-DD'),
@@ -110,8 +110,8 @@ export const PlanificationsTable: React.FunctionComponent<{
     };
 
     const fetchPlanificationFile = async () => {
-        await axiosInstance?.current?.get(`documents/api/inspection-documents/${planifications?.find(plan => plan.id === selectedPlanificationId)?.uuid}/inspection`).then(response => {
-            dispatch(getProjetsList(response.data));
+        await axiosInstance?.current?.get(`services/documents/api/inspection-documents/${planifications?.find(plan => plan.id === selectedPlanificationId)?.uuid}/inspection`).then(response => {
+            dispatch(getPlanificationFile(response.data));
             return;
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -291,7 +291,7 @@ export const PlanificationsTable: React.FunctionComponent<{
             {openCreatePlanification && <CreatePlanification isOpen={openCreatePlanification} close={closeModal} selectedDate={selectedDate} />}
             {openUpdatePlanification && <UpdatePlanification isOpen={openUpdatePlanification} close={() => setOpenUpdatePlanification(false)} planification={planifications?.find(plan => plan.id === selectedPlanificationId) ||initialPlanification} />}
             {openDeletePlanification && <DeletePlanification isOpen={openDeletePlanification} close={() => setOpenDeletePlanification(false)} planification={planifications?.find(plan => plan.id === selectedPlanificationId) ||initialPlanification} />}
-            {openPdfFile && <VisiteTechniqueHTML isOpen={openPdfFile} close={() => setOpenPdfFile(false)} pdfObject={planifications?.find(plan => plan.id === selectedPlanificationId) ||initialPlanification} />}
+            {openPdfFile && <VisiteTechniqueHTML isOpen={openPdfFile} close={() => setOpenPdfFile(false)} pdfObject={vtPdfFile} />}
         </React.Fragment>
     );
 };

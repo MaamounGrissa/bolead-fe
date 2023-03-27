@@ -17,7 +17,7 @@ export const DeleteRessource: React.FunctionComponent<{
   const { isOpen, close, ressource } = props;
 
   const deleteRessourceRequest = async () => {
-    await axiosInstance?.current?.delete(`inspections/api/members/${ressource.id}`).then(response => {
+    await axiosInstance?.current?.delete(`services/inspections/api/members/${ressource.id}`).then(response => {
       enqueueSnackbar('Ressource supprimé avec succès', { variant: 'success' });
       return response;
     }).catch(error => {

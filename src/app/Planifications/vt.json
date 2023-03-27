@@ -1,0 +1,355 @@
+{
+  "id": "641c3185f197391997012ea7",
+  "uuid": "d82a68d3-5eb1-4aa9-bdff-8be8bd866c25",
+  "inspection": "f2639535-93a4-4d8b-8e4a-230c7628a948",
+  "comment": null,
+  "status": "VALID",
+  "type": null,
+  "partner": {
+    "company": "Test",
+    "reference": null,
+    "visiteDate": "2023-03-23T11:01:24.726Z",
+    "participantName": "Partner",
+    "participantUuid": "e48742f8-dd87-43f7-a383-9ac34cce44aa"
+  },
+  "customerDetails": {
+    "fullName": "Fediii test",
+    "address": "France",
+    "phone": "235356",
+    "email": "Fedi@g.com",
+    "projectUuid": "435719af-0922-4609-bd71-78d78ff5c3a4",
+    "customerUuid": "9b2a38fd-3a93-4f99-ab22-8056c0c9ebb8"
+  },
+  "informations": {
+    "criterias": [
+      { "key": "LA_MAISON_A_T_ELLE_2_ANS", "value": "true", "answer": "true", "additionalInformation": "" },
+      { "key": "OCCUPE_A_LA_MAISON", "value": "true", "answer": "true", "additionalInformation": "" },
+      {
+        "key": "ENERGIE_CHAUFFAGE_EXISTANTE",
+        "value": "Gaz Naturel",
+        "answer": "Gaz Naturel",
+        "additionalInformation": ""
+      }
+    ],
+    "preparation": [
+      { "key": "ACCES_CAMION", "value": "true", "answer": "false", "additionalInformation": "" },
+      { "key": "STOCKAGE_POSSIBLE", "value": "false", "answer": "false", "additionalInformation": "" },
+      { "key": "ECHAUFAUDAGE_POSSIBLE", "value": "false", "answer": "false", "additionalInformation": "" },
+      { "key": "NOMBRE_DE_FACADES", "value": "2 façades", "answer": "2 façades", "additionalInformation": "" },
+      { "key": "NATURE_DU_SUPPORT", "value": "Nature", "answer": "Nature", "additionalInformation": "" },
+      { "key": "SURFACE_TOTALE_A_ISOLER", "value": "25", "answer": "25", "additionalInformation": "" }
+    ],
+    "pictures": [
+      { "key": "VUE_ENSEMBLE_DE_LA_MAISON", "value": "true", "answer": "true", "additionalInformation": "" },
+      { "key": "ZONE_DE_STOCKAGE_MATERIEL", "value": "false", "answer": "false", "additionalInformation": "" },
+      { "key": "ACCES_A_LA_MAISON", "value": "true", "answer": "true", "additionalInformation": "" },
+      { "key": "FACADES_A_TRAITER", "value": "false", "answer": "false", "additionalInformation": "" },
+      { "key": "ZONE_DE_DECHARGEMENT", "value": "false", "answer": "false", "additionalInformation": "" },
+      {
+        "key": "POINTS_SINGULIERS_POUR_CHAQUE_FACADE",
+        "value": "false",
+        "answer": "false",
+        "additionalInformation": ""
+      }
+    ],
+    "attachments": [
+      { "key": "PLAN_FACADE_1", "value": "false", "answer": "false", "additionalInformation": "" },
+      { "key": "PLAN_FACADE_2", "value": "true", "answer": "true", "additionalInformation": "" },
+      { "key": "PLAN_FACADE_3", "value": "false", "answer": "false", "additionalInformation": "" },
+      { "key": "PLAN_FACADE_4", "value": "false", "answer": "false", "additionalInformation": "" }
+    ]
+  },
+  "summary": {
+    "feasibility": [{ "key": "VAS", "value": "KEY_VALUE", "answer": "Test", "additionalInformation": "" }],
+    "comment": "Comment",
+    "dateOfSignature": "2023-03-15T11:02:00Z",
+    "customerSignature": "8842a234-54c6-4f2f-b433-1449b692069f",
+    "participantSignature": "8842a234-54c6-4f2f-b433-1449b692069f"
+  },
+  "snapshots": [
+    {
+      "orientation": "",
+      "inspectionFile": {
+        "createdBy": null,
+        "createdDate": "2023-03-23T11:17:29.460Z",
+        "lastModifiedBy": null,
+        "lastModifiedDate": "2023-03-23T11:17:29.460Z",
+        "id": null,
+        "uuid": "8842a234-54c6-4f2f-b433-1449b692069f",
+        "inspection": null,
+        "inspectionDocument": null,
+        "fileContentType": null,
+        "type": null
+      },
+      "type": "ZAR",
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": []
+    },
+    {
+      "orientation": "NORD",
+      "inspectionFile": {
+        "createdBy": null,
+        "createdDate": "2023-03-23T11:21:31.508Z",
+        "lastModifiedBy": null,
+        "lastModifiedDate": "2023-03-23T11:21:31.508Z",
+        "id": null,
+        "uuid": "8842a234-54c6-4f2f-b433-1449b692069f",
+        "inspection": null,
+        "inspectionDocument": null,
+        "fileContentType": null,
+        "type": null
+      },
+      "type": "ZAR",
+      "width": 25.0,
+      "height": 25.0,
+      "length": 25.0,
+      "singularPoints": [
+        {
+          "key": "FENETRES",
+          "quantity": "25",
+          "toReplace": "Jxdjj",
+          "install": "Jddjdj",
+          "installReInstall": "",
+          "byPartner": "",
+          "byCustomer": ""
+        }
+      ]
+    },
+    {
+      "orientation": "West",
+      "inspectionFile": {
+        "createdBy": null,
+        "createdDate": "2023-03-23T11:18:05.752Z",
+        "lastModifiedBy": null,
+        "lastModifiedDate": "2023-03-23T11:18:05.752Z",
+        "id": null,
+        "uuid": "8842a234-54c6-4f2f-b433-1449b692069f",
+        "inspection": null,
+        "inspectionDocument": null,
+        "fileContentType": null,
+        "type": null
+      },
+      "type": "ZAR",
+      "width": 66.0,
+      "height": 25.0,
+      "length": 99.0,
+      "singularPoints": [
+        {
+          "key": "FENETRES",
+          "quantity": "65",
+          "toReplace": "",
+          "install": "",
+          "installReInstall": "",
+          "byPartner": "",
+          "byCustomer": ""
+        }
+      ]
+    },
+    {
+      "orientation": "",
+      "inspectionFile": {
+        "createdBy": null,
+        "createdDate": "2023-03-23T11:12:48.175Z",
+        "lastModifiedBy": null,
+        "lastModifiedDate": "2023-03-23T11:12:48.175Z",
+        "id": null,
+        "uuid": "8842a234-54c6-4f2f-b433-1449b692069f",
+        "inspection": null,
+        "inspectionDocument": null,
+        "fileContentType": null,
+        "type": null
+      },
+      "type": "ZAR",
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": [
+        {
+          "key": "PORTE_ENTREE",
+          "quantity": "25",
+          "toReplace": "",
+          "install": "",
+          "installReInstall": "",
+          "byPartner": "",
+          "byCustomer": ""
+        }
+      ]
+    },
+    {
+      "orientation": "",
+      "inspectionFile": {
+        "createdBy": null,
+        "createdDate": "2023-03-23T11:08:28.359Z",
+        "lastModifiedBy": null,
+        "lastModifiedDate": "2023-03-23T11:08:28.359Z",
+        "id": null,
+        "uuid": "8842a234-54c6-4f2f-b433-1449b692069f",
+        "inspection": null,
+        "inspectionDocument": null,
+        "fileContentType": null,
+        "type": null
+      },
+      "type": "ZAR",
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": [
+        {
+          "key": "FENETRES",
+          "quantity": "82",
+          "toReplace": "Oui",
+          "install": "Oui",
+          "installReInstall": "",
+          "byPartner": "",
+          "byCustomer": ""
+        },
+        {
+          "key": "BARREAUX_FENETRES",
+          "quantity": "255",
+          "toReplace": "Oui",
+          "install": "Dep",
+          "installReInstall": "Depose",
+          "byPartner": "",
+          "byCustomer": "Client"
+        }
+      ]
+    },
+    {
+      "orientation": "",
+      "inspectionFile": {
+        "createdBy": null,
+        "createdDate": "2023-03-23T11:09:00.573Z",
+        "lastModifiedBy": null,
+        "lastModifiedDate": "2023-03-23T11:09:00.573Z",
+        "id": null,
+        "uuid": "8842a234-54c6-4f2f-b433-1449b692069f",
+        "inspection": null,
+        "inspectionDocument": null,
+        "fileContentType": null,
+        "type": null
+      },
+      "type": "ZAR",
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": [
+        {
+          "key": "FENETRES",
+          "quantity": "52",
+          "toReplace": "Gf",
+          "install": "",
+          "installReInstall": "",
+          "byPartner": "",
+          "byCustomer": ""
+        }
+      ]
+    },
+    {
+      "orientation": "",
+      "inspectionFile": {
+        "createdBy": null,
+        "createdDate": "2023-03-23T11:10:27.338Z",
+        "lastModifiedBy": null,
+        "lastModifiedDate": "2023-03-23T11:10:27.338Z",
+        "id": null,
+        "uuid": "8842a234-54c6-4f2f-b433-1449b692069f",
+        "inspection": null,
+        "inspectionDocument": null,
+        "fileContentType": null,
+        "type": null
+      },
+      "type": "ZAR",
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": [
+        {
+          "key": "PORTE_ENTREE",
+          "quantity": "25",
+          "toReplace": "Oui",
+          "install": "",
+          "installReInstall": "",
+          "byPartner": "",
+          "byCustomer": ""
+        },
+        {
+          "key": "PORTE_DE_GARAGE",
+          "quantity": "25",
+          "toReplace": "",
+          "install": "",
+          "installReInstall": "",
+          "byPartner": "",
+          "byCustomer": ""
+        }
+      ]
+    },
+    {
+      "orientation": "",
+      "inspectionFile": {
+        "createdBy": null,
+        "createdDate": "2023-03-23T11:10:56.384Z",
+        "lastModifiedBy": null,
+        "lastModifiedDate": "2023-03-23T11:10:56.384Z",
+        "id": null,
+        "uuid": "8842a234-54c6-4f2f-b433-1449b692069f",
+        "inspection": null,
+        "inspectionDocument": null,
+        "fileContentType": null,
+        "type": null
+      },
+      "type": "ZAR",
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": [
+        {
+          "key": "PORTE_ENTREE",
+          "quantity": "25",
+          "toReplace": "",
+          "install": "",
+          "installReInstall": "",
+          "byPartner": "",
+          "byCustomer": ""
+        }
+      ]
+    },
+    {
+      "orientation": null,
+      "inspectionFile": null,
+      "type": null,
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": null
+    },
+    {
+      "orientation": null,
+      "inspectionFile": null,
+      "type": null,
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": null
+    },
+    {
+      "orientation": null,
+      "inspectionFile": null,
+      "type": null,
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": null
+    },
+    {
+      "orientation": null,
+      "inspectionFile": null,
+      "type": null,
+      "width": 0.0,
+      "height": 0.0,
+      "length": 0.0,
+      "singularPoints": null
+    }
+  ]
+}

@@ -51,7 +51,7 @@ export const ClientsTable: React.FunctionComponent<{
     const [resetFilter, setResetFilter] = React.useState(false);
 
     const fetchClientStatus = async () => {
-        await axiosInstance?.current?.get(`inspections/api/referentiel-customer-statuses`).then(response => {
+        await axiosInstance?.current?.get(`services/inspections/api/referentiel-customer-statuses`).then(response => {
             dispatch(getClientStatus(response.data));
         }).catch(error => {
             enqueueSnackbar(error.message, { variant: 'error' });
@@ -59,7 +59,7 @@ export const ClientsTable: React.FunctionComponent<{
     };
 
     const fetchClientList = async () => {
-        await axiosInstance?.current?.get(`inspections/api/customers`, {
+        await axiosInstance?.current?.get(`services/inspections/api/customers`, {
             params: {
                 page: page - 1,
                 size: size,

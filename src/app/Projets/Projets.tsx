@@ -26,7 +26,7 @@ const Projets: React.FunctionComponent = () => {
   const dispatch = useAppDispatch();
 
   const fetchDashboardStatistics = async () => {
-    await axiosInstance?.current?.get(`inspections/api/dashboard`)
+    await axiosInstance?.current?.get(`services/inspections/api/dashboard`)
     .then(response => {
         dispatch(getDashboardStatistics(response.data));
     }).catch(error => {
